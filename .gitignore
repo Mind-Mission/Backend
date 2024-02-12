@@ -1,0 +1,5 @@
+/.env
+/dist
+/access.log
+/node_modules
+/ToDo.txt
