@@ -1,10 +1,10 @@
-import express, { response } from "express";
+import { Request, Response, NextFunction } from "express";
 import HttpStatusCode from "../enums/HTTPStatusCode";
 
-const welcomeRouter = express.Router();
+const Welcome = () => {
+  return (request: Request, response: Response, next: NextFunction) => {
+    response.status(HttpStatusCode.OK).send('Welcome!');
+  };
+};
 
-welcomeRouter.get('/', (request, response, next) => {
-  response.status(HttpStatusCode.OK).send("Welcome!");
-});
-
-export default welcomeRouter;
+export default Welcome

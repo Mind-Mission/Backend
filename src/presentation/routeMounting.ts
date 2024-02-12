@@ -1,5 +1,4 @@
 import { Application } from 'express';
-import welcomeRouter from './config/Welcome';
 import userRoutes from "./routes/userRoutes";
 import roleRoutes from "./routes/roleRoutes";
 import authenticationRoutes from "./routes/authenticationRoutes";
@@ -32,7 +31,6 @@ import whatsAppRoute from "./routes/whatsAppRoutes"
 
 export const routeMounting = (app: Application) => {
   const apiVersion = process.env.API_Version;
-  app.use(`/`, welcomeRouter);
   app.use(`${apiVersion}/auth`, authenticationRoutes);
   app.use(`${apiVersion}/sso/gmail`, ssoGmailRoutes);
   app.use(`${apiVersion}/sso/linkedin`, ssoLinkedinRoutes);
