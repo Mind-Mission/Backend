@@ -4,7 +4,6 @@ import compression from 'compression';
 import app from "./config/Express";
 import server from "./config/ServerCreator";
 import Logger from "./logger";
-import Welcome from "./config/Welcome";
 import container from "./DIContainer/DI";
 import { RealTimeManager } from "./services/RealTimeManager";
 import notFoundRoutes from "./errorHandlers/NotFoundRoutesHandler";
@@ -19,7 +18,6 @@ app.options('*', cors());
 app.use(express.json({limit: "50kb"}));
 app.use(Logger());
 app.use(compression());
-app.use(Welcome());
 
 // container.get<RealTimeManager>('RealTimeManager');
 

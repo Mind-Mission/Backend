@@ -1,4 +1,5 @@
 import { Application } from 'express';
+import  "./config/Welcome";
 import userRoutes from "./routes/userRoutes";
 import roleRoutes from "./routes/roleRoutes";
 import authenticationRoutes from "./routes/authenticationRoutes";
