@@ -1,13 +1,13 @@
 export enum NotifyFor {
-  NewMessage = "NewMessage",
-  NewComment = "NewComment",
-  OnlineUserCount = "OnlineUserCount"
+  NewMessage = "newMessage",
+  NewComment = "newComment",
+  OnlineUserCount = "onlineUserCount"
 }
 
 export enum SubscribeOn {
   Connection = "connection",
   Disconnect = "disconnect",
-  Login = "Login",
-  NewMessage = "NewMessage",
-  NewComment = "NewComment",
+  Login = "login",
+  NewMessage = "newMessage",
+  NewComment = "newComment",
 }
