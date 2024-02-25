@@ -2,7 +2,7 @@ import { Request } from "express"
 
 export abstract class RequestManager {
   private static skipItems = 0;
-  private static takeItems = 10;
+  private static takeItems = 3;
 
   private static select = (request: Request) => {
     const {select} = request.body;
@@ -25,11 +25,13 @@ export abstract class RequestManager {
   };
 
   private static skip = (request: Request) => {
-    return request.body.skip || this.skipItems;
+    const {page, skip} = request.body;
+    return page ? (page * this.takeItems - this.takeItems) : (skip || this.skipItems);
   };
 
   private static take = (request: Request) => {
-    return request.body.take || this.takeItems;
+    this.takeItems = request.body.take || this.takeItems;
+    return this.takeItems;
   };
 
   private static _count = (request: Request) => {
@@ -58,8 +60,8 @@ export abstract class RequestManager {
       select: this.select(request),
       include: this.include(request),
       orderBy: this.orderBy(request),
-      skip: this.skip(request),
       take: this.take(request),
+      skip: this.skip(request),
     }
   }
 
