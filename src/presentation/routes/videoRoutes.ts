@@ -13,19 +13,19 @@ const {upload} = new VideoUploader();
 const videoRouter = express.Router();
 
 videoRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Video', 'GET'), getAllVideos);
+	.post(isAuthenticated, isAuthorized('Videos', 'Get'), getAllVideos);
 
 videoRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Video', 'GET'), getVideoById);
+	.post(idValidation, isAuthenticated, isAuthorized('Videos', 'Get'), getVideoById);
 
 videoRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('Video', 'POST'), addVideoValidation, createVideo);
+	.post(isAuthenticated, isAuthorized('Videos', 'Add'), addVideoValidation, createVideo);
 
 videoRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Video', 'PATCH'), updateVideoValidation, updateVideo);
+	.post(idValidation, isAuthenticated, isAuthorized('Videos', 'Update'), updateVideoValidation, updateVideo);
 
 videoRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Video', 'DELETE'), deleteVideo);
+	.post(idValidation, isAuthenticated, isAuthorized('Videos', 'Delete'), deleteVideo);
 
 const storage = multer.memoryStorage();
 const multerUpload = multer({ storage });

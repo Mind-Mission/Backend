@@ -8,6 +8,6 @@ const {getAllModelPermissions} = new ModelPermissionController();
 const modelPermissionRouter = express.Router();
 
 modelPermissionRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Role', 'GET'), getAllModelPermissions)
+	.post(isAuthenticated, isAuthorized('Permissions', 'Get'), getAllModelPermissions)
 
 export default modelPermissionRouter;

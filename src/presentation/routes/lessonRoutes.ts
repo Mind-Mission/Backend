@@ -11,18 +11,18 @@ const {getAllLessons, getLessonById, createLesson, updateLesson, deleteLesson} =
 const lessonRouter = express.Router();
 
 lessonRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Lesson', 'GET'), getAllLessons);
+	.post(isAuthenticated, isAuthorized('Lessons', 'Get'), getAllLessons);
 
 lessonRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Lesson', 'GET'), getLessonById);
+	.post(idValidation, isAuthenticated, isAuthorized('Lessons', 'Get'), getLessonById);
 
 lessonRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('Lesson', 'POST'), addLessonValidation, createLesson);
+	.post(isAuthenticated, isAuthorized('Lessons', 'Add'), addLessonValidation, createLesson);
 
 lessonRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Lesson', 'PATCH'), updateLessonValidation, updateLesson);
+	.post(idValidation, isAuthenticated, isAuthorized('Lessons', 'Update'), updateLessonValidation, updateLesson);
 
 lessonRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Lesson', 'DELETE'), deleteLesson);
+	.post(idValidation, isAuthenticated, isAuthorized('Lessons', 'Delete'), deleteLesson);
 
 export default lessonRouter;

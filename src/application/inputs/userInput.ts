@@ -1,4 +1,4 @@
-import { HaveAudience, Platform, SSOPlatform, TeachingType, VideoProAcademy } from "@prisma/client";
+import { Crud, HaveAudience, Platform, Resource, Role, SSOPlatform, TeachingType, VideoProAcademy } from "@prisma/client";
 
 export type CreateUser = {
   firstName: string; 
@@ -10,11 +10,12 @@ export type CreateUser = {
   bio: string;
   picture: string;
   platform?: SSOPlatform,
-  isEmailVerified?: boolean
-  role: {
-    id?: number;
-    slug?: string;
-  };
+  isEmailVerified?: boolean,
+  role: Role,
+  permissions: {
+    resource: Resource;
+    cruds: Crud[];
+  }[];
   refreshToken?: string;
   instructor?: {
     specialization: string;
@@ -38,11 +39,15 @@ export type UpdateUser = {
   whatsAppNumber?: string;
   bio?: string;
   picture?: string;
+  permissions?: [{
+    id?: number,
+    resource: Resource;
+    cruds: Crud[];
+  }];
   refreshToken?: string;
   isOnline?: boolean;
   isActive?: boolean;
   isBlocked?: boolean;
   isDeleted?: boolean;
-  roleId?: number;
   personalLinks?: {platform: Platform, link: string}[];
 };

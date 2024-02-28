@@ -14,21 +14,21 @@ courseRouter.route("/enums")
 	.post(getCourseEnums);
 
 courseRouter.route("/aggregate")
-	.post(isAuthenticated, isAuthorized('Course', 'GET'), courseAggregates);
+	.post(isAuthenticated, isAuthorized('Courses', 'Get'), courseAggregates);
 
 courseRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Course', 'GET'), getAllCourses);
+	.post(isAuthenticated, isAuthorized('Courses', 'Get'), getAllCourses);
 
 courseRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Course', 'GET'), getCourseById);
+	.post(idValidation, isAuthenticated, isAuthorized('Courses', 'Get'), getCourseById);
 
 courseRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('Course', 'POST'), addCourseValidation, createCourse);
+	.post(isAuthenticated, isAuthorized('Courses', 'Add'), addCourseValidation, createCourse);
 
 courseRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Course', 'PATCH'), updateCourseValidation, updateCourse);
+	.post(idValidation, isAuthenticated, isAuthorized('Courses', 'Update'), updateCourseValidation, updateCourse);
 
 courseRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Course', 'DELETE'), deleteCourse);
+	.post(idValidation, isAuthenticated, isAuthorized('Courses', 'Delete'), deleteCourse);
 
 export default courseRouter;

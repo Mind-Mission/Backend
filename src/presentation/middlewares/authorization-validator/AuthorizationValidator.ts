@@ -1,10 +1,9 @@
+import { Crud, Resource, Role } from "@prisma/client";
 import { Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
 import {inject, injectable} from "inversify";
 import {IUserService} from "../../../application/interfaces/IServices/IUserService";
 import { ExtendedRequest } from "../../types/ExtendedRequest";
-import { AllowedMethod, AllowedModel, AllowedModels } from "../../types/ModelPermission";
-import { MainRoles } from "../../types/MainRoles";
 import { JWTGenerator } from "../../services/JWTGenerator";
 import APIError from "../../errorHandlers/APIError";
 import HttpStatusCode from "../../enums/HTTPStatusCode";
@@ -14,8 +13,8 @@ export class Authorization {
 
   constructor(@inject('IUserService') private userService: IUserService) {}
 
-  private isCurrentUserRoleInList = (request: ExtendedRequest, roleList: MainRoles[]): boolean => {
-    return (request?.user?.role && roleList.includes(request.user.role.slug as MainRoles)) as boolean;
+  private isCurrentUserRoleInList = (request: ExtendedRequest, roleList: Role[]): boolean => {
+    return request.user?.role ? roleList.includes(request.user?.role) : false;
   };
 
   private isTokenCreatedBeforeUpdatingPassword(decodedPayload: any, passwordUpdatedTime: Date | null): boolean {
@@ -37,7 +36,7 @@ export class Authorization {
           email: {equals: decodedPayload?.email, mode: 'insensitive'}
         },
         include: {
-          role: true
+          permissions: true,
         }
       });
       if(!user || this.isTokenCreatedBeforeUpdatingPassword(decodedPayload, user.passwordUpdatedTime)) {
@@ -48,31 +47,29 @@ export class Authorization {
     }
   });
   
-  isAuthorized = (modelName: AllowedModel, method: AllowedMethod) => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => { 
+  isAuthorized = (resource: Resource, crud: Crud) => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => { 
     if(request.user?.isBlocked || request.user?.isDeleted) {
       throw new APIError('Your are blocked, try to contact with our support team', HttpStatusCode.Forbidden);
     }
-    let permission = method.toLowerCase();
-    if(request.user?.role?.allowedModels) {
-      for(const allowedModel of request.user?.role.allowedModels) {
-        if(allowedModel.modelName.toLowerCase() === modelName.toLowerCase() && allowedModel.permissions.includes(permission)) {
+    if(request.user?.permissions) {
+      for(const permission of request.user?.permissions) {
+        if(permission.resource === resource && permission.cruds.includes(crud)) {
           next();
           return;
         }
       }
     }
-    permission = (permission === 'post') ? 'add' : (permission === 'patch') ? 'update' : (permission === 'put') ? 'get' : permission;
-    throw new APIError(`Not Allowed to ${permission} ${modelName}`, HttpStatusCode.Forbidden);
+    throw new APIError(`Not Allowed to ${crud.toLowerCase()} ${resource}`, HttpStatusCode.Forbidden);
   });
   
-  isCurrentUserRoleInWhiteList = (...roleWhiteList: MainRoles[]) => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => { 
+  isCurrentUserRoleInWhiteList = (...roleWhiteList: Role[]) => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => { 
     if(!this.isCurrentUserRoleInList(request, roleWhiteList)) {
       throw new APIError('Not allow to access this route', HttpStatusCode.Forbidden);
     }
     next();
   });
 
-  isCurrentUserRoleInBlackList = (...roleBlackList: MainRoles[]) => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => { 
+  isCurrentUserRoleInBlackList = (...roleBlackList: Role[]) => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => { 
     if(this.isCurrentUserRoleInList(request, roleBlackList)) {
       throw new APIError('Not allow to access this route', HttpStatusCode.Forbidden);
     }
@@ -80,14 +77,14 @@ export class Authorization {
   });
   
   isParamIdEqualCurrentUserId = (userId = 'id') => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => { 
-    if(request.user && +request.params[userId] !== request.user.id && this.isCurrentUserRoleInList(request, ['instructor', 'student'])) {
+    if(request.user && +request.params[userId] !== request.user.id && this.isCurrentUserRoleInList(request, ['Instructor', 'Student'])) {
       throw new APIError('Not allow to access this route, the Id in route not match the Id of the current user', HttpStatusCode.Forbidden);
     }
     next();
   });
   
   restrictedUpdateForAdminOnly = (restrictedProperties: string[]) => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
-    if(request.user?.role?.slug === AllowedModels.Instructors || request.user?.role?.slug === AllowedModels.Students) {
+    if(!request.user?.admin) {
       for(const property of restrictedProperties) {
         delete request.body.input[property];
       }

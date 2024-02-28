@@ -11,18 +11,18 @@ const {getAllMessages, getMessageById, createMessage, updateMessage, deleteMessa
 const messageRouter = express.Router();
 
 messageRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Message', 'GET'), getAllMessages);
+	.post(isAuthenticated, isAuthorized('Messages', 'Get'), getAllMessages);
 
 messageRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Message', 'GET'), getMessageById);
+	.post(idValidation, isAuthenticated, isAuthorized('Messages', 'Get'), getMessageById);
 
 messageRouter.route("/add")
 	.post(addMessageValidation, createMessage);
 
 messageRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Message', 'PATCH'), updateMessageValidation, updateMessage);
+	.post(idValidation, isAuthenticated, isAuthorized('Messages', 'Update'), updateMessageValidation, updateMessage);
 
 messageRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Message', 'DELETE'), deleteMessage);
+	.post(idValidation, isAuthenticated, isAuthorized('Messages', 'Delete'), deleteMessage);
 
 export default messageRouter;

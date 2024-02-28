@@ -20,12 +20,12 @@ categoryRouter.route("/get/:id")
 	.post(idValidation, getCategoryById);
 
 categoryRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('Category', 'POST'), addCategoryValidation, createCategory);
+	.post(isAuthenticated, isAuthorized('Categories', 'Add'), addCategoryValidation, createCategory);
 
 categoryRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Category', 'PATCH'), updateCategoryValidation, updateCategory);
+	.post(idValidation, isAuthenticated, isAuthorized('Categories', 'Update'), updateCategoryValidation, updateCategory);
 
 categoryRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Category', 'DELETE'), deleteCategory);
+	.post(idValidation, isAuthenticated, isAuthorized('Categories', 'Delete'), deleteCategory);
 
 export default categoryRouter;

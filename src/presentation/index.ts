@@ -10,7 +10,7 @@ import notFoundRoutes from "./errorHandlers/NotFoundRoutesHandler";
 import GlobalError from "./errorHandlers/GlobalErrorHandler"
 import UnhandledRejection from "./errorHandlers/UnhandledRejectionHandler";
 import { routeMounting } from "./routeMounting";
-import { upsertMainItemsIntoDB } from "../infrastructure/config/upsertMainItemsIntoDB";
+import { upsertMainItemsIntoDB } from "../application/config/upsertMainItemsIntoDB";
 import { seeding } from "./seed";
 
 app.use(cors());

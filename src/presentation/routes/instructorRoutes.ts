@@ -14,12 +14,12 @@ instructorRouter.route("/enums")
 	.post(getInstructorEnums);
 
 instructorRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Instructor', 'GET'), isCurrentUserRoleInBlackList("instructor", "student"), getAllInstructors);
+	.post(isAuthenticated, isAuthorized('Instructors', 'Get'), isCurrentUserRoleInBlackList("Instructor", "Student"), getAllInstructors);
 
 instructorRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Instructor', 'GET'), getInstructorById);
+	.post(idValidation, isAuthenticated, isAuthorized('Instructors', 'Get'), getInstructorById);
 
 instructorRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Instructor', 'PATCH'), updateInstructorValidation, updateInstructor);
+	.post(idValidation, isAuthenticated, isAuthorized('Instructors', 'Update'), updateInstructorValidation, updateInstructor);
 
 export default instructorRouter;

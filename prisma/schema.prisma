@@ -7,19 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Role {
-  id             Int         @id @default(autoincrement())
-  name           String      
-  slug           String      @unique
-  description    String?
-  allowedModels  Json[]     
-  isBlocked      Boolean     @default(false)
-  isDeleted      Boolean     @default(false)
-  users          User[]
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime?   @updatedAt
-}
-
 model User {
   id                    Int         @id @default(autoincrement())
   firstName             String
@@ -41,8 +28,8 @@ model User {
   isDeleted             Boolean     @default(false)
   isSignWithSSO         Boolean     @default(false)
   platform              SSOPlatform?
-  roleId                Int
-  role                  Role        @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permissions           Permission[]
+  role                  Role
   student               Student?    
   instructor            Instructor?
   admin                 Admin?
@@ -54,6 +41,56 @@ model User {
   lastSeen              DateTime?
   createdAt             DateTime    @default(now())
   updatedAt             DateTime?   @updatedAt
+}
+
+enum Role {
+  Admin
+  Instructor
+  Student
+}
+model Permission {
+  id             Int         @id @default(autoincrement())
+  resource       Resource
+  cruds          Crud[]   
+  userId         Int
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime?   @updatedAt  
+}
+
+enum Resource {
+  Users
+  Permissions
+  Instructors
+  Students
+  Categories
+  SubCategories
+  Topics
+  Courses
+  Wishlists
+  Payments
+  Enrollments
+  Ratings
+  Sections
+  Lessons
+  Videos
+  Articles
+  Quizzes
+  Notes
+  Comments
+  Coupons
+  Messages
+  Certificates
+  CertificateTemplates
+  Carts
+  Logs
+}
+
+enum Crud {
+  Get
+  Add
+  Update
+  Delete
 }
 
 model OnlineUser {

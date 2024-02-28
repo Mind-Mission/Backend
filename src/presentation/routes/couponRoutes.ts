@@ -11,18 +11,18 @@ const {getAllCoupons, getCouponById, createCoupon, updateCoupon, deleteCoupon} =
 const CouponRouter = express.Router();
 
 CouponRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Coupon', 'GET'), getAllCoupons);
+	.post(isAuthenticated, isAuthorized('Coupons', 'Get'), getAllCoupons);
 
 CouponRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Coupon', 'GET'), getCouponById);
+	.post(idValidation, isAuthenticated, isAuthorized('Coupons', 'Get'), getCouponById);
 
 CouponRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('Coupon', 'POST'), addCouponValidation, createCoupon);
+	.post(isAuthenticated, isAuthorized('Coupons', 'Add'), addCouponValidation, createCoupon);
 
 CouponRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Coupon', 'PATCH'), updateCouponValidation, updateCoupon);
+	.post(idValidation, isAuthenticated, isAuthorized('Coupons', 'Update'), updateCouponValidation, updateCoupon);
 
 CouponRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Coupon', 'DELETE'), deleteCoupon);
+	.post(idValidation, isAuthenticated, isAuthorized('Coupons', 'Delete'), deleteCoupon);
 
 export default CouponRouter;

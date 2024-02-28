@@ -11,15 +11,15 @@ const {getAllRatings, getRatingById, upsertRating, deleteRating} = container.get
 const ratingRouter = express.Router();
 
 ratingRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Rating', 'GET'), getAllRatings);
+	.post(isAuthenticated, isAuthorized('Ratings', 'Get'), getAllRatings);
 
 ratingRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Rating', 'GET'), getRatingById);
+	.post(idValidation, isAuthenticated, isAuthorized('Ratings', 'Get'), getRatingById);
 
 ratingRouter.route('/upsert')
-	.post(isAuthenticated, isAuthorized('Rating', 'POST'), isCurrentUserRoleInWhiteList('student'), upsertRatingValidation, upsertRating);
+	.post(isAuthenticated, isAuthorized('Ratings', 'Add'), isCurrentUserRoleInWhiteList('Student'), upsertRatingValidation, upsertRating);
 
 ratingRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Rating', 'DELETE'), deleteRating);
+	.post(idValidation, isAuthenticated, isAuthorized('Ratings', 'Delete'), deleteRating);
 
 export default ratingRouter;

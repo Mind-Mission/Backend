@@ -11,18 +11,18 @@ const {getAllCertificateTemplates, getCertificateTemplateById, createCertificate
 const certificateTemplateRouter = express.Router();
 
 certificateTemplateRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('CertificateTemplate', 'GET'), getAllCertificateTemplates);
+	.post(isAuthenticated, isAuthorized('CertificateTemplates', 'Get'), getAllCertificateTemplates);
 
 certificateTemplateRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('CertificateTemplate', 'GET'), getCertificateTemplateById);
+	.post(idValidation, isAuthenticated, isAuthorized('CertificateTemplates', 'Get'), getCertificateTemplateById);
 
 certificateTemplateRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('CertificateTemplate', 'POST'), createCertificateTemplate, createCertificateTemplate);
+	.post(idValidation, isAuthenticated, isAuthorized('CertificateTemplates', 'Add'), createCertificateTemplate, createCertificateTemplate);
 
 certificateTemplateRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('CertificateTemplate', 'PATCH'), updateCertificateTemplate, updateCertificateTemplate);
+	.post(idValidation, isAuthenticated, isAuthorized('CertificateTemplates', 'Update'), updateCertificateTemplate, updateCertificateTemplate);
 
 certificateTemplateRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('CertificateTemplate', 'DELETE'), deleteCertificateTemplate);
+	.post(idValidation, isAuthenticated, isAuthorized('CertificateTemplates', 'Delete'), deleteCertificateTemplate);
 
 export default certificateTemplateRouter;
