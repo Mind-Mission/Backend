@@ -1,8 +1,7 @@
-import { Admin, Instructor, Student, User } from "@prisma/client"
-import { ExtendedRole } from "./ExtendedRole";
+import { Admin, Instructor, Permission, Student, User } from "@prisma/client"
 
 export interface ExtendedUser extends User {
-  role?: ExtendedRole;
+  permissions?: Permission[];
   instructor?: Instructor;
   student?: Student;
   admin?: Admin

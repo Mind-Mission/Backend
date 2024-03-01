@@ -11,15 +11,15 @@ const {getAllStudents, getStudentById, addToWishlist, removeFromWishlist} = cont
 const studentRouter = express.Router();
 
 studentRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Student', 'GET'), getAllStudents);
+	.post(isAuthenticated, isAuthorized('Students', 'Get'), getAllStudents);
 
 studentRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Student', 'GET'), getStudentById);
+	.post(idValidation, isAuthenticated, isAuthorized('Students', 'Get'), getStudentById);
 
 studentRouter.route("/wishlist/add")
-	.post(isAuthenticated, isAuthorized('Wishlist', 'PATCH'), wishlistValidation, addToWishlist);
+	.post(isAuthenticated, isAuthorized('Wishlists', 'Update'), wishlistValidation, addToWishlist);
 
 studentRouter.route("/wishlist/remove")
-	.post(isAuthenticated, isAuthorized('Wishlist', 'PATCH'), wishlistValidation, removeFromWishlist);
+	.post(isAuthenticated, isAuthorized('Wishlists', 'Update'), wishlistValidation, removeFromWishlist);
 
 export default studentRouter;

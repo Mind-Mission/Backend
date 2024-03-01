@@ -14,13 +14,13 @@ paymentRouter.route("/enums")
 	.post(getPaymentEnums);
 
 paymentRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Payment', 'GET'), getAllPayments);
+	.post(isAuthenticated, isAuthorized('Payments', 'Get'), getAllPayments);
 
 paymentRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Payment', 'GET'), getPaymentById);
+	.post(idValidation, isAuthenticated, isAuthorized('Payments', 'Get'), getPaymentById);
 
 paymentRouter.route("/pay")
-	.post(isAuthenticated, isAuthorized('Payment', 'POST'), payValidation, createPayment);
+	.post(isAuthenticated, isAuthorized('Payments', 'Add'), payValidation, createPayment);
 
 paymentRouter.route("/paymob/confirm")
 	.post(payMobPaymentConfirmation);
@@ -34,6 +34,6 @@ paymentRouter.route("/response_pay")
 	});
 
 paymentRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Payment', 'DELETE'), deletePayment);
+	.post(idValidation, isAuthenticated, isAuthorized('Payments', 'Delete'), deletePayment);
 
 export default paymentRouter;

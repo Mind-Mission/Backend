@@ -14,19 +14,19 @@ userRouter.route("/enums")
 	.post(getUserEnums);
 
 userRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('User', 'GET'), isCurrentUserRoleInBlackList('instructor', 'student'), getAllUsers);
+	.post(isAuthenticated, isAuthorized('Users', 'Get'), isCurrentUserRoleInBlackList('Instructor', 'Student'), getAllUsers);
 
 userRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isParamIdEqualCurrentUserId(), isAuthorized('User', 'GET'), getUserById)
+	.post(idValidation, isAuthenticated, isParamIdEqualCurrentUserId(), isAuthorized('Users', 'Get'), getUserById)
 
 userRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('User', 'POST'), addUserValidation, createUser);
+	.post(isAuthenticated, isAuthorized('Users', 'Add'), addUserValidation, createUser);
 
 userRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('User', 'PATCH'), isParamIdEqualCurrentUserId(), restrictedUpdateForAdminOnly(restrictedPropertiesForAdminOnly), updateUserValidation, updateUser);
+	.post(idValidation, isAuthenticated, isAuthorized('Users', 'Update'), isParamIdEqualCurrentUserId(), restrictedUpdateForAdminOnly(restrictedPropertiesForAdminOnly), updateUserValidation, updateUser);
 
 userRouter.route("/update/:id/email")
-	.post(isAuthenticated, isAuthorized('User', 'PATCH'), isCurrentUserRoleInWhiteList("instructor", "student"), updateUserEmailValidation, updateUserEmail);
+	.post(isAuthenticated, isAuthorized('Users', 'Update'), isCurrentUserRoleInWhiteList("Instructor", "Student"), updateUserEmailValidation, updateUserEmail);
 
 userRouter.route("/verify/email/ask")
 	.post(isAuthenticated, generateEmailVerificationCode);
@@ -35,9 +35,9 @@ userRouter.route("/verify/email/confirm")
 	.post(isAuthenticated, confirmEmailVerificationCodeValidation, confirmEmailVerificationCode);
 
 userRouter.route("/update/:id/password")
-	.post(isAuthenticated, isAuthorized('User', 'PATCH'), isCurrentUserRoleInWhiteList("instructor", "student"), updateUserPasswordValidation, updateUserPassword);
+	.post(isAuthenticated, isAuthorized('Users', 'Update'), isCurrentUserRoleInWhiteList("Instructor", "Student"), updateUserPasswordValidation, updateUserPassword);
 
 userRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('User', 'DELETE'), isParamIdEqualCurrentUserId(), deleteUser);
+	.post(idValidation, isAuthenticated, isAuthorized('Users', 'Delete'), isParamIdEqualCurrentUserId(), deleteUser);
 
 export default userRouter;

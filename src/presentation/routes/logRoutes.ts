@@ -10,9 +10,9 @@ const {getAllLogs, getLogById} = container.get<LogController>('LogController');
 const logRouter = express.Router();
 
 logRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Log', 'GET'), getAllLogs);
+	.post(isAuthenticated, isAuthorized('Logs', 'Get'), getAllLogs);
 
 logRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Log', 'GET'), getLogById)
+	.post(idValidation, isAuthenticated, isAuthorized('Logs', 'Get'), getLogById)
 
 export default logRouter;

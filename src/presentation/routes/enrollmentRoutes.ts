@@ -11,18 +11,18 @@ const {getAllEnrollments, getEnrollmentById, createEnrollment, updateEnrollment,
 const enrollmentRouter = express.Router();
 
 enrollmentRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Enrollment', 'GET'), getAllEnrollments);
+	.post(isAuthenticated, isAuthorized('Enrollments', 'Get'), getAllEnrollments);
 
 enrollmentRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Enrollment', 'GET'), getEnrollmentById);
+	.post(idValidation, isAuthenticated, isAuthorized('Enrollments', 'Get'), getEnrollmentById);
 
 enrollmentRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('Enrollment', 'POST'), addEnrollmentValidation, createEnrollment);
+	.post(isAuthenticated, isAuthorized('Enrollments', 'Add'), addEnrollmentValidation, createEnrollment);
 
 enrollmentRouter.route("/update")
-	.post(isAuthenticated, isAuthorized('Enrollment', 'PATCH'), updateEnrollmentValidation, updateEnrollment);
+	.post(isAuthenticated, isAuthorized('Enrollments', 'Update'), updateEnrollmentValidation, updateEnrollment);
 
 enrollmentRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Enrollment', 'DELETE'), deleteEnrollment);
+	.post(idValidation, isAuthenticated, isAuthorized('Enrollments', 'Delete'), deleteEnrollment);
 
 export default enrollmentRouter;

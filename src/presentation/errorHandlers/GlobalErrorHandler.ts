@@ -1,7 +1,7 @@
+import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
 import {NextFunction, Request, Response} from 'express';
 import APIError from './APIError';
 import HttpStatusCode from '../enums/HTTPStatusCode';
-import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
 
 abstract class GlobalErrorHandler {
 	private static sendErrorForDev = (error: APIError, response: Response) => response.status(error.statusCode).json({
@@ -23,8 +23,13 @@ abstract class GlobalErrorHandler {
 		}
 
 		if(error instanceof PrismaClientValidationError || error instanceof PrismaClientKnownRequestError) {
-			const errorMessage = error.message.split('\n');
-			error.message = errorMessage[errorMessage.length - 1].split('?')[0];
+			if((error as any).code === 'P2002') {
+				error.message = `This ${(error as any).meta.target} is already exist`
+			}
+			else {
+				const errorMessage = error.message.split('\n');
+				error.message = errorMessage[errorMessage.length - 1].split('?')[0];
+			}
 			error.statusCode = HttpStatusCode.BadRequest;
 		}
 

@@ -11,18 +11,18 @@ const {getAllSections, getSectionById, createSection, updateSection, deleteSecti
 const sectionRouter = express.Router();
 
 sectionRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Section', 'GET'), getAllSections);
+	.post(isAuthenticated, isAuthorized('Sections', 'Get'), getAllSections);
 
 sectionRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Section', 'GET'), getSectionById);
+	.post(idValidation, isAuthenticated, isAuthorized('Sections', 'Get'), getSectionById);
 
 sectionRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('Section', 'POST'), addSectionValidation, createSection);
+	.post(isAuthenticated, isAuthorized('Sections', 'Add'), addSectionValidation, createSection);
 
 sectionRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Section', 'PATCH'), updateSectionValidation, updateSection);
+	.post(idValidation, isAuthenticated, isAuthorized('Sections', 'Update'), updateSectionValidation, updateSection);
 
 sectionRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Section', 'DELETE'), deleteSection);
+	.post(idValidation, isAuthenticated, isAuthorized('Sections', 'Delete'), deleteSection);
 
 export default sectionRouter;

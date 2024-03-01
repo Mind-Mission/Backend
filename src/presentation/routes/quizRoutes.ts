@@ -14,18 +14,18 @@ quizRouter.route("/enums")
 	.post(getQuizEnums);
 
 quizRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Quiz', 'GET'), getAllQuizzes);
+	.post(isAuthenticated, isAuthorized('Quizzes', 'Get'), getAllQuizzes);
 
 quizRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Quiz', 'GET'), getQuizById);
+	.post(idValidation, isAuthenticated, isAuthorized('Quizzes', 'Get'), getQuizById);
 
 quizRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('Quiz', 'POST'), addQuizValidation, createQuiz);
+	.post(isAuthenticated, isAuthorized('Quizzes', 'Add'), addQuizValidation, createQuiz);
 
 quizRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Quiz', 'PATCH'), updateQuizValidation, updateQuiz);
+	.post(idValidation, isAuthenticated, isAuthorized('Quizzes', 'Update'), updateQuizValidation, updateQuiz);
 
 quizRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Quiz', 'DELETE'), deleteQuiz);
+	.post(idValidation, isAuthenticated, isAuthorized('Quizzes', 'Delete'), deleteQuiz);
 
 export default quizRouter;

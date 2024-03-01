@@ -11,15 +11,15 @@ const {getAllNotes, getNoteById, upsertNote, deleteNote} = container.get<NoteCon
 const noteRouter = express.Router();
 
 noteRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Note', 'GET'), getAllNotes);
+	.post(isAuthenticated, isAuthorized('Notes', 'Get'), getAllNotes);
 
 noteRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Note', 'GET'), getNoteById);
+	.post(idValidation, isAuthenticated, isAuthorized('Notes', 'Get'), getNoteById);
 
 noteRouter.route("/upsert")
-	.post(isAuthenticated, isAuthorized('Note', 'POST'), upsertNoteValidation, upsertNote);
+	.post(isAuthenticated, isAuthorized('Notes', 'Add'), upsertNoteValidation, upsertNote);
 
 noteRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Note', 'DELETE'), deleteNote);
+	.post(idValidation, isAuthenticated, isAuthorized('Notes', 'Delete'), deleteNote);
 
 export default noteRouter;  

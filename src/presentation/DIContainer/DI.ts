@@ -1,7 +1,6 @@
 import { container } from './container/DIContainer';
 import './classes/userDI';
 import './classes/onlineUserDI';
-import './classes/roleDI';
 import './classes/authenticationDI';
 import './classes/authorizationDI';
 import './classes/logDI';

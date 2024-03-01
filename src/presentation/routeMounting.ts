@@ -1,7 +1,6 @@
 import { Application } from 'express';
 import  "./config/Welcome";
 import userRoutes from "./routes/userRoutes";
-import roleRoutes from "./routes/roleRoutes";
 import authenticationRoutes from "./routes/authenticationRoutes";
 import ssoGmailRoutes from "./routes/ssoGmailRoutes";
 import ssoLinkedinRoutes from "./routes/ssoLinkedinRoutes";
@@ -36,7 +35,6 @@ export const routeMounting = (app: Application) => {
   app.use(`${apiVersion}/sso/gmail`, ssoGmailRoutes);
   app.use(`${apiVersion}/sso/linkedin`, ssoLinkedinRoutes);
   app.use(`${apiVersion}/users`, userRoutes);
-  app.use(`${apiVersion}/roles`, roleRoutes);
   app.use(`${apiVersion}/logs`, logRoutes);
   app.use(`${apiVersion}/permissions`, modelPermissionRoutes);
   app.use(`${apiVersion}/categories`, categoryRoutes);

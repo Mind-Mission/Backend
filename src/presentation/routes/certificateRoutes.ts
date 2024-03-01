@@ -11,15 +11,15 @@ const {getAllCertificates, getCertificateById, updateCertificate, deleteCertific
 const certificateRouter = express.Router();
 
 certificateRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Certificate', 'GET'), getAllCertificates);
+	.post(isAuthenticated, isAuthorized('Certificates', 'Get'), getAllCertificates);
 
 certificateRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Certificate', 'GET'), getCertificateById);
+	.post(idValidation, isAuthenticated, isAuthorized('Certificates', 'Get'), getCertificateById);
 
 certificateRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Certificate', 'PATCH'), updateCertificateValidation, updateCertificate);
+	.post(idValidation, isAuthenticated, isAuthorized('Certificates', 'Update'), updateCertificateValidation, updateCertificate);
 
 certificateRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Certificate', 'DELETE'), deleteCertificate);
+	.post(idValidation, isAuthenticated, isAuthorized('Certificates', 'Delete'), deleteCertificate);
 
 export default certificateRouter;

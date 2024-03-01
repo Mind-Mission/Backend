@@ -11,18 +11,18 @@ const {getAllComments, getCommentById, createComment, updateComment, deleteComme
 const CommentRouter = express.Router();
 
 CommentRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Comment', 'GET'), getAllComments);
+	.post(isAuthenticated, isAuthorized('Comments', 'Get'), getAllComments);
 
 CommentRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Comment', 'GET'), getCommentById);
+	.post(idValidation, isAuthenticated, isAuthorized('Comments', 'Get'), getCommentById);
 
 CommentRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('Comment', 'POST'), addCommentValidation, createComment);
+	.post(isAuthenticated, isAuthorized('Comments', 'Add'), addCommentValidation, createComment);
 
 CommentRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Comment', 'PATCH'), updateCommentValidation, updateComment);
+	.post(idValidation, isAuthenticated, isAuthorized('Comments', 'Update'), updateCommentValidation, updateComment);
 
 CommentRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Comment', 'DELETE'), deleteComment);
+	.post(idValidation, isAuthenticated, isAuthorized('Comments', 'Delete'), deleteComment);
 
 export default CommentRouter;

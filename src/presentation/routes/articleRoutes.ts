@@ -11,18 +11,18 @@ const {getAllArticles, getArticleById, createArticle, updateArticle, deleteArtic
 const articleRouter = express.Router();
 
 articleRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Article', 'GET'), getAllArticles);
+	.post(isAuthenticated, isAuthorized('Articles', 'Get'), getAllArticles);
 
 articleRouter.route("/get/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Article', 'GET'), getArticleById);
+	.post(idValidation, isAuthenticated, isAuthorized('Articles', 'Get'), getArticleById);
 
 articleRouter.route("/add")
-	.post(isAuthenticated, isAuthorized('Article', 'POST'), addArticleValidation, createArticle);
+	.post(isAuthenticated, isAuthorized('Articles', 'Add'), addArticleValidation, createArticle);
 
 articleRouter.route("/update/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Article', 'PATCH'), updateArticleValidation, updateArticle);
+	.post(idValidation, isAuthenticated, isAuthorized('Articles', 'Update'), updateArticleValidation, updateArticle);
 
 articleRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Article', 'DELETE'), deleteArticle);
+	.post(idValidation, isAuthenticated, isAuthorized('Articles', 'Delete'), deleteArticle);
 
 export default articleRouter;

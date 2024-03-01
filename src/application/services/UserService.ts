@@ -3,17 +3,15 @@ import { Prisma } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import {IUserService} from "../interfaces/IServices/IUserService"
 import {IUserRepository} from "../interfaces/IRepositories/IUserRepository"
-import { IRoleService } from "../interfaces/IServices/IRoleService";
 import { CreateUser, UpdateUser } from "../inputs/userInput";
 import { ExtendedUser } from "../types/ExtendedUser";
-import { ExtendedRole } from "../types/ExtendedRole";
 import { TransactionType } from "../types/TransactionType";
 import APIError from "../../presentation/errorHandlers/APIError";
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 
 @injectable()
 export class UserService implements IUserService {
-	constructor(@inject('IUserRepository') private userRepository: IUserRepository, @inject('IRoleService') private roleService: IRoleService) {}
+	constructor(@inject('IUserRepository') private userRepository: IUserRepository) {}
 
 	private async isEmailExist(email: string, id?: number): Promise<boolean> {
 		const user = await this.findFirst({
@@ -50,22 +48,10 @@ export class UserService implements IUserService {
 	};
 
 	async create(args: {data: CreateUser, select?: Prisma.UserSelect; include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
-		const {firstName, lastName, email, password, mobilePhone, whatsAppNumber, bio, picture, platform, isEmailVerified, role, refreshToken, instructor} = args.data;
-		if(await this.isEmailExist(email)) {
-			throw new APIError('This email already exists', HttpStatusCode.BadRequest);
-		};
-		const isRoleExist = await this.roleService.findUnique({
-			where: {
-				...role as any,
-			},
-			select: {
-				id: true,
-				slug: true
-			}
-		});
-		if(!isRoleExist) {
-			throw new APIError('This role does not exist', HttpStatusCode.BadRequest);
-		}
+		const {firstName, lastName, email, password, mobilePhone, whatsAppNumber, bio, picture, platform, isEmailVerified, permissions, role, refreshToken, instructor} = args.data;
+		// if(await this.isEmailExist(email)) {
+		// 	throw new APIError('This email already exists', HttpStatusCode.BadRequest);
+		// };
 		return this.userRepository.create({
 			data: {
 				firstName,
@@ -80,96 +66,41 @@ export class UserService implements IUserService {
 				isSignWithSSO: platform ? true : false,
 				isEmailVerified,
 				refreshToken,
-				role: {
-					connect: {
-						...role
+				permissions: {
+					createMany: {
+						data: permissions
 					}
 				},
-				student: isRoleExist.slug === "student" ? {
+				role,
+				student: role === "Student" ? {
 					create: {
 						cart: {
 							create: {}
 						}
 					}
 				} : undefined,
-				instructor: isRoleExist.slug === "instructor" ? {
+				instructor: role === "Instructor" && instructor ? {
 					create: {
-						...instructor
+						...instructor,
 					}
 				} : undefined,
-				admin: (isRoleExist.slug !== "instructor" && isRoleExist.slug !== "student") ? {
+				admin: role === 'Admin' ? {
 					create: {}
 				} : undefined,
 			},
 			select: args.select,
 			include: args.include
-		}, transaction);
+		} , transaction);
 	};
 
 	async update(args: {data: UpdateUser, select?: Prisma.UserSelect, include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
-		const {id, firstName, lastName, email, isEmailVerified, emailVerificationCode, password, passwordUpdatedTime, resetPasswordCode, bio, picture, mobilePhone, whatsAppNumber, refreshToken, isOnline, isActive, isBlocked, isDeleted, roleId, personalLinks} = args.data
+		const {id, firstName, lastName, email, isEmailVerified, emailVerificationCode, password, passwordUpdatedTime, resetPasswordCode, bio, picture, mobilePhone, whatsAppNumber, refreshToken, isOnline, isActive, isBlocked, isDeleted, permissions, personalLinks} = args.data
 		if(resetPasswordCode && resetPasswordCode.code && !resetPasswordCode.isVerified) {
 			resetPasswordCode.code = bcrypt.hashSync((args.data.resetPasswordCode as any).code.toString(), 10);
 		}
-		if(email && await this.isEmailExist(email)) {
-			throw new APIError('This email already exists', HttpStatusCode.BadRequest);
-		}
-		if(personalLinks) {
-			const currentUser = await this.findUnique({
-				where: {
-					id
-				},
-				select: {
-					role: {
-						select: {
-							slug: true
-						}
-					}
-				}
-			}); 
-			if(currentUser && currentUser.role?.slug !== 'student' && currentUser.role?.slug !== 'instructor') {
-				throw new APIError('Only students and instructors that can have personal links', HttpStatusCode.BadRequest);
-			}
-		}
-		if(roleId) {
-			const isRoleExist = await this.roleService.findUnique({
-				where: {
-					id: roleId
-				},
-				select: {
-					id: true,
-					slug: true
-				}
-			});
-
-			if(!isRoleExist) {
-				throw new APIError('This role does not exist', HttpStatusCode.BadRequest);
-			}
-			const currentUser = await this.findUnique({
-				where: {
-					id: args.data.id
-				},
-				select: {
-					role: {
-						select: {
-							id: true,
-							slug: true
-						}
-					},
-					admin: {
-						select: {
-							id: true
-						}
-					}
-				}
-			});
-			const {id, slug} = currentUser?.role as ExtendedRole;			
-			if(id !== isRoleExist.id && (slug === 'student' || slug === 'instructor' || (currentUser?.admin && (isRoleExist?.slug === 'student' || isRoleExist?.slug === 'instructor')))) {
-				const currentRole = (isRoleExist.slug !== 'instructor' && isRoleExist.slug !== 'student') ? 'admin' : isRoleExist.slug;
-				const previousRole = (slug !== 'instructor' && slug !== 'student') ? 'admin' : slug; 
-				throw new APIError(`The ${previousRole} role cannot be changed to ${currentRole} role because each one has different profile settings`, HttpStatusCode.BadRequest);
-			}
-		}
+		// if(email && await this.isEmailExist(email)) {
+		// 	throw new APIError('This email already exists', HttpStatusCode.BadRequest);
+		// }
 		return this.userRepository.update({
 			where: {
 				id
@@ -192,10 +123,22 @@ export class UserService implements IUserService {
 				isActive: isActive,
 				isBlocked: isBlocked,
 				isDeleted: isDeleted,
-				role: roleId ? {
-					connect: {
-						id: roleId
-					}
+				permissions: permissions ? {
+					upsert: permissions.map(({id, resource, cruds}) => {
+						return {
+							where: {
+								id
+							},
+							update: {
+								resource,
+								cruds
+							},
+							create: {
+								resource,
+								cruds
+							}
+						}
+					})
 				} : undefined,
 				personalLinks: personalLinks ? {
 					upsert: personalLinks.map(({platform, link}) => {

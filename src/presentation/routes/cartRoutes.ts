@@ -10,9 +10,9 @@ const {getCart, upsertCart} = container.get<CartController>('CartController');
 const cartRouter = express.Router();
 
 cartRouter.route("/get")
-	.post(isAuthenticated, isAuthorized('Cart', 'GET'), getCart);
+	.post(isAuthenticated, isAuthorized('Carts', 'Get'), getCart);
 
 cartRouter.route("/upsert")
-	.post(isAuthenticated, isAuthorized('Cart', 'PATCH'), upsertCartValidation, upsertCart);
+	.post(isAuthenticated, isAuthorized('Carts', 'Update'), upsertCartValidation, upsertCart);
 
 export default cartRouter;

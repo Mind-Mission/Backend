@@ -17,7 +17,7 @@ import HttpStatusCode from '../enums/HTTPStatusCode';
 
 @injectable()
 export class UserController {
-	restrictedPropertiesForAdminOnly: string[] = ['isBlocked', 'isDeleted', 'role'];
+	restrictedPropertiesForAdminOnly: string[] = ['isBlocked', 'isDeleted', 'permissions'];
 
 	constructor(@inject('IUserService') private userService: IUserService, @inject('ILogService') private logService: ILogService) {}
 
@@ -74,14 +74,14 @@ export class UserController {
 
 	createUser = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
-		const createdUser = await this.userService.create({data: {...request.body.input, role: {id: request.body.input.roleId}}, select, include});
+		const createdUser = await this.userService.create({data: {...request.body.input, role: 'Admin'}, select, include});
 		this.logService.log('ADD', 'USER', createdUser, request.user);
 		const mappedUserResults = UserMapper.map([createdUser]);
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The user is created successfully', mappedUserResults));
 	});
 
 	updateUser = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
-		const {firstName, lastName, bio, picture, mobilePhone, whatsAppNumber, isActive, isBlocked, isDeleted, roleId, personalLinks} = request.body.input;
+		const {firstName, lastName, bio, picture, mobilePhone, whatsAppNumber, isActive, isBlocked, isDeleted, personalLinks, permissions} = request.body.input;
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const updatedUser = await this.userService.update({
 			data: {
@@ -95,15 +95,13 @@ export class UserController {
 				isActive, 
 				isBlocked, 
 				isDeleted, 
-				roleId, 
-				personalLinks
+				personalLinks,
+				permissions,
 			},
 			select,
 			include,
 		});
-		if((request.user?.role?.slug !== "student" && request.user?.role?.slug !== "instructor")) {
-			this.logService.log('UPDATE', 'USER', updatedUser, request.user);
-		}
+		this.logService.log('UPDATE', 'USER', updatedUser, request.user);
 		const mappedUserResults = UserMapper.map([updatedUser]);
 		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The user is updated successfully', mappedUserResults));
 	});
