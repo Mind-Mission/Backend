@@ -7,6 +7,7 @@ export interface ICourseService {
   count(args: Prisma.CourseCountArgs): Promise<number>;
   findMany(args: Prisma.CourseFindManyArgs): Promise<Course[]>;
   findUnique(args: Prisma.CourseFindUniqueArgs): Promise<Course | null>
+  findFirst(args: Prisma.CourseFindFirstArgs): Promise<Course | null>;
   create(args: {data: CreateCourse, select?: Prisma.CourseSelect, include?: Prisma.CourseInclude}, transaction?: TransactionType): Promise<Course>;
   update(args: {data: UpdateCourse, select?: Prisma.CourseSelect, include?: Prisma.CourseInclude}, transaction?: TransactionType): Promise<Course>;
   delete(id: number, transaction?: TransactionType): Promise<Course>;

@@ -5,14 +5,17 @@ import {upsertCartValidation} from "../middlewares/express-validator/cartValidat
 import { CartController } from '../controllers/CartController';
 
 const {isAuthenticated, isAuthorized} = container.get<Authorization>('Authorization');
-const {getCart, upsertCart} = container.get<CartController>('CartController');
+const {getCart, addToCart, removeFromCart} = container.get<CartController>('CartController');
 
 const cartRouter = express.Router();
 
 cartRouter.route("/get")
 	.post(isAuthenticated, isAuthorized('Carts', 'Get'), getCart);
 
-cartRouter.route("/upsert")
-	.post(isAuthenticated, isAuthorized('Carts', 'Update'), upsertCartValidation, upsertCart);
+cartRouter.route("/add")
+	.post(isAuthenticated, isAuthorized('Carts', 'Update'), upsertCartValidation, addToCart);
+
+cartRouter.route("/remove")
+	.post(isAuthenticated, isAuthorized('Carts', 'Update'), upsertCartValidation, removeFromCart);
 
 export default cartRouter;

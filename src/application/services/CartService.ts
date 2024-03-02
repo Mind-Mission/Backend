@@ -1,13 +1,45 @@
-import { Prisma, Cart, Course } from "@prisma/client"
+import { Prisma, Cart } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { UpdateCart} from "../inputs/cartInput";
 import { ICartRepository } from "../interfaces/IRepositories/ICartRepository"
 import { ICartService } from "../interfaces/IServices/ICartService"
+import { ICourseService } from "../interfaces/IServices/ICourseService";
 import { TransactionType } from "../types/TransactionType";
+import APIError from "../../presentation/errorHandlers/APIError";
+import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 
 @injectable()
 export class CartService implements ICartService {
-	constructor(@inject('ICartRepository') private cartRepository: ICartRepository) {}
+	constructor(@inject('ICartRepository') private cartRepository: ICartRepository, @inject('ICourseService') private courseService: ICourseService) {}
+
+  private async isCurrentUserInstructorForThisCourse(userId: number, courseId: number): Promise<boolean> {
+    const isCourseExist = await this.courseService.findFirst({
+      where: {
+        id: courseId,
+        instructor: {
+          userId
+        }
+      },
+      select: {
+        id: true
+      }
+    });
+    return isCourseExist ? true : false;
+  };
+
+  private async getCartId(userId: number): Promise<number> {
+    const cart = await this.cartRepository.findFirst({
+      where: {
+        student: {
+          userId
+        }
+      },
+      select: {
+        id: true
+      }
+    });
+    return cart?.id as number;
+  };
 
 	count(args: Prisma.CartCountArgs): Promise<number> {
 		return this.cartRepository.count(args);
@@ -23,33 +55,26 @@ export class CartService implements ICartService {
 
   findFirst(args: Prisma.CartFindFirstArgs): Promise< Cart | null> {
     return this.cartRepository.findFirst(args);
-  }
+  };
 
 	async update(args: {data: UpdateCart, select?: Prisma.CartSelect, include?: Prisma.CartInclude}, transaction?: TransactionType): Promise<Cart> {
-		const {userId, courseIds} = args.data;
-    const cart = await this.cartRepository.findFirst({
-      where: {
-        student: {
-          userId
-        }
-      },
-      select: {
-        studentId: true,
-        courses: {
-          select: {
-            id: true
-          }
-        }
-      }
-    }) as any;
+		const {userId, courseId, operation} = args.data;
+    if(await this.isCurrentUserInstructorForThisCourse(userId, courseId)) {
+      throw new APIError('You cannot add your course into your cart', HttpStatusCode.Forbidden);
+    }
+    const cartId = await this.getCartId(userId);
 		return this.cartRepository.update({
       where: {
-        studentId: cart.studentId
+        id: cartId,
       },
       data: {
         courses: {
-          disconnect: cart?.courses.length ? cart.courses.map(({id}: Course) => ({id})) : undefined,
-          connect: courseIds.map(id => ({id}))
+          connect: operation === 'Add' ? { 
+            id: courseId
+          } : undefined,
+          disconnect: operation === 'Remove' ? {
+            id: courseId
+          } : undefined,
         }
       },
       select: args.select,

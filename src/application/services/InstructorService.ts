@@ -4,8 +4,8 @@ import slugify from "slugify";
 import { IInstructorRepository } from "../interfaces/IRepositories/IInstructorRepository";
 import { IInstructorService } from "../interfaces/IServices/IInstructorService";
 import { ExtendedInstructor } from "../types/ExtendedInstructor";
-import { TransactionType } from "../types/TransactionType";
 import { UpdateInstructor } from "../inputs/instructorInput";
+import { TransactionType } from "../types/TransactionType";
 
 @injectable()
 export class InstructorService implements IInstructorService {
@@ -23,8 +23,8 @@ export class InstructorService implements IInstructorService {
 		return this.instructorRepository.findUnique(args);
 	};
 
-	async update(args: {data: UpdateInstructor, select?: Prisma.InstructorSelect, include?: Prisma.InstructorInclude}, transaction?: TransactionType): Promise<ExtendedInstructor> {
-		const {id, bref, specialization, skills} = args.data;
+	update(args: {data: UpdateInstructor, select?: Prisma.InstructorSelect, include?: Prisma.InstructorInclude}, transaction?: TransactionType): Promise<ExtendedInstructor> {
+		const {id, bref, specialization, teachingType, haveAudience, videoProAcademy, skills} = args.data;
 		return this.instructorRepository.update({
 			where: {
 				id
@@ -32,6 +32,9 @@ export class InstructorService implements IInstructorService {
 			data: {
 				bref: bref || undefined,
 				specialization: specialization || undefined,
+				teachingType: teachingType || undefined,
+				haveAudience: haveAudience || undefined,
+				videoProAcademy: videoProAcademy || undefined,
 				skills: skills ? {
 					upsert: skills.map(({name}) => {
 						const slug = slugify(name, {lower: true, trim: true});

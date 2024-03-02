@@ -13,4 +13,8 @@ export class CourseRepository extends BaseRepository<Course> implements ICourseR
   aggregate(args: Prisma.CourseAggregateArgs): Prisma.PrismaPromise<Prisma.GetCourseAggregateType<any>> {
     return prisma.course.aggregate(args);
   };
+
+  findFirst(args: Prisma.CourseFindFirstArgs): Promise<Course | null> {
+    return prisma.course.findFirst(args);
+  }
 }

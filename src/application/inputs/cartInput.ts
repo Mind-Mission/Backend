@@ -1,4 +1,5 @@
 export type UpdateCart = {
   userId: number;
-  courseIds: number[];
+  courseId: number;
+  operation: 'Add' | 'Remove'
 }

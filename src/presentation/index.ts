@@ -10,8 +10,7 @@ import notFoundRoutes from "./errorHandlers/NotFoundRoutesHandler";
 import GlobalError from "./errorHandlers/GlobalErrorHandler"
 import UnhandledRejection from "./errorHandlers/UnhandledRejectionHandler";
 import { routeMounting } from "./routeMounting";
-import { upsertMainItemsIntoDB } from "../application/config/upsertMainItemsIntoDB";
-import { seeding } from "./seed";
+import { createSuperAdmin, seeding } from "./seed";
 
 app.use(cors());
 app.options('*', cors());
@@ -21,7 +20,7 @@ app.use(compression());
 
 // container.get<RealTimeManager>('RealTimeManager');
 
-// upsertMainItemsIntoDB();
+// createSuperAdmin();
 // seeding();
 
 routeMounting(app);

@@ -1,6 +1,107 @@
-import { CorrectAnswer, LessonType, QuestionLevel } from "@prisma/client";
-import slugify from "slugify"
-import prisma from "../domain/db"
+import { CorrectAnswer, Crud, LessonType, QuestionLevel, Resource } from "@prisma/client";
+import slugify from "slugify";
+import bcrypt from 'bcrypt';
+import prisma from "../domain/db";
+
+const SuperAdminPermissions = [
+  {
+    resource: Resource.Permissions,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Users,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Instructors,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Students,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Logs,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Categories,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Courses,
+    cruds: [Crud.Get, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Sections,
+    cruds: [Crud.Get, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Lessons,
+    cruds: [Crud.Get, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Notes,
+    cruds: [Crud.Get]
+  },
+  {
+    resource: Resource.Carts,
+    cruds: [Crud.Get]
+  },
+  {
+    resource: Resource.Enrollments,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Ratings,
+    cruds: [Crud.Get, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Comments,
+    cruds: [Crud.Get, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Coupons,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Messages,
+    cruds: [Crud.Get, Crud.Update, Crud.Delete]
+  },
+];
+
+export const createSuperAdmin = async () => {
+  const {Super_Admin_FirstName, Super_Admin_LastName, Super_Admin_Email, Super_Admin_Password} = process.env;
+  await prisma.user.upsert({
+    where: {
+      email: Super_Admin_Email,
+    },
+    update: {
+      permissions: {
+        deleteMany: {},
+        createMany: {
+          data: SuperAdminPermissions
+        }
+      }
+    },
+    create: {
+      firstName: Super_Admin_FirstName || "Tarek",
+      lastName: Super_Admin_LastName || "Eslam",
+      email: Super_Admin_Email || "tarekeslam159@gmail.com",
+      password: bcrypt.hashSync(Super_Admin_Password || "123456789", 10),
+      roles: ['Admin'],
+      admin: {
+        create: {}
+      },
+      permissions: {
+        createMany: {
+          data: SuperAdminPermissions
+        }
+      } 
+    },
+  });
+  console.log("The main items are upsert into the database successfully ✅");
+};
 
 const courses = [
   {

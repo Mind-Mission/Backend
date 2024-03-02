@@ -106,6 +106,20 @@ export class UserController {
 		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The user is updated successfully', mappedUserResults));
 	});
 
+	beInstructor = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
+		const {select, include} = RequestManager.findOptionsWrapper(request);
+		const user = await this.userService.update({
+			data: {
+				id: request.user?.id as number,
+				beInstructor: true
+			},
+			select,
+			include
+		});
+		const mappedUserResults = UserMapper.map([user]);
+		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The user now has instructor role', mappedUserResults));
+	});
+
 	updateUserEmail = asyncHandler(async (request, response, next) => {
 		const {email, newEmail, password} = request.body.input;
 		const {select, include} = RequestManager.findOptionsWrapper(request);

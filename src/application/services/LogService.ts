@@ -20,7 +20,7 @@ export class LogService implements ILogService {
   };
 
   async log(operationType: OperationType, ModelName: LogModel, details: object, user: ExtendedUser | undefined): Promise<Log | undefined> {
-    if(user?.role === 'Admin') {
+    if(user?.roles.includes('Admin')) {
       const log = await this.logRepository.log({
         data: {
           operationType,

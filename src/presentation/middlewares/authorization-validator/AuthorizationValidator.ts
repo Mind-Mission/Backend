@@ -14,7 +14,7 @@ export class Authorization {
   constructor(@inject('IUserService') private userService: IUserService) {}
 
   private isCurrentUserRoleInList = (request: ExtendedRequest, roleList: Role[]): boolean => {
-    return request.user?.role ? roleList.includes(request.user?.role) : false;
+    return roleList.some(role => request.user?.roles.includes(role));
   };
 
   private isTokenCreatedBeforeUpdatingPassword(decodedPayload: any, passwordUpdatedTime: Date | null): boolean {
@@ -78,6 +78,7 @@ export class Authorization {
   
   isParamIdEqualCurrentUserId = (userId = 'id') => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => { 
     if(request.user && +request.params[userId] !== request.user.id && this.isCurrentUserRoleInList(request, ['Instructor', 'Student'])) {
+      // request.params[userId] = request.user?.id.toString() || ''
       throw new APIError('Not allow to access this route, the Id in route not match the Id of the current user', HttpStatusCode.Forbidden);
     }
     next();

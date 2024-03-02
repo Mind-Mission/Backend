@@ -6,7 +6,7 @@ import {addUserValidation, updateUserValidation, updateUserEmailValidation, conf
 import {UserController} from '../controllers/UserController';
 
 const {isAuthenticated, isAuthorized, isCurrentUserRoleInBlackList, isCurrentUserRoleInWhiteList, isParamIdEqualCurrentUserId, restrictedUpdateForAdminOnly} = container.get<Authorization>('Authorization');
-const {getUserEnums, getAllUsers, getUserById, createUser, restrictedPropertiesForAdminOnly, updateUser, updateUserEmail, generateEmailVerificationCode, confirmEmailVerificationCode, updateUserPassword, deleteUser } = container.get<UserController>('UserController');
+const {getUserEnums, getAllUsers, getUserById, createUser, restrictedPropertiesForAdminOnly, updateUser, beInstructor, updateUserEmail, generateEmailVerificationCode, confirmEmailVerificationCode, updateUserPassword, deleteUser } = container.get<UserController>('UserController');
 
 const userRouter = express.Router();
 
@@ -24,6 +24,9 @@ userRouter.route("/add")
 
 userRouter.route("/update/:id")
 	.post(idValidation, isAuthenticated, isAuthorized('Users', 'Update'), isParamIdEqualCurrentUserId(), restrictedUpdateForAdminOnly(restrictedPropertiesForAdminOnly), updateUserValidation, updateUser);
+
+	userRouter.route("/be/instructor")
+	.post(isAuthenticated, isAuthorized('Users', 'Update'), isCurrentUserRoleInWhiteList('Student'), beInstructor);
 
 userRouter.route("/update/:id/email")
 	.post(isAuthenticated, isAuthorized('Users', 'Update'), isCurrentUserRoleInWhiteList("Instructor", "Student"), updateUserEmailValidation, updateUserEmail);

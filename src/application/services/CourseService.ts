@@ -45,6 +45,10 @@ export class CourseService implements ICourseService {
 		return this.courseRepository.findUnique(args);
 	};
 
+	findFirst(args: Prisma.CourseFindFirstArgs): Promise<Course| null> {
+		return this.courseRepository.findFirst(args);
+	};
+
   async create(args: {data: CreateCourse, select?: Prisma.CourseSelect, include?: Prisma.CourseInclude}, transaction?: TransactionType): Promise<Course> {
     const {title, shortDescription, description, language, level, imageCover, requirements, courseTeachings, price, isDraft, userId, topicId} = args.data;
 		const slug = slugify(title, {lower: true, trim: true});
