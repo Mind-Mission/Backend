@@ -11,7 +11,7 @@ const {getUserEnums, getAllUsers, getUserById, createUser, restrictedPropertiesF
 const userRouter = express.Router();
 
 userRouter.route("/enums")
-	.post(getUserEnums);
+	.post(isAuthenticated, isAuthorized('Users', 'Get'), isCurrentUserRoleInBlackList('Instructor', 'Student'), getUserEnums);
 
 userRouter.route("/get")
 	.post(isAuthenticated, isAuthorized('Users', 'Get'), isCurrentUserRoleInBlackList('Instructor', 'Student'), getAllUsers);

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { $Enums } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
 import { ILogService } from "../../application/interfaces/IServices/ILogService";
@@ -10,6 +11,14 @@ import HttpStatusCode from '../enums/HTTPStatusCode';
 @injectable()
 export class LogController {
 	constructor(@inject('ILogService') private logService: ILogService) {};
+
+	getLogEnums = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+		const logEnums = {
+			LogModel: $Enums.LogModel,
+			OperationType: $Enums.OperationType
+		}
+		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'All log enums are retrieved successfully', [logEnums]));
+	});
 
 	getAllLogs = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
 		const findOptions = RequestManager.findOptionsWrapper(request);

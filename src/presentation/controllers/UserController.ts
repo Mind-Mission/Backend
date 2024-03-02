@@ -14,6 +14,7 @@ import { ExtendedRequest } from "../types/ExtendedRequest";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from '../enums/HTTPStatusCode';
+import { SuperAdminPermissions } from "../../application/config/CorePermissions";
 
 @injectable()
 export class UserController {
@@ -40,7 +41,11 @@ export class UserController {
 	};
 
 	getUserEnums = asyncHandler((request: Request, response: Response, next: NextFunction) => {
-    response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'All user enums are retrieved successfully', [$Enums.Platform]));
+		const userEnums = {
+			Role: $Enums.Role,
+			Permissions: SuperAdminPermissions
+		}
+    response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'All user enums are retrieved successfully', [userEnums]));
   });
 
 	getAllUsers = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {

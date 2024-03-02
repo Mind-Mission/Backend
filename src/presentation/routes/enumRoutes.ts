@@ -1,12 +1,13 @@
 import express from 'express';
 import container from '../DIContainer/DI'
 import { EnumController } from '../controllers/EnumController';
+import { Authorization } from '../middlewares/authorization-validator/AuthorizationValidator';
 
-const {getAllEnums} = container.get<EnumController>('EnumController');
+const {getPublicEnums} = container.get<EnumController>('EnumController');
 
 const enumRouter = express.Router();
 
 enumRouter.route("/get")
-	.post(getAllEnums);
+	.post(getPublicEnums);
 
 export default enumRouter;
