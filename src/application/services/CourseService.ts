@@ -21,13 +21,9 @@ export class CourseService implements ICourseService {
 			select: {
 				type: true
 			}
-		})
-
-		if(topic && topic.type === 'TOPIC') {
-			return true;
-		}
-		return false;
-	}
+		});
+		return (topic && topic.type === 'TOPIC') ? true : false;
+	};
 
   aggregate(args: Prisma.CourseAggregateArgs): Promise<Prisma.GetCourseAggregateType<Prisma.CourseAggregateArgs>> {
     return this.courseRepository.aggregate(args);
@@ -85,8 +81,8 @@ export class CourseService implements ICourseService {
 	};
 
 	async update(args: {data: UpdateCourse, select?: Prisma.CourseSelect, include?: Prisma.CourseInclude}, transaction?: TransactionType): Promise<Course> {
-    let {id, title, shortDescription, description, language, level, imageCover, requirements, courseTeachings, price, discountPercentage, hours, lectures, articles, quizzes, isApproved, isDraft, sections: sections, topicId} = args.data;
-		const slug = title ? slugify(title.toString(), {lower: true, trim: true}) : undefined;
+    const {id, title, shortDescription, description, language, level, imageCover, requirements, courseTeachings, price, discountPercentage, hours, lectures, articles, quizzes, isApproved, isDraft, sections: sections, topicId} = args.data;
+		const slug = title ? slugify(title, {lower: true, trim: true}) : undefined;
 		if(topicId && !await this.isTrueTopic(topicId)) {
 			throw new APIError("This topic may be not exist or may be exist but not a topic", HttpStatusCode.BadRequest);
 		}

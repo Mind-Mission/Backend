@@ -1,8 +1,9 @@
-import { Prisma, Cart } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { IFindBaseRepository } from "./Base/IFindBaseRepository";
+import { ExtendedCart } from "../../types/ExtenedCart";
 import { TransactionType } from "../../types/TransactionType";
 
-export interface ICartRepository extends IFindBaseRepository<Cart> {
-  findFirst(args: Prisma.CartFindFirstArgs): Promise<Cart | null>;
-  update(args: Prisma.CartUpdateArgs, transaction?: TransactionType): Promise<Cart>;
+export interface ICartRepository extends IFindBaseRepository<ExtendedCart> {
+  findFirst(args: Prisma.CartFindFirstArgs): Promise<ExtendedCart | null>;
+  update(args: Prisma.CartUpdateArgs, transaction?: TransactionType): Promise<ExtendedCart>;
 }

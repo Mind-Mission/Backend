@@ -450,7 +450,7 @@ model Payment {
   discount       Float          @default(0)
   paymentUnits   PaymentUnit[]
   couponCode     String?
-  coupon         Coupon?        @relation(fields: [couponCode], references: [code], onDelete: Cascade)      
+  coupon         Coupon?        @relation(fields: [couponCode], references: [code], onDelete: SetNull)      
   studentId      Int        
   student        Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
   createdAt      DateTime       @default(now())
