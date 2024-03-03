@@ -6,6 +6,7 @@ import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from '../enums/HTTPStatusCode';
+import { ExtendedRequest } from "../types/ExtendedRequest";
 
 @injectable()
 export class ArticleController {
@@ -35,19 +36,19 @@ export class ArticleController {
 		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The Article is retrieved successfully', [article]));
 	});
 
-	createArticle = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+	createArticle = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const createdArticle = await this.articleService.create({data: request.body.input, select, include});
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The article is created successfully', [createdArticle]));
 	});
 
-	updateArticle = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+	updateArticle = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const updatedArticle = await this.articleService.update({data: {...request.body.input, id: +request.params.id}, select, include});
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The article is updated successfully', [updatedArticle]));
 	});
 
-	deleteArticle = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+	deleteArticle = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		await this.articleService.delete(+request.params.id);
 		response.status(HttpStatusCode.NoContent).json();
 	});

@@ -1,31 +1,13 @@
 import { Resource, Crud } from "@prisma/client";
-import bcrypt from "bcrypt"
-import prisma from "../../domain/db"
 
 export const InstructorPermissions = [
-  {
-    resource: Resource.Users,
-    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
-  },
   {
     resource: Resource.Instructors,
     cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
   },
   {
-    resource: Resource.Students,
-    cruds: [Crud.Get]
-  },
-  {
-    resource: Resource.Categories,
-    cruds: [Crud.Get]
-  },
-  {
     resource: Resource.Courses,
     cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
-  },
-  {
-    resource: Resource.Enrollments,
-    cruds: [Crud.Get]
   },
   {
     resource: Resource.Sections,
@@ -45,14 +27,6 @@ export const InstructorPermissions = [
   },
   {
     resource: Resource.Quizzes,
-    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
-  },
-  {
-    resource: Resource.Ratings,
-    cruds: [Crud.Get]
-  },
-  {
-    resource: Resource.Comments,
     cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
   },
 ];
@@ -116,11 +90,11 @@ export const StudentPermissions = [
   },
 ];
 
-const AdminPermissions = [
-  {
-    resource: Resource.Permissions,
-    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
-  },
+export const SuperAdminPermissions = [
+  // {
+  //   resource: Resource.Permissions,
+  //   cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  // },
   {
     resource: Resource.Users,
     cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
@@ -142,6 +116,14 @@ const AdminPermissions = [
     cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
   },
   {
+    resource: Resource.Enrollments,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Coupons,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
     resource: Resource.Courses,
     cruds: [Crud.Get, Crud.Update, Crud.Delete]
   },
@@ -154,18 +136,6 @@ const AdminPermissions = [
     cruds: [Crud.Get, Crud.Update, Crud.Delete]
   },
   {
-    resource: Resource.Notes,
-    cruds: [Crud.Get]
-  },
-  {
-    resource: Resource.Carts,
-    cruds: [Crud.Get]
-  },
-  {
-    resource: Resource.Enrollments,
-    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
-  },
-  {
     resource: Resource.Ratings,
     cruds: [Crud.Get, Crud.Update, Crud.Delete]
   },
@@ -174,44 +144,15 @@ const AdminPermissions = [
     cruds: [Crud.Get, Crud.Update, Crud.Delete]
   },
   {
-    resource: Resource.Coupons,
-    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
-  },
-  {
     resource: Resource.Messages,
     cruds: [Crud.Get, Crud.Update, Crud.Delete]
   },
+  {
+    resource: Resource.Notes,
+    cruds: [Crud.Get]
+  },
+  {
+    resource: Resource.Carts,
+    cruds: [Crud.Get]
+  },
 ];
-
-export const upsertMainItemsIntoDB = async () => {
-  const {Super_Admin_FirstName, Super_Admin_LastName, Super_Admin_Email, Super_Admin_Password} = process.env;
-  await prisma.user.upsert({
-    where: {
-      email: Super_Admin_Email,
-    },
-    update: {
-      permissions: {
-        deleteMany: {},
-        createMany: {
-          data: AdminPermissions
-        }
-      }
-    },
-    create: {
-      firstName: Super_Admin_FirstName || "Tarek",
-      lastName: Super_Admin_LastName || "Eslam",
-      email: Super_Admin_Email || "tarekeslam159@gmail.com",
-      password: bcrypt.hashSync(Super_Admin_Password || "123456789", 10),
-      role: 'Admin',
-      admin: {
-        create: {}
-      },
-      permissions: {
-        createMany: {
-          data: AdminPermissions
-        }
-      } 
-    },
-  });
-  console.log("The main items are upsert into the database successfully ✅");
-}

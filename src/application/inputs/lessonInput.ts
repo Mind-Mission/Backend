@@ -1,4 +1,5 @@
 import { LessonType } from "@prisma/client";
+import { ExtendedUser } from "../types/ExtendedUser";
 
 export type CreateLesson = {
   title: string;
@@ -6,7 +7,8 @@ export type CreateLesson = {
   isAvailable?: Boolean;
   attachment?: string; 
   order: number;
-  sectionId: number
+  sectionId: number;
+  user: ExtendedUser;
 };
 
 export type UpdateLesson = {

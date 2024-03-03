@@ -1,4 +1,4 @@
-import { Course, Prisma } from "@prisma/client"
+import { Prisma } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { IPaymentService } from "../interfaces/IServices/IPaymentService"
 import { IPaymentRepository } from "../interfaces/IRepositories/IPaymentRepository"
@@ -58,14 +58,14 @@ export class PaymentService implements IPaymentService {
 					}
 				}
 			}
-		}) as any;
-		if(!cart || !cart.courses.length) {
+		});
+		if(!cart || cart.courses?.length === 0) {
 			throw new APIError("Your cart is empty", HttpStatusCode.BadRequest);
 		}
-		const totalPrice = (cart.courses as Course[]).reduce((acc, curr) => {
+		const totalPrice = cart.courses?.reduce((acc, curr) => {
 			return acc + curr.price
 		}, 0);
-		let discount = couponCode ? await this.getCouponDiscount(couponCode) : 0;
+		const discount = couponCode ? await this.getCouponDiscount(couponCode) : 0;
 		return this.paymentRepository.create({
 			data: {
 				currency,
@@ -73,7 +73,7 @@ export class PaymentService implements IPaymentService {
 				totalPrice,
 				discount,
 				paymentUnits: {
-					create: cart.courses.map(({id, price}: Course) => {
+					create: cart.courses?.map(({id, price}) => {
 						return {
 							price,
 							courseId: id,

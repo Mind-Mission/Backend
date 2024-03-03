@@ -7,6 +7,7 @@ import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from '../enums/HTTPStatusCode';
+import { ExtendedRequest } from "../types/ExtendedRequest";
 
 @injectable()
 export class QuizController {
@@ -40,13 +41,13 @@ export class QuizController {
 		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The quiz is retrieved successfully', [quiz]));
 	});
 
-	createQuiz = asyncHandler(async(request: Request, response: Response, next: NextFunction) => {
+	createQuiz = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const createdQuiz = await this.quizService.create({data: request.body.input, select, include});
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The quiz is created successfully', [createdQuiz]));
   });
 
-	updateQuiz = asyncHandler(async(request: Request, response: Response, next: NextFunction) => {
+	updateQuiz = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const updatedQuiz = await this.quizService.update({
 			data: {
@@ -59,7 +60,7 @@ export class QuizController {
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The quiz is updated successfully', [updatedQuiz]));
   });
 
-	deleteQuiz = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+	deleteQuiz = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		await this.quizService.delete(+request.params.id);
 		response.status(HttpStatusCode.NoContent).json();
 	});

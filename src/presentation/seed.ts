@@ -1,6 +1,41 @@
 import { CorrectAnswer, LessonType, QuestionLevel } from "@prisma/client";
-import slugify from "slugify"
-import prisma from "../domain/db"
+import slugify from "slugify";
+import bcrypt from 'bcrypt';
+import prisma from "../domain/db";
+import { SuperAdminPermissions } from "../application/config/CorePermissions";
+
+export const createSuperAdmin = async () => {
+  const {Super_Admin_FirstName, Super_Admin_LastName, Super_Admin_Email, Super_Admin_Password} = process.env;
+  await prisma.user.upsert({
+    where: {
+      email: Super_Admin_Email,
+    },
+    update: {
+      permissions: {
+        deleteMany: {},
+        createMany: {
+          data: SuperAdminPermissions
+        }
+      }
+    },
+    create: {
+      firstName: Super_Admin_FirstName || "Tarek",
+      lastName: Super_Admin_LastName || "Eslam",
+      email: Super_Admin_Email || "tarekeslam159@gmail.com",
+      password: bcrypt.hashSync(Super_Admin_Password || "123456789", 10),
+      roles: ['Admin'],
+      admin: {
+        create: {}
+      },
+      permissions: {
+        createMany: {
+          data: SuperAdminPermissions
+        }
+      } 
+    },
+  });
+  console.log("The main items are upsert into the database successfully ✅");
+};
 
 const courses = [
   {

@@ -1,4 +1,5 @@
 import { CourseLevel, Language } from "@prisma/client";
+import { ExtendedUser } from "../types/ExtendedUser";
 
 export type CreateCourse = {
   title: string;

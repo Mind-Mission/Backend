@@ -1,9 +1,11 @@
+import { ExtendedUser } from "../types/ExtendedUser";
+
 export type CreateSection = {
   title: string;
   description?: string;
   isAvailable?: Boolean;
   order: number;
-  courseId: number
+  courseId: number;
 }
 
 export type UpdateSection = {

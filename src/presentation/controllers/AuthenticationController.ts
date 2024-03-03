@@ -1,4 +1,3 @@
-import { Role } from "@prisma/client";
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
@@ -8,7 +7,7 @@ import { ExtendedUser } from "../../application/types/ExtendedUser";
 import { SendEmail } from "../services/SendEmail";
 import { JWTGenerator } from "../services/JWTGenerator";
 import { RequestManager } from "../services/RequestManager";
-import { InstructorPermissions, StudentPermissions } from "../../application/config/upsertMainItemsIntoDB";
+import { StudentPermissions } from "../../application/config/CorePermissions";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import { UserMapper } from "../mapping/UserMapper";
 import APIError from "../errorHandlers/APIError";
@@ -36,10 +35,8 @@ export class AuthenticationController {
   }
 
   signup = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-    const {firstName, lastName, email, password, mobilePhone, whatsAppNumber, bio, picture, platform, isEmailVerified, specialization, teachingType, videoProAcademy, haveAudience} = request.body.input;
+    const {firstName, lastName, email, password, mobilePhone, whatsAppNumber, bio, picture, platform, isEmailVerified} = request.body.input;
 		const {select, include} = RequestManager.findOptionsWrapper(request);
-    const role: Role = (specialization && teachingType && videoProAcademy && haveAudience) ? 'Instructor' : 'Student';
-    const permissions = role === "Instructor" ? InstructorPermissions : StudentPermissions;
     const createdUser = await this.userService.create({
       data: {
         firstName,
@@ -53,14 +50,8 @@ export class AuthenticationController {
         platform,
         isEmailVerified,
         refreshToken: JWTGenerator.generateRefreshToken({ firstName, lastName, email, picture } as ExtendedUser),
-        role,
-        instructor: role === "Instructor" ? {
-          specialization,
-          teachingType,
-          videoProAcademy,
-          haveAudience,
-        } : undefined,
-        permissions
+        role: 'Student',
+        permissions: StudentPermissions
       },
       select,
       include,

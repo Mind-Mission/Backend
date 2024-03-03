@@ -3,6 +3,7 @@ import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
 import {IVideoService} from "../../application/interfaces/IServices/IVideoService"
 import { RequestManager } from "../services/RequestManager";
+import { ExtendedRequest } from "../types/ExtendedRequest";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from '../enums/HTTPStatusCode';
@@ -35,13 +36,13 @@ export class VideoController {
 		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The Video is retrieved successfully', [video]));
 	});
 
-	createVideo = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+	createVideo = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const createdVideo = await this.videoService.create({data: request.body.input, select, include});
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The video is created successfully', [createdVideo]));
 	});
 	
-	updateVideo = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+	updateVideo = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const updatedVideo = await this.videoService.update({
 			data: {
@@ -54,7 +55,7 @@ export class VideoController {
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The video is updated successfully', [updatedVideo]));
 	});
 	
-	deleteVideo = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+	deleteVideo = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		await this.videoService.delete(+request.params.id);
 		response.status(HttpStatusCode.NoContent).json();
 	});

@@ -9,7 +9,12 @@ import HttpStatusCode from '../enums/HTTPStatusCode';
 export class EnumController {
 	constructor() {};
 
-  getAllEnums = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-    response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'All Enums are retrieved successfully', [$Enums]));
+  getPublicEnums = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+    Reflect.deleteProperty($Enums, 'Resource');
+    Reflect.deleteProperty($Enums, 'Crud');
+    Reflect.deleteProperty($Enums, 'Role');
+    Reflect.deleteProperty($Enums, 'LogModel');
+    Reflect.deleteProperty($Enums, 'OperationType');
+    response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'All Public Enums are retrieved successfully', [$Enums]));
   });
 }

@@ -77,7 +77,8 @@ export class CourseController {
 		const updatedCourse = await this.courseService.update({
 			data: {
 				...request.body.input,
-				id: +request.params.id
+				id: +request.params.id,
+				user: request.user
 			},
 			select,
 			include

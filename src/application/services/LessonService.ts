@@ -3,15 +3,17 @@ import {inject, injectable } from "inversify"
 import slugify from "slugify"
 import { ILessonService } from "../interfaces/IServices/ILessonService"
 import { ICourseService } from "../interfaces/IServices/ICourseService"
+import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { ILessonRepository } from "../interfaces/IRepositories/ILessonRepository"
 import { CreateLesson, UpdateLesson } from "../inputs/lessonInput"
 import { TransactionType } from "../types/TransactionType"
+import { ExtendedUser } from "../types/ExtendedUser"
 import { Transaction } from "../../infrastructure/services/Transaction"
 import APIError from "../../presentation/errorHandlers/APIError"
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode"
 
 @injectable()
-export class LessonService implements ILessonService {
+export class LessonService implements ILessonService, IResourceOwnership<Lesson> {
 	constructor(@inject('ILessonRepository') private lessonRepository: ILessonRepository, @inject('ICourseService') private courseService: ICourseService) {}
 
 	private async updateCourseInfo(lessonId: number, operationType: | "update" | "delete", transaction?: TransactionType, lessonType?: LessonType, time?: number) {
@@ -76,7 +78,26 @@ export class LessonService implements ILessonService {
 				id: true
 			},
 		}, transaction);
-	}
+	};
+
+	async isResourceBelongsToCurrentUser(resourceId: number, user: ExtendedUser): Promise<boolean> {
+		if(!user.roles.includes('Instructor')) {
+			return true;
+		}
+		const lesson = await this.lessonRepository.findFirst({
+			where: {
+				id: resourceId,
+				section: {
+					course: {
+						instructor: {
+							userId: user.id,
+						}
+					}
+				}
+			}
+		});
+		return lesson ? true : false;
+	};
 
 	count(args: Prisma.LessonCountArgs): Promise<number> {
 		return this.lessonRepository.count(args);
@@ -88,6 +109,10 @@ export class LessonService implements ILessonService {
 
 	findUnique(args: Prisma.LessonFindUniqueArgs): Promise<Lesson | null> {
 		return this.lessonRepository.findUnique(args);
+	};
+
+	findFirst(args: Prisma.LessonFindFirstArgs): Promise<Lesson | null> {
+		return this.lessonRepository.findFirst(args);
 	};
 
 	async create(args: {data: CreateLesson, select?: Prisma.LessonSelect, include?: Prisma.LessonInclude}, transaction?: TransactionType): Promise<Lesson> {
@@ -125,7 +150,7 @@ export class LessonService implements ILessonService {
 		}, transaction);
 	}
 
-	async update(args: {data: UpdateLesson, select?: Prisma.LessonSelect, include?: Prisma.LessonInclude}, transaction?: TransactionType): Promise<Lesson> {
+	update(args: {data: UpdateLesson, select?: Prisma.LessonSelect, include?: Prisma.LessonInclude}, transaction?: TransactionType): Promise<Lesson> {
 		const {id, title, attachment, isFree, isAvailable, lessonType, time} = args.data;
 		const slug = title ? slugify(title.toString(), {lower: true, trim: true}) : undefined;
 		return Transaction.transact<Lesson>(async (prismaTransaction) => {

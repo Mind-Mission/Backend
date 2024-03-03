@@ -42,13 +42,13 @@ export class SectionController {
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The section is created successfully', [createdSection]));
   });
 
-	updateSection = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+	updateSection = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const updatedLesson = await this.sectionService.update({data: {...request.body.input, id: +request.params.id}, select, include});
 		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The section is updated successfully', [updatedLesson]));
 	});
 
-	deleteSection = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+	deleteSection = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		await this.sectionService.delete(+request.params.id);
 		response.status(HttpStatusCode.NoContent).json();
 	});

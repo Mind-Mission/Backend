@@ -29,9 +29,15 @@ export class CartController {
 		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The cart is retrieved successfully', [Cart]));
 	});
 
-	upsertCart = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
+	addToCart = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
-		const upsertCart = await this.cartService.update({data: {...request.body.input, userId: request.user?.id}, select, include});
-		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The cart is updated successfully', [upsertCart]));
+		const cart = await this.cartService.update({data: {...request.body.input, operation: 'Add', userId: request.user?.id}, select, include});
+		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The cart is updated successfully', [cart]));
+	});
+
+	removeFromCart = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
+		const {select, include} = RequestManager.findOptionsWrapper(request);
+		const cart = await this.cartService.update({data: {...request.body.input, operation: 'Remove', userId: request.user?.id}, select, include});
+		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The cart is updated successfully', [cart]));
 	});
 }

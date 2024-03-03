@@ -2,16 +2,17 @@ import { LessonType, Prisma, Quiz } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { IQuizService } from "../interfaces/IServices/IQuizService"
 import { ILessonService } from "../interfaces/IServices/ILessonService";
+import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { IQuizRepository } from "../interfaces/IRepositories/IQuizRepository"
 import { CreateQuiz, UpdateQuiz } from "../inputs/quizInput";
 import { TransactionType } from "../types/TransactionType";
 import { Transaction } from "../../infrastructure/services/Transaction";
 import APIError from "../../presentation/errorHandlers/APIError";
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
-import prisma from "../../domain/db";
+import { ExtendedUser } from "../types/ExtendedUser";
 
 @injectable()
-export class QuizService implements IQuizService {
+export class QuizService implements IQuizService, IResourceOwnership<Quiz> {
 	constructor(@inject('IQuizRepository') private quizRepository: IQuizRepository, @inject('ILessonService') private lessonService: ILessonService) {}
 
 	private async isLessonAvailable(lessonId: number): Promise<boolean> {
@@ -20,7 +21,20 @@ export class QuizService implements IQuizService {
 				id: lessonId
 			},
 			select: {
-				lessonType: true
+				lessonType: true,
+				section: {
+					select: {
+						course: {
+							select: {
+								instructor: {
+									select: {
+										userId: true
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		});
 
@@ -43,6 +57,27 @@ export class QuizService implements IQuizService {
 		}, transaction)
 	};
 
+	async isResourceBelongsToCurrentUser(resourceId: number, user: ExtendedUser): Promise<boolean> {
+		if(!user.roles.includes('Instructor')) {
+			return true
+		}
+		const quiz = await this.quizRepository.findFirst({
+			where: {
+				id: resourceId,
+				lesson: {
+					section: {
+						course: {
+							instructor: {
+								userId: user.id
+							}
+						}
+					}
+				}
+			}
+		});
+		return quiz ? true : false;
+	};
+
 	count(args: Prisma.QuizCountArgs): Promise<number> {
 		return this.quizRepository.count(args);
 	};
@@ -56,9 +91,13 @@ export class QuizService implements IQuizService {
 	};
 
 	async create(args: {data: CreateQuiz, select?: Prisma.QuizSelect, include?: Prisma.QuizInclude}, transaction?: TransactionType): Promise<Quiz> {
-		const {title, description, time, questions, lessonId} = args.data;
-		if(!await this.isLessonAvailable(lessonId)) {
+		const {title, description, time, questions, lessonId, user} = args.data;
+		const lesson: any = await this.isLessonAvailable(lessonId)
+		if(!lesson) {
 			throw new APIError('This lesson is not available', HttpStatusCode.BadRequest);
+		}
+		if(user.roles.includes('Instructor') && lesson.section.course.instructor.userId !== user.id) {
+			throw new APIError('This lesson is not yours', HttpStatusCode.Forbidden);
 		}
 		return Transaction.transact<Quiz>(async (prismaTransaction) => {
 			await this.updateLessonInfo(lessonId, time, 'QUIZ', prismaTransaction);
@@ -95,7 +134,7 @@ export class QuizService implements IQuizService {
 		}, transaction);
 	};
 
-	async update(args: {data: UpdateQuiz, select?: Prisma.QuizSelect, include?: Prisma.QuizInclude}, transaction?: TransactionType): Promise<Quiz> {
+	update(args: {data: UpdateQuiz, select?: Prisma.QuizSelect, include?: Prisma.QuizInclude}, transaction?: TransactionType): Promise<Quiz> {
 		const {id, title, description, time, questions} = args.data;
 		return Transaction.transact<Quiz>(async (prismaTransaction) => {
 			const updatedQuiz = await this.quizRepository.update({
@@ -153,7 +192,7 @@ export class QuizService implements IQuizService {
 		}, transaction);
 	};
 
-	async delete(id: number, transaction?: TransactionType): Promise<Quiz> {
+	delete(id: number, transaction?: TransactionType): Promise<Quiz> {
 		return Transaction.transact<Quiz>(async (prismaTransaction) => {
 			const deletedQuiz = await this.quizRepository.delete(id, prismaTransaction);
 			await this.updateLessonInfo(deletedQuiz.lessonId, 0, 'UNDEFINED', prismaTransaction);

@@ -14,6 +14,7 @@ import { ExtendedRequest } from "../types/ExtendedRequest";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from '../enums/HTTPStatusCode';
+import { SuperAdminPermissions } from "../../application/config/CorePermissions";
 
 @injectable()
 export class UserController {
@@ -40,7 +41,11 @@ export class UserController {
 	};
 
 	getUserEnums = asyncHandler((request: Request, response: Response, next: NextFunction) => {
-    response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'All user enums are retrieved successfully', [$Enums.Platform]));
+		const userEnums = {
+			Role: $Enums.Role,
+			Permissions: SuperAdminPermissions
+		}
+    response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'All user enums are retrieved successfully', [userEnums]));
   });
 
 	getAllUsers = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
@@ -104,6 +109,20 @@ export class UserController {
 		this.logService.log('UPDATE', 'USER', updatedUser, request.user);
 		const mappedUserResults = UserMapper.map([updatedUser]);
 		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The user is updated successfully', mappedUserResults));
+	});
+
+	beInstructor = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
+		const {select, include} = RequestManager.findOptionsWrapper(request);
+		const user = await this.userService.update({
+			data: {
+				id: request.user?.id as number,
+				beInstructor: true
+			},
+			select,
+			include
+		});
+		const mappedUserResults = UserMapper.map([user]);
+		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'The user now has instructor role', mappedUserResults));
 	});
 
 	updateUserEmail = asyncHandler(async (request, response, next) => {

@@ -2,15 +2,37 @@ import { Prisma, Section } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import slugify from "slugify"
 import { ISectionService } from "../interfaces/IServices/ISectionService"
+import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { ISectionRepository } from "../interfaces/IRepositories/ISectionRepository"
 import { CreateSection, UpdateSection } from "../inputs/sectionInput"
 import { TransactionType } from "../types/TransactionType"
+import { ExtendedUser } from "../types/ExtendedUser"
 import APIError from "../../presentation/errorHandlers/APIError"
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode"
 
 @injectable()
-export class SectionService implements ISectionService {
+export class SectionService implements ISectionService, IResourceOwnership<Section> {
 	constructor(@inject('ISectionRepository') private sectionRepository: ISectionRepository) {}
+
+	async isResourceBelongsToCurrentUser(sectionId: number, user: ExtendedUser): Promise<boolean> {
+		if(!user.roles.includes('Instructor')) {
+			return true;
+		}
+		const section = await this.findFirst({
+			where: {
+				id: sectionId,
+				course: {
+					instructor: {
+						userId: user.id
+					}
+				}
+			},
+			select: {
+				id: true
+			}
+		});
+		return section ? true : false;
+	};
 
 	count(args: Prisma.SectionCountArgs): Promise<number> {
 		return this.sectionRepository.count(args);
@@ -59,9 +81,9 @@ export class SectionService implements ISectionService {
 			select: args?.select,
 			include: args?.include
 		}, transaction);
-	}
+	};
 
-	async update(args: {data: UpdateSection, select?: Prisma.SectionSelect, include?: Prisma.SectionInclude}, transaction: TransactionType): Promise<Section> {
+	update(args: {data: UpdateSection, select?: Prisma.SectionSelect, include?: Prisma.SectionInclude}, transaction: TransactionType): Promise<Section> {
 		const {id, title, description, isAvailable, lessons} = args.data;
 		const slug = title ? slugify(title.toString(), {lower: true, trim: true}) : undefined;
 		return this.sectionRepository.update({

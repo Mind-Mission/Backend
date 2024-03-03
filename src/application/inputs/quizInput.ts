@@ -1,4 +1,5 @@
 import { QuestionLevel } from "@prisma/client";
+import { ExtendedUser } from "../types/ExtendedUser";
 
 type Question = {
   id?: number;
@@ -18,6 +19,7 @@ export type CreateQuiz = {
   time: number; 
   questions: Question[]; 
   lessonId: number;
+  user: ExtendedUser;
 }
 
 export type UpdateQuiz = {

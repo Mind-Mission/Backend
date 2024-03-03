@@ -1,35 +1,16 @@
-import bcrypt from "bcrypt"
 import { Prisma } from "@prisma/client";
+import bcrypt from "bcrypt"
 import { inject, injectable } from "inversify";
 import {IUserService} from "../interfaces/IServices/IUserService"
 import {IUserRepository} from "../interfaces/IRepositories/IUserRepository"
+import { InstructorPermissions } from "../config/CorePermissions";
 import { CreateUser, UpdateUser } from "../inputs/userInput";
 import { ExtendedUser } from "../types/ExtendedUser";
 import { TransactionType } from "../types/TransactionType";
-import APIError from "../../presentation/errorHandlers/APIError";
-import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 
 @injectable()
 export class UserService implements IUserService {
 	constructor(@inject('IUserRepository') private userRepository: IUserRepository) {}
-
-	private async isEmailExist(email: string, id?: number): Promise<boolean> {
-		const user = await this.findFirst({
-			where: {
-				email: {
-					equals: email,
-					mode: 'insensitive'
-				}
-			},
-			select: {
-				id: true
-			}
-		});
-		if(user && (id ? user.id !== id : true)) {
-			return true;
-		};
-		return false
-	};
 
 	count(args: Prisma.UserCountArgs): Promise<number> {
 		return this.userRepository.count(args);
@@ -47,11 +28,8 @@ export class UserService implements IUserService {
 		return this.userRepository.findFirst(args);
 	};
 
-	async create(args: {data: CreateUser, select?: Prisma.UserSelect; include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
-		const {firstName, lastName, email, password, mobilePhone, whatsAppNumber, bio, picture, platform, isEmailVerified, permissions, role, refreshToken, instructor} = args.data;
-		// if(await this.isEmailExist(email)) {
-		// 	throw new APIError('This email already exists', HttpStatusCode.BadRequest);
-		// };
+	create(args: {data: CreateUser, select?: Prisma.UserSelect; include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
+		const {firstName, lastName, email, password, mobilePhone, whatsAppNumber, bio, picture, platform, isEmailVerified, permissions, role, refreshToken} = args.data;
 		return this.userRepository.create({
 			data: {
 				firstName,
@@ -66,12 +44,9 @@ export class UserService implements IUserService {
 				isSignWithSSO: platform ? true : false,
 				isEmailVerified,
 				refreshToken,
-				permissions: {
-					createMany: {
-						data: permissions
-					}
+				roles: {
+					set: [role]
 				},
-				role,
 				student: role === "Student" ? {
 					create: {
 						cart: {
@@ -79,28 +54,37 @@ export class UserService implements IUserService {
 						}
 					}
 				} : undefined,
-				instructor: role === "Instructor" && instructor ? {
-					create: {
-						...instructor,
-					}
-				} : undefined,
 				admin: role === 'Admin' ? {
 					create: {}
 				} : undefined,
+				permissions: {
+					createMany: {
+						data: permissions
+					}
+				},
 			},
 			select: args.select,
 			include: args.include
-		} , transaction);
+		}, transaction);
 	};
 
 	async update(args: {data: UpdateUser, select?: Prisma.UserSelect, include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
-		const {id, firstName, lastName, email, isEmailVerified, emailVerificationCode, password, passwordUpdatedTime, resetPasswordCode, bio, picture, mobilePhone, whatsAppNumber, refreshToken, isOnline, isActive, isBlocked, isDeleted, permissions, personalLinks} = args.data
+		let {id, firstName, lastName, email, isEmailVerified, emailVerificationCode, password, passwordUpdatedTime, resetPasswordCode, bio, picture, mobilePhone, whatsAppNumber, refreshToken, isOnline, isActive, isBlocked, isDeleted, beInstructor, permissions, personalLinks} = args.data
 		if(resetPasswordCode && resetPasswordCode.code && !resetPasswordCode.isVerified) {
 			resetPasswordCode.code = bcrypt.hashSync((args.data.resetPasswordCode as any).code.toString(), 10);
 		}
-		// if(email && await this.isEmailExist(email)) {
-		// 	throw new APIError('This email already exists', HttpStatusCode.BadRequest);
-		// }
+		if(beInstructor) {
+			const user = await this.findUnique({
+				where: {
+					id
+				},
+				select: {
+					roles: true
+				}
+			});
+			beInstructor = user ? !user.roles.includes('Instructor') : false;
+			permissions = beInstructor ? InstructorPermissions : permissions;
+		} 
 		return this.userRepository.update({
 			where: {
 				id
@@ -123,14 +107,22 @@ export class UserService implements IUserService {
 				isActive: isActive,
 				isBlocked: isBlocked,
 				isDeleted: isDeleted,
+				roles: beInstructor ? {
+					set: ['Student', 'Instructor']
+				} : undefined,
+				instructor: beInstructor ? {
+					create: {}
+				} : undefined,
 				permissions: permissions ? {
-					upsert: permissions.map(({id, resource, cruds}) => {
+					upsert: permissions.map(({resource, cruds}) => {
 						return {
 							where: {
-								id
+								resource_userId: {
+									userId: id,
+									resource,
+								}
 							},
 							update: {
-								resource,
 								cruds
 							},
 							create: {
@@ -140,7 +132,7 @@ export class UserService implements IUserService {
 						}
 					})
 				} : undefined,
-				personalLinks: personalLinks ? {
+				personalLinks: personalLinks && personalLinks.length > 0 ? {
 					upsert: personalLinks.map(({platform, link}) => {
 						return {
 							where : {
@@ -155,6 +147,7 @@ export class UserService implements IUserService {
 							create: {
 								platform: platform.toUpperCase(),
 								link
+								
 							}
 						}
 					})

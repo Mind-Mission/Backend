@@ -1,16 +1,16 @@
 import {body} from "express-validator";
-import ErrorExpressValidatorHandler from "../../errorHandlers/ErrorExpressValidatorHandler";
 import { HaveAudience, TeachingType, VideoProAcademy } from "@prisma/client";
+import ErrorExpressValidatorHandler from "../../errorHandlers/ErrorExpressValidatorHandler";
 
-export const addInstructorValidation = [
+export const updateInstructorValidation = [
   body("input.specialization")
-    .notEmpty().withMessage('Your specialization is required')
+    .optional()
     .isString().withMessage("Specialization must be a string")
     .isLength({min: 10}).withMessage("Too short specialization, must be 10 characters at least")
     .isLength({max: 100}).withMessage("Too long specialization, must be 100 characters at most"),
 
   body("input.teachingType")
-    .notEmpty().withMessage('Teaching type is required')
+    .optional()
     .toUpperCase()
     .custom((value) => {
       if(!TeachingType[value as TeachingType]) {
@@ -20,7 +20,7 @@ export const addInstructorValidation = [
     }),
   
   body("input.videoProAcademy")
-    .notEmpty().withMessage('Video Pro Academy is required')
+    .optional()
     .toUpperCase()
     .custom((value) => {
       if(!VideoProAcademy[value as VideoProAcademy]) {
@@ -30,7 +30,7 @@ export const addInstructorValidation = [
     }),
   
   body("input.haveAudience")
-    .notEmpty().withMessage('HaveAudience type is required')
+    .optional()
     .toUpperCase()
     .custom((value) => {
       if(!HaveAudience[value as HaveAudience]) {
@@ -39,22 +39,12 @@ export const addInstructorValidation = [
       return true;
     }),
 
-  ErrorExpressValidatorHandler.catchExpressValidatorErrors
-];
-
-export const updateInstructorValidation = [
-  body("input.specialization")
+  body("input.bref")
     .optional()
     .isString().withMessage("Specialization must be a string")
-    .isLength({min: 10}).withMessage("Too short specialization, must be 10 characters at least")
-    .isLength({max: 100}).withMessage("Too long specialization, must be 100 characters at most"),
-
-  body("input.bref")
-  .optional()
-  .isString().withMessage("Specialization must be a string")
-  .isLength({min: 20}).withMessage("Too short bref, must be 20 characters at least")
-  .isLength({max: 1000}).withMessage("Too long bref, must be 1000 characters at most"),
-  
+    .isLength({min: 20}).withMessage("Too short bref, must be 20 characters at least")
+    .isLength({max: 1000}).withMessage("Too long bref, must be 1000 characters at most"),
+    
   body("input.skills")
     .notEmpty().withMessage('Skills are required')
     .isArray().withMessage('Skills must be an array of skill object')
