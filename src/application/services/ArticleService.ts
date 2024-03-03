@@ -1,4 +1,4 @@
-import { Prisma, Article, LessonType } from "@prisma/client"
+import { Prisma, Article, LessonType, Lesson } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { CreateArticle, UpdateArticle } from "../inputs/articleInput";
 import { TransactionType } from "../types/TransactionType";
@@ -8,25 +8,36 @@ import { ILessonService } from "../interfaces/IServices/ILessonService";
 import { Transaction } from "../../infrastructure/services/Transaction";
 import APIError from "../../presentation/errorHandlers/APIError";
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
+import { ExtendedUser } from "../types/ExtendedUser";
 
 @injectable()
 export class ArticleService implements IArticleService {
 	constructor(@inject('IArticleRepository') private articleRepository: IArticleRepository, @inject('ILessonService') private lessonService: ILessonService) {}
 
-	private async isLessonAvailable(lessonId: number): Promise<boolean> {
-		const lesson = await this.lessonService.findUnique({
+	private async isLessonAvailable(lessonId: number): Promise<Lesson | null> {
+		return this.lessonService.findFirst({
 			where: {
-				id: lessonId
+				id: lessonId,
+				lessonType: {
+					not: 'UNDEFINED'
+				}
 			},
 			select: {
-				lessonType: true
+				section: {
+					select: {
+						course: {
+							select: {
+								instructor: {
+									select: {
+										userId: true
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		});
-
-		if(lesson && lesson.lessonType === 'UNDEFINED') {
-			return true
-		}
-		return false; 
 	};
 
 	private async updateLessonInfo(lessonId: number, time: number, lessonType?: LessonType, transaction?: TransactionType) {
@@ -42,6 +53,27 @@ export class ArticleService implements IArticleService {
 		}, transaction)
 	};
 
+	async isResourceBelongsToCurrentUser(resourceId: number, user: ExtendedUser): Promise<boolean> {
+		if(!user.roles.includes('Instructor')) {
+			return true
+		}
+		const article = await this.articleRepository.findFirst({
+			where: {
+				id: resourceId,
+				lesson: {
+					section: {
+						course: {
+							instructor: {
+								userId: user.id
+							}
+						}
+					}
+				}
+			}
+		});
+		return article ? true : false;
+	};
+
 	count(args: Prisma.ArticleCountArgs): Promise<number> {
 		return this.articleRepository.count(args);
 	};
@@ -55,9 +87,13 @@ export class ArticleService implements IArticleService {
 	};
 
 	async create(args: {data: CreateArticle, select?: Prisma.ArticleSelect, include?: Prisma.ArticleInclude}, transaction?: TransactionType): Promise<Article> {
-		const {lessonId, title, content, time} = args.data;
-		if(!await this.isLessonAvailable(lessonId)) {
+		const {lessonId, title, content, time, user} = args.data;
+		const lesson: any = await this.isLessonAvailable(lessonId)
+		if(!lesson) {
 			throw new APIError('This lesson is not available', HttpStatusCode.BadRequest);
+		}
+		if(user.roles.includes('Instructor') && lesson.section.course.instructor.userId !== user.id) {
+			throw new APIError('This lesson is not yours', HttpStatusCode.Forbidden);
 		}
 		return Transaction.transact<Article>(async (prismaTransaction) => {
 			await this.updateLessonInfo(lessonId, time, 'ARTICLE', prismaTransaction);
@@ -79,7 +115,10 @@ export class ArticleService implements IArticleService {
 	};
 
 	async update(args: {data: UpdateArticle, select?: Prisma.ArticleSelect, include?: Prisma.ArticleInclude}, transaction?: TransactionType): Promise<Article> {
-		const {id, title, content, time} = args.data;
+		const {id, title, content, time, user} = args.data;
+		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
+			throw new APIError('This article is not yours', HttpStatusCode.Forbidden);
+		}
 		return Transaction.transact<Article>(async (prismaTransaction) => {
 			const updatedArticle = await this.articleRepository.update({
 				where: {
@@ -101,7 +140,11 @@ export class ArticleService implements IArticleService {
 		}, transaction);
 	};
 
-	delete(id: number, transaction?: TransactionType): Promise<Article> {
+	async delete(args: {id: number, user: ExtendedUser}, transaction?: TransactionType): Promise<Article> {
+		const {id, user} = args;
+		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
+			throw new APIError('This article is not yours', HttpStatusCode.Forbidden);
+		}
 		return Transaction.transact<Article>(async (prismaTransaction) => {
 			const deletedArticle = await this.articleRepository.delete(id, prismaTransaction);
 			await this.updateLessonInfo(deletedArticle.lessonId, 0, 'UNDEFINED', prismaTransaction);

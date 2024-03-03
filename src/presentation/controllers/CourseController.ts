@@ -77,7 +77,8 @@ export class CourseController {
 		const updatedCourse = await this.courseService.update({
 			data: {
 				...request.body.input,
-				id: +request.params.id
+				id: +request.params.id,
+				user: request.user
 			},
 			select,
 			include
@@ -87,7 +88,7 @@ export class CourseController {
 	});
 
 	deleteCourse = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
-		const deletedCourse = await this.courseService.delete(+request.params.id);
+		const deletedCourse = await this.courseService.delete({id: +request.params.id, user: request.user});
 		this.logService.log('DELETE', 'COURSE', deletedCourse, request.user);
 		response.status(HttpStatusCode.NoContent).json();
 	});

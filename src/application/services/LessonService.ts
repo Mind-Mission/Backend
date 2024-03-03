@@ -3,16 +3,18 @@ import {inject, injectable } from "inversify"
 import slugify from "slugify"
 import { ILessonService } from "../interfaces/IServices/ILessonService"
 import { ICourseService } from "../interfaces/IServices/ICourseService"
+import { ISectionService } from "../interfaces/IServices/ISectionService"
 import { ILessonRepository } from "../interfaces/IRepositories/ILessonRepository"
 import { CreateLesson, UpdateLesson } from "../inputs/lessonInput"
 import { TransactionType } from "../types/TransactionType"
+import { ExtendedUser } from "../types/ExtendedUser"
 import { Transaction } from "../../infrastructure/services/Transaction"
 import APIError from "../../presentation/errorHandlers/APIError"
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode"
 
 @injectable()
 export class LessonService implements ILessonService {
-	constructor(@inject('ILessonRepository') private lessonRepository: ILessonRepository, @inject('ICourseService') private courseService: ICourseService) {}
+	constructor(@inject('ILessonRepository') private lessonRepository: ILessonRepository, @inject('ISectionService') private sectionService: ISectionService, @inject('ICourseService') private courseService: ICourseService) {}
 
 	private async updateCourseInfo(lessonId: number, operationType: | "update" | "delete", transaction?: TransactionType, lessonType?: LessonType, time?: number) {
 		const lesson = await this.lessonRepository.findUnique({
@@ -76,7 +78,26 @@ export class LessonService implements ILessonService {
 				id: true
 			},
 		}, transaction);
-	}
+	};
+
+	async isResourceBelongsToCurrentUser(resourceId: number, user: ExtendedUser): Promise<boolean> {
+		if(!user.roles.includes('Instructor')) {
+			return true;
+		}
+		const lesson = await this.lessonRepository.findFirst({
+			where: {
+				id: resourceId,
+				section: {
+					course: {
+						instructor: {
+							userId: user.id,
+						}
+					}
+				}
+			}
+		});
+		return lesson ? true : false;
+	};
 
 	count(args: Prisma.LessonCountArgs): Promise<number> {
 		return this.lessonRepository.count(args);
@@ -90,8 +111,12 @@ export class LessonService implements ILessonService {
 		return this.lessonRepository.findUnique(args);
 	};
 
+	findFirst(args: Prisma.LessonFindFirstArgs): Promise<Lesson | null> {
+		return this.lessonRepository.findFirst(args);
+	};
+
 	async create(args: {data: CreateLesson, select?: Prisma.LessonSelect, include?: Prisma.LessonInclude}, transaction?: TransactionType): Promise<Lesson> {
-		const {title, order, attachment, isFree, isAvailable, sectionId} = args.data;
+		const {title, order, attachment, isFree, isAvailable, sectionId, user} = args.data;
 		const slug = slugify(args.data.title.toString(), {lower: true, trim: true});
 		const isOrderIsFound = await this.lessonRepository.findFirst({
 			where: {
@@ -104,6 +129,9 @@ export class LessonService implements ILessonService {
 		});
 		if(isOrderIsFound) {
 			throw new APIError("There is another lesson with the same order", HttpStatusCode.BadRequest);
+		}
+		if(!await this.sectionService.isResourceBelongsToCurrentUser(sectionId, user)) {
+			throw new APIError('This section is not yours', HttpStatusCode.Forbidden);
 		}
 		return this.lessonRepository.create({
 			data: {
@@ -126,8 +154,11 @@ export class LessonService implements ILessonService {
 	}
 
 	async update(args: {data: UpdateLesson, select?: Prisma.LessonSelect, include?: Prisma.LessonInclude}, transaction?: TransactionType): Promise<Lesson> {
-		const {id, title, attachment, isFree, isAvailable, lessonType, time} = args.data;
+		const {id, title, attachment, isFree, isAvailable, lessonType, time, user} = args.data;
 		const slug = title ? slugify(title.toString(), {lower: true, trim: true}) : undefined;
+		if(user && !await this.isResourceBelongsToCurrentUser(id, user)) {
+			throw new APIError('This Lesson is not yours', HttpStatusCode.Forbidden);
+		}
 		return Transaction.transact<Lesson>(async (prismaTransaction) => {
 			(lessonType || time) && await this.updateCourseInfo(id, 'update', prismaTransaction, lessonType, time);
 			return await this.lessonRepository.update({
@@ -149,7 +180,11 @@ export class LessonService implements ILessonService {
 		}, transaction);
 	};
 
-	delete(id: number, transaction?: TransactionType): Promise<Lesson> {
+	async delete(args: {id: number, user: ExtendedUser}, transaction?: TransactionType): Promise<Lesson> {
+		const {id, user} = args;
+		if(user && !await this.isResourceBelongsToCurrentUser(id, user)) {
+			throw new APIError('This Lesson is not yours', HttpStatusCode.Forbidden);
+		}
 		return Transaction.transact<Lesson>(async (prismaTransaction) => {
 			await this.updateCourseInfo(id, 'delete', prismaTransaction, undefined, 0);
 			return this.lessonRepository.delete(id, prismaTransaction);

@@ -8,7 +8,7 @@ import { TransactionType } from "../types/TransactionType";
 import { Transaction } from "../../infrastructure/services/Transaction";
 import APIError from "../../presentation/errorHandlers/APIError";
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
-import prisma from "../../domain/db";
+import { ExtendedUser } from "../types/ExtendedUser";
 
 @injectable()
 export class QuizService implements IQuizService {
@@ -20,7 +20,20 @@ export class QuizService implements IQuizService {
 				id: lessonId
 			},
 			select: {
-				lessonType: true
+				lessonType: true,
+				section: {
+					select: {
+						course: {
+							select: {
+								instructor: {
+									select: {
+										userId: true
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		});
 
@@ -43,6 +56,27 @@ export class QuizService implements IQuizService {
 		}, transaction)
 	};
 
+	async isResourceBelongsToCurrentUser(resourceId: number, user: ExtendedUser): Promise<boolean> {
+		if(!user.roles.includes('Instructor')) {
+			return true
+		}
+		const quiz = await this.quizRepository.findFirst({
+			where: {
+				id: resourceId,
+				lesson: {
+					section: {
+						course: {
+							instructor: {
+								userId: user.id
+							}
+						}
+					}
+				}
+			}
+		});
+		return quiz ? true : false;
+	};
+
 	count(args: Prisma.QuizCountArgs): Promise<number> {
 		return this.quizRepository.count(args);
 	};
@@ -56,9 +90,13 @@ export class QuizService implements IQuizService {
 	};
 
 	async create(args: {data: CreateQuiz, select?: Prisma.QuizSelect, include?: Prisma.QuizInclude}, transaction?: TransactionType): Promise<Quiz> {
-		const {title, description, time, questions, lessonId} = args.data;
-		if(!await this.isLessonAvailable(lessonId)) {
+		const {title, description, time, questions, lessonId, user} = args.data;
+		const lesson: any = await this.isLessonAvailable(lessonId)
+		if(!lesson) {
 			throw new APIError('This lesson is not available', HttpStatusCode.BadRequest);
+		}
+		if(user.roles.includes('Instructor') && lesson.section.course.instructor.userId !== user.id) {
+			throw new APIError('This lesson is not yours', HttpStatusCode.Forbidden);
 		}
 		return Transaction.transact<Quiz>(async (prismaTransaction) => {
 			await this.updateLessonInfo(lessonId, time, 'QUIZ', prismaTransaction);
@@ -96,7 +134,10 @@ export class QuizService implements IQuizService {
 	};
 
 	async update(args: {data: UpdateQuiz, select?: Prisma.QuizSelect, include?: Prisma.QuizInclude}, transaction?: TransactionType): Promise<Quiz> {
-		const {id, title, description, time, questions} = args.data;
+		const {id, title, description, time, questions, user} = args.data;
+		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
+			throw new APIError('This video is not yours', HttpStatusCode.Forbidden);
+		}
 		return Transaction.transact<Quiz>(async (prismaTransaction) => {
 			const updatedQuiz = await this.quizRepository.update({
 				where: {
@@ -153,7 +194,11 @@ export class QuizService implements IQuizService {
 		}, transaction);
 	};
 
-	async delete(id: number, transaction?: TransactionType): Promise<Quiz> {
+	async delete(args: {id: number, user: ExtendedUser}, transaction?: TransactionType): Promise<Quiz> {
+		const {id, user} = args;
+		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
+			throw new APIError('This quiz is not yours', HttpStatusCode.Forbidden);
+		}
 		return Transaction.transact<Quiz>(async (prismaTransaction) => {
 			const deletedQuiz = await this.quizRepository.delete(id, prismaTransaction);
 			await this.updateLessonInfo(deletedQuiz.lessonId, 0, 'UNDEFINED', prismaTransaction);

@@ -1,4 +1,5 @@
 import { CourseLevel, Language } from "@prisma/client";
+import { ExtendedUser } from "../types/ExtendedUser";
 
 export type CreateCourse = {
   title: string;
@@ -35,4 +36,5 @@ export type UpdateCourse = {
   quizzes?: number;
   sections?: {id: number, order: number}[];
   topicId?: number;
+  user?: ExtendedUser;
 }

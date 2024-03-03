@@ -2,15 +2,37 @@ import { Prisma, Section } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import slugify from "slugify"
 import { ISectionService } from "../interfaces/IServices/ISectionService"
+import { ICourseService } from "../interfaces/IServices/ICourseService"
 import { ISectionRepository } from "../interfaces/IRepositories/ISectionRepository"
 import { CreateSection, UpdateSection } from "../inputs/sectionInput"
 import { TransactionType } from "../types/TransactionType"
+import { ExtendedUser } from "../types/ExtendedUser"
 import APIError from "../../presentation/errorHandlers/APIError"
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode"
 
 @injectable()
 export class SectionService implements ISectionService {
-	constructor(@inject('ISectionRepository') private sectionRepository: ISectionRepository) {}
+	constructor(@inject('ISectionRepository') private sectionRepository: ISectionRepository, @inject('ICourseService') private courseService: ICourseService) {}
+
+	async isResourceBelongsToCurrentUser(sectionId: number, user: ExtendedUser): Promise<boolean> {
+		if(!user.roles.includes('Instructor')) {
+			return true;
+		}
+		const section = await this.findFirst({
+			where: {
+				id: sectionId,
+				course: {
+					instructor: {
+						userId: user.id
+					}
+				}
+			},
+			select: {
+				id: true
+			}
+		});
+		return section ? true : false;
+	};
 
 	count(args: Prisma.SectionCountArgs): Promise<number> {
 		return this.sectionRepository.count(args);
@@ -29,7 +51,7 @@ export class SectionService implements ISectionService {
 	};
 
   async create(args: {data: CreateSection, select?: Prisma.SectionSelect, include?: Prisma.SectionInclude}, transaction?: TransactionType): Promise<Section> {
-		const {title, description, isAvailable, order, courseId} = args.data;
+		const {title, description, isAvailable, order, courseId, user} = args.data;
 		const slug = slugify(title, {lower: true, trim: true});
 		const isOrderExist = await this.findFirst({
 			where: {
@@ -42,6 +64,9 @@ export class SectionService implements ISectionService {
 		});
 		if(isOrderExist) {
 			throw new APIError('There is already section with the same order', HttpStatusCode.BadRequest);
+		}
+		if(!await this.courseService.isResourceBelongsToCurrentUser(courseId, user)) {
+			throw new APIError('This course is not yours', HttpStatusCode.Forbidden);
 		}
 		return this.sectionRepository.create({
 			data: {
@@ -59,11 +84,14 @@ export class SectionService implements ISectionService {
 			select: args?.select,
 			include: args?.include
 		}, transaction);
-	}
+	};
 
 	async update(args: {data: UpdateSection, select?: Prisma.SectionSelect, include?: Prisma.SectionInclude}, transaction: TransactionType): Promise<Section> {
-		const {id, title, description, isAvailable, lessons} = args.data;
+		const {id, title, description, isAvailable, lessons, user} = args.data;
 		const slug = title ? slugify(title.toString(), {lower: true, trim: true}) : undefined;
+		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
+			throw new APIError('This section is not yours', HttpStatusCode.Forbidden);
+		}
 		return this.sectionRepository.update({
 			where: {
 				id: id
@@ -91,7 +119,11 @@ export class SectionService implements ISectionService {
 		}, transaction);
 	}
 
-	delete(id: number, transaction: TransactionType): Promise<Section> {
+	async delete(args: {id: number, user: ExtendedUser}, transaction: TransactionType): Promise<Section> {
+		const {id, user} = args; 
+		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
+			throw new APIError('This section is not yours', HttpStatusCode.Forbidden);
+		}
 		return this.sectionRepository.delete(id, transaction);
 	};
 }
