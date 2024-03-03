@@ -28,5 +28,4 @@ export type UpdateQuiz = {
   description?: string; 
   time?: number; 
   questions?: Question[]; 
-  user: ExtendedUser;
 }

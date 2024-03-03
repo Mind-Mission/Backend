@@ -1,6 +1,7 @@
 import { Lesson, LessonType, Prisma, Video } from "@prisma/client";
 import {inject, injectable } from "inversify";
 import { IVideoService } from "../interfaces/IServices/IVideoService";
+import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { ILessonService } from "../interfaces/IServices/ILessonService";
 import { IVideoRepository } from "../interfaces/IRepositories/IVideoRepository";
 import { CreateVideo, UpdateVideo } from "../inputs/videoInput";
@@ -11,7 +12,7 @@ import APIError from "../../presentation/errorHandlers/APIError";
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 
 @injectable()
-export class VideoService implements IVideoService {
+export class VideoService implements IVideoService, IResourceOwnership<Video> {
 	constructor(@inject('IVideoRepository') private videoRepository: IVideoRepository, @inject('ILessonService') private lessonService: ILessonService) {}
 
 	private async isLessonAvailable(lessonId: number): Promise<Lesson | null> {
@@ -115,11 +116,8 @@ export class VideoService implements IVideoService {
 		}, transaction);
 	}
 
-	async update(args: {data: UpdateVideo, select?: Prisma.VideoSelect, include?: Prisma.VideoInclude}, transaction?: TransactionType): Promise<Video> {
+	update(args: {data: UpdateVideo, select?: Prisma.VideoSelect, include?: Prisma.VideoInclude}, transaction?: TransactionType): Promise<Video> {
 		const {id, title, description, url, time, user} = args.data;
-		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
-			throw new APIError('This video is not yours', HttpStatusCode.Forbidden);
-		}
 		return Transaction.transact<Video>(async (prismaTransaction) => {
 			const updateVideo = await this.videoRepository.update({
 				where: {
@@ -145,11 +143,7 @@ export class VideoService implements IVideoService {
 		}, transaction);
 	}
 
-	async delete(args: {id: number, user: ExtendedUser}, transaction?: TransactionType): Promise<Video> {
-		const {id, user} = args;
-		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
-			throw new APIError('This video is not yours', HttpStatusCode.Forbidden);
-		}
+	delete(id: number, transaction?: TransactionType): Promise<Video> {
 		return Transaction.transact<Video>(async (prismaTransaction) => {
 			const deletedVideo = await this.videoRepository.delete(id);
 			await this.updateLessonInfo(deletedVideo.lessonId, 0, 'UNDEFINED', prismaTransaction);

@@ -19,5 +19,4 @@ export type UpdateLesson = {
   attachment?: string; 
   lessonType?: LessonType;
   time?: number;
-  user?: ExtendedUser;
 };

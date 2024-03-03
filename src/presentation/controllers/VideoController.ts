@@ -38,7 +38,7 @@ export class VideoController {
 
 	createVideo = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
-		const createdVideo = await this.videoService.create({data: {...request.body.input, user: request.user}, select, include});
+		const createdVideo = await this.videoService.create({data: request.body.input, select, include});
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The video is created successfully', [createdVideo]));
 	});
 	
@@ -47,8 +47,7 @@ export class VideoController {
 		const updatedVideo = await this.videoService.update({
 			data: {
 				...request.body.input,
-				id: +request.params.id,
-				user: request.user
+				id: +request.params.id
 			},
 			select,
 			include,
@@ -57,7 +56,7 @@ export class VideoController {
 	});
 	
 	deleteVideo = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
-		await this.videoService.delete({id: +request.params.id, user: request.user as any});
+		await this.videoService.delete(+request.params.id);
 		response.status(HttpStatusCode.NoContent).json();
 	});
 }

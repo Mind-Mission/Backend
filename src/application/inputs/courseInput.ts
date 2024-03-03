@@ -36,5 +36,4 @@ export type UpdateCourse = {
   quizzes?: number;
   sections?: {id: number, order: number}[];
   topicId?: number;
-  user?: ExtendedUser;
 }

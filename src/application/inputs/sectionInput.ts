@@ -6,7 +6,6 @@ export type CreateSection = {
   isAvailable?: Boolean;
   order: number;
   courseId: number;
-  user: ExtendedUser;
 }
 
 export type UpdateSection = {
@@ -15,5 +14,4 @@ export type UpdateSection = {
   description?: string;
   isAvailable?: Boolean;
   lessons?: {id: number, order: number}[];
-  user: ExtendedUser;
 }

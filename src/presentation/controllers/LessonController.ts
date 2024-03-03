@@ -38,7 +38,7 @@ export class LessonController {
 
 	createLesson = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
-		const createdLesson = await this.lessonService.create({data: {...request.body.input, user: request.user}, select, include});
+		const createdLesson = await this.lessonService.create({data: request.body.input, select, include});
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The lesson is created successfully', [createdLesson]));
 	});
 
@@ -50,7 +50,6 @@ export class LessonController {
 				time: undefined,
 				lessonType: undefined,
 				id: +request.params.id,
-				user: request.user
 			},
 			select,
 			include,
@@ -59,7 +58,7 @@ export class LessonController {
 	});
 
 	deleteLesson = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
-		await this.lessonService.delete({id: +request.params.id, user: request.user});
+		await this.lessonService.delete(+request.params.id);
 		response.status(HttpStatusCode.NoContent).json();
 	});
 }

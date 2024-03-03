@@ -1,17 +1,18 @@
 import { Prisma, Article, LessonType, Lesson } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { CreateArticle, UpdateArticle } from "../inputs/articleInput";
-import { TransactionType } from "../types/TransactionType";
 import { IArticleRepository } from "../interfaces/IRepositories/IArticleRepository"
 import { IArticleService } from "../interfaces/IServices/IArticleService"
+import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { ILessonService } from "../interfaces/IServices/ILessonService";
+import { TransactionType } from "../types/TransactionType";
+import { ExtendedUser } from "../types/ExtendedUser";
 import { Transaction } from "../../infrastructure/services/Transaction";
 import APIError from "../../presentation/errorHandlers/APIError";
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
-import { ExtendedUser } from "../types/ExtendedUser";
 
 @injectable()
-export class ArticleService implements IArticleService {
+export class ArticleService implements IArticleService, IResourceOwnership<Article> {
 	constructor(@inject('IArticleRepository') private articleRepository: IArticleRepository, @inject('ILessonService') private lessonService: ILessonService) {}
 
 	private async isLessonAvailable(lessonId: number): Promise<Lesson | null> {
@@ -114,11 +115,8 @@ export class ArticleService implements IArticleService {
 		}, transaction);
 	};
 
-	async update(args: {data: UpdateArticle, select?: Prisma.ArticleSelect, include?: Prisma.ArticleInclude}, transaction?: TransactionType): Promise<Article> {
-		const {id, title, content, time, user} = args.data;
-		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
-			throw new APIError('This article is not yours', HttpStatusCode.Forbidden);
-		}
+	update(args: {data: UpdateArticle, select?: Prisma.ArticleSelect, include?: Prisma.ArticleInclude}, transaction?: TransactionType): Promise<Article> {
+		const {id, title, content, time} = args.data;
 		return Transaction.transact<Article>(async (prismaTransaction) => {
 			const updatedArticle = await this.articleRepository.update({
 				where: {
@@ -140,11 +138,7 @@ export class ArticleService implements IArticleService {
 		}, transaction);
 	};
 
-	async delete(args: {id: number, user: ExtendedUser}, transaction?: TransactionType): Promise<Article> {
-		const {id, user} = args;
-		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
-			throw new APIError('This article is not yours', HttpStatusCode.Forbidden);
-		}
+	delete(id: number, transaction?: TransactionType): Promise<Article> {
 		return Transaction.transact<Article>(async (prismaTransaction) => {
 			const deletedArticle = await this.articleRepository.delete(id, prismaTransaction);
 			await this.updateLessonInfo(deletedArticle.lessonId, 0, 'UNDEFINED', prismaTransaction);

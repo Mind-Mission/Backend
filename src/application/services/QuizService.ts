@@ -2,6 +2,7 @@ import { LessonType, Prisma, Quiz } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { IQuizService } from "../interfaces/IServices/IQuizService"
 import { ILessonService } from "../interfaces/IServices/ILessonService";
+import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { IQuizRepository } from "../interfaces/IRepositories/IQuizRepository"
 import { CreateQuiz, UpdateQuiz } from "../inputs/quizInput";
 import { TransactionType } from "../types/TransactionType";
@@ -11,7 +12,7 @@ import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 import { ExtendedUser } from "../types/ExtendedUser";
 
 @injectable()
-export class QuizService implements IQuizService {
+export class QuizService implements IQuizService, IResourceOwnership<Quiz> {
 	constructor(@inject('IQuizRepository') private quizRepository: IQuizRepository, @inject('ILessonService') private lessonService: ILessonService) {}
 
 	private async isLessonAvailable(lessonId: number): Promise<boolean> {
@@ -133,11 +134,8 @@ export class QuizService implements IQuizService {
 		}, transaction);
 	};
 
-	async update(args: {data: UpdateQuiz, select?: Prisma.QuizSelect, include?: Prisma.QuizInclude}, transaction?: TransactionType): Promise<Quiz> {
-		const {id, title, description, time, questions, user} = args.data;
-		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
-			throw new APIError('This video is not yours', HttpStatusCode.Forbidden);
-		}
+	update(args: {data: UpdateQuiz, select?: Prisma.QuizSelect, include?: Prisma.QuizInclude}, transaction?: TransactionType): Promise<Quiz> {
+		const {id, title, description, time, questions} = args.data;
 		return Transaction.transact<Quiz>(async (prismaTransaction) => {
 			const updatedQuiz = await this.quizRepository.update({
 				where: {
@@ -194,11 +192,7 @@ export class QuizService implements IQuizService {
 		}, transaction);
 	};
 
-	async delete(args: {id: number, user: ExtendedUser}, transaction?: TransactionType): Promise<Quiz> {
-		const {id, user} = args;
-		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
-			throw new APIError('This quiz is not yours', HttpStatusCode.Forbidden);
-		}
+	delete(id: number, transaction?: TransactionType): Promise<Quiz> {
 		return Transaction.transact<Quiz>(async (prismaTransaction) => {
 			const deletedQuiz = await this.quizRepository.delete(id, prismaTransaction);
 			await this.updateLessonInfo(deletedQuiz.lessonId, 0, 'UNDEFINED', prismaTransaction);

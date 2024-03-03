@@ -3,6 +3,7 @@ import {inject, injectable } from "inversify";
 import slugify from "slugify";
 import { ICourseRepository } from "../interfaces/IRepositories/ICourseRepository";
 import { ICourseService } from "../interfaces/IServices/ICourseService";
+import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { ICategoryService } from "../interfaces/IServices/ICategoryService";
 import { CreateCourse, UpdateCourse } from "../inputs/courseInput";
 import { ExtendedUser } from "../types/ExtendedUser";
@@ -11,7 +12,7 @@ import APIError from "../../presentation/errorHandlers/APIError";
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 
 @injectable()
-export class CourseService implements ICourseService {
+export class CourseService implements ICourseService, IResourceOwnership<Course> {
 	constructor(@inject('ICourseRepository') private courseRepository: ICourseRepository, @inject('ICategoryService') private categoryService: ICategoryService) {}
 
 	private async isTrueTopic(id: number): Promise<boolean> {
@@ -100,13 +101,10 @@ export class CourseService implements ICourseService {
 	};
 
 	async update(args: {data: UpdateCourse, select?: Prisma.CourseSelect, include?: Prisma.CourseInclude}, transaction?: TransactionType): Promise<Course> {
-    const {id, title, shortDescription, description, language, level, imageCover, requirements, courseTeachings, price, discountPercentage, hours, lectures, articles, quizzes, isApproved, isDraft, sections: sections, topicId, user} = args.data;
+    const {id, title, shortDescription, description, language, level, imageCover, requirements, courseTeachings, price, discountPercentage, hours, lectures, articles, quizzes, isApproved, isDraft, sections: sections, topicId} = args.data;
 		const slug = title ? slugify(title, {lower: true, trim: true}) : undefined;
 		if(topicId && !await this.isTrueTopic(topicId)) {
 			throw new APIError("This topic may be not exist or may be exist but not a topic", HttpStatusCode.BadRequest);
-		}
-		if(user && !await this.isResourceBelongsToCurrentUser(id, user as any)) {
-			throw new APIError('This course is not yours', HttpStatusCode.Forbidden);
 		}
 		return this.courseRepository.update({
 			where: {
@@ -154,11 +152,7 @@ export class CourseService implements ICourseService {
 		}, transaction);
 	};
 
-	async delete(args: {id: number, user: ExtendedUser}, transaction?: TransactionType): Promise<Course> {
-		const {id, user} = args;
-		if(!await this.isResourceBelongsToCurrentUser(id, user)) {
-			throw new APIError('This course is not yours', HttpStatusCode.Forbidden);
-		}
+	delete(id: number, transaction?: TransactionType): Promise<Course> {
 		return this.courseRepository.delete(id, transaction);
 	};
 }

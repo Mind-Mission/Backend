@@ -13,5 +13,4 @@ export type UpdateArticle = {
   title?: string;
   content?: string;
   time?: number;
-  user: ExtendedUser;
 }
