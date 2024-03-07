@@ -5,7 +5,7 @@ import { ExtendedRequest } from "../types/ExtendedRequest";
 import {IMessageService} from "../../application/interfaces/IServices/IMessageService"
 import { ILogService } from "../../application/interfaces/IServices/ILogService";
 import { RequestManager } from "../services/RequestManager";
-import { SendEmail } from "../services/SendEmail";
+import { SendEmail } from "../../application/helpers/SendEmail";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from '../enums/HTTPStatusCode';

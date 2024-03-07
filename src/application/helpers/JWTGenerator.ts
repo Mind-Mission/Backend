@@ -1,19 +1,19 @@
 import JWT, { JwtPayload } from "jsonwebtoken"
-import { ExtendedUser } from "../../application/types/ExtendedUser";
+import { ExtendedUser } from "../types/ExtendedUser";
 
 export abstract class JWTGenerator {
   private static accessTokenSecretKey: string = process.env.JWT_Access_Token_Secret_Key as string;
   private static refreshTokenSecretKey: string = process.env.JWT_Refresh_Token_Secret_Key as string;
   private static emailVerificationTokenSecretKey: string = process.env.JWT_Email_Verification_Token_Secret_Key as string;
 
-  static generateAccessToken(user: ExtendedUser) {
-    const {firstName, lastName, email, picture} = user;
-    return JWT.sign({firstName, lastName, email, picture}, this.accessTokenSecretKey, {expiresIn: "3d"});
+  static generateAccessToken(user: any) {
+    const {id, firstName, lastName, email, picture, isActive, isBlocked, isDeleted, isEmailVerified, roles, permissions} = user;
+    return JWT.sign({id, firstName, lastName, email, picture, isActive, isBlocked, isDeleted, isEmailVerified, roles, permissions}, this.accessTokenSecretKey, {expiresIn: "3d"});
   };
 
   static generateRefreshToken(user: ExtendedUser) {
-    const {firstName, lastName, email, picture} = user;
-    return JWT.sign({firstName, lastName, email, picture}, this.refreshTokenSecretKey, {expiresIn: "30d"});
+    const {id, firstName, lastName, email, picture, isActive, isBlocked, isDeleted, isEmailVerified, roles, permissions} = user;
+    return JWT.sign({id, firstName, lastName, email, picture, isActive, isBlocked, isDeleted, isEmailVerified, roles, permissions}, this.refreshTokenSecretKey, {expiresIn: "30d"});
   };
 
   static generateEmailVerificationToken(user: ExtendedUser) {

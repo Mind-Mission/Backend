@@ -4,7 +4,7 @@ import asyncHandler from "express-async-handler";
 import {inject, injectable} from "inversify";
 import {IUserService} from "../../../application/interfaces/IServices/IUserService";
 import { ExtendedRequest } from "../../types/ExtendedRequest";
-import { JWTGenerator } from "../../services/JWTGenerator";
+import { JWTGenerator } from "../../../application/helpers/JWTGenerator";
 import APIError from "../../errorHandlers/APIError";
 import HttpStatusCode from "../../enums/HTTPStatusCode";
 
@@ -30,19 +30,11 @@ export class Authorization {
   isAuthenticated = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => { 
     if(request.headers.authorization && request.headers.authorization.startsWith("Bearer")) {
       const token = request.headers.authorization.split(" ")[1];
-      const decodedPayload = JWTGenerator.verifyAccessToken(token);
-      const user = await this.userService.findFirst({
-        where: {
-          email: {equals: decodedPayload?.email, mode: 'insensitive'}
-        },
-        include: {
-          permissions: true,
-        }
-      });
-      if(!user || this.isTokenCreatedBeforeUpdatingPassword(decodedPayload, user.passwordUpdatedTime)) {
-        throw new APIError("Unauthorized, try to login again", HttpStatusCode.Unauthorized);
-      }
-      request.user = user;
+      const payload = JWTGenerator.verifyAccessToken(token);
+      // if(!user || this.isTokenCreatedBeforeUpdatingPassword(payload, user.passwordUpdatedTime)) {
+      //   throw new APIError("Unauthorized, try to login again", HttpStatusCode.Unauthorized);
+      // }
+      request.user = payload;
       next();
     }
   });
