@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
-import { EmailContent } from '../types/EmailContent';
-import APIError from '../errorHandlers/APIError';
-import HttpStatusCode from '../enums/HTTPStatusCode';
+import { EmailContent } from '../../presentation/types/EmailContent';
+import APIError from '../../presentation/errorHandlers/APIError';
+import HttpStatusCode from '../../presentation/enums/HTTPStatusCode';
 
 export abstract class SendEmail {
   private static host = process.env.Email_Host;

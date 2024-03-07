@@ -6,15 +6,15 @@ import bcrypt from 'bcrypt';
 import { IUserService } from "../../application/interfaces/IServices/IUserService";
 import { ILogService } from "../../application/interfaces/IServices/ILogService";
 import { ExtendedUser } from "../../application/types/ExtendedUser";
-import { JWTGenerator } from "../services/JWTGenerator";
+import { JWTGenerator } from "../../application/helpers/JWTGenerator";
 import { RequestManager } from "../services/RequestManager";
-import { SendEmail } from "../services/SendEmail";
+import { SendEmail } from "../../application/helpers/SendEmail";
 import { UserMapper } from "../mapping/UserMapper";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
+import { SuperAdminPermissions } from "../../application/config/CorePermissions";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from '../enums/HTTPStatusCode';
-import { SuperAdminPermissions } from "../../application/config/CorePermissions";
 
 @injectable()
 export class UserController {

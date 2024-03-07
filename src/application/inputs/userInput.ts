@@ -5,10 +5,10 @@ export type CreateUser = {
   lastName: string;
   email: string;
   password: string;
-  mobilePhone: string;
-  whatsAppNumber: string;
-  bio: string;
-  picture: string;
+  mobilePhone?: string;
+  whatsAppNumber?: string;
+  bio?: string;
+  picture?: string;
   platform?: SSOPlatform;
   isEmailVerified?: boolean;
   role: Role;

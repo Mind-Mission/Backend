@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import server from "../config/ServerCreator";
+import server from "../factory/ServerCreator";
 
 // class Notifier extends Server {
 //   constructor(server: http.Server) {

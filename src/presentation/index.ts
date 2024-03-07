@@ -1,8 +1,8 @@
 import express from "express"
 import cors from 'cors';
 import compression from 'compression';
-import app from "./config/Express";
-import server from "./config/ServerCreator";
+import app from "./factory/Express";
+import server from "./factory/ServerCreator";
 import Logger from "./logger";
 import container from "./DIContainer/DI";
 import { RealTimeManager } from "./services/RealTimeManager";
