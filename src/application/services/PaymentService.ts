@@ -1,11 +1,11 @@
 import { Prisma } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { IPaymentService } from "../interfaces/IServices/IPaymentService"
+import { ICouponService } from "../interfaces/IServices/ICouponService"
+import { ICartService } from "../interfaces/IServices/ICartService";
 import { IPaymentRepository } from "../interfaces/IRepositories/IPaymentRepository"
 import { CreatePayment, UpdatePayment } from "../inputs/paymentInput"
 import { TransactionType } from "../types/TransactionType"
-import { ICartService } from "../interfaces/IServices/ICartService";
-import { ICouponService } from "../interfaces/IServices/ICouponService"
 import { ExtendedPayment } from "../types/ExtendedPayment"
 import APIError from "../../presentation/errorHandlers/APIError"
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode"
@@ -23,10 +23,7 @@ export class PaymentService implements IPaymentService {
 				payments: true
 			}
 		});
-		if(coupon && coupon.expiredAt >= new Date()) {
-			return coupon.discount;
-		}
-		return 0
+		return coupon && coupon.expiredAt >= new Date() ? coupon.discount : 0;
 	}
 
 	count(args: Prisma.PaymentCountArgs): Promise<number> {
@@ -42,12 +39,10 @@ export class PaymentService implements IPaymentService {
 	};
 
   async create(args: {data: CreatePayment, select?: Prisma.PaymentSelect, include?: Prisma.PaymentInclude}, transaction?: TransactionType): Promise<ExtendedPayment> {
-		const {currency, paymentMethod, userId, couponCode} = args.data;		
+		const {currency, paymentMethod, studentId, couponCode} = args.data;		
 		const cart = await this.cartService.findFirst({
 			where: {
-				student: {
-					userId
-				}
+				studentId
 			},
 			select: {
 				id: true,
@@ -87,7 +82,7 @@ export class PaymentService implements IPaymentService {
 				} : undefined,
 				student: {
 					connect: {
-						userId: userId
+						id: studentId
 					}
 				}
 			},
@@ -108,22 +103,6 @@ export class PaymentService implements IPaymentService {
 			select: args.select,
 			include: args.include
 		}, transaction);
-	};
-
-	deleteNotCompletedPayment(id: number, transaction?: TransactionType) {
-		setTimeout(async () => {
-			const payment = await this.paymentRepository.findUnique({
-				where: {
-					id
-				},
-				select: {
-					status: true
-				}
-			});
-			if(payment && payment.status !== "COMPLETE") {
-				await this.delete(id, transaction);
-			}
-		}, 1000 * 60 * 11); // 11 Min
 	};
 
 	delete(id: number, transaction?: TransactionType): Promise<ExtendedPayment> {

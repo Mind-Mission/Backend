@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, request } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
 import {IStudentService} from "../../application/interfaces/IServices/IStudentService"
@@ -41,7 +41,7 @@ export class StudentController {
 		const {courseId} = request.body.input;
 		const updatedStudent = await this.studentService.update({
 			data: {
-				userId: request.user?.id as number, 
+				id: request.user?.student?.id as number, 
 				wishlistCourse: {
 					operation: "connect",
 					courseId
@@ -58,7 +58,7 @@ export class StudentController {
 		const {courseId} = request.body.input;
 		const updatedStudent = await this.studentService.update({
 			data: {
-				userId: request.user?.id as number, 
+				id: request.user?.student?.id as number, 
 				wishlistCourse: {
 					operation: "disconnect",
 					courseId

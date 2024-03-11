@@ -59,7 +59,7 @@ export class CartService implements ICartService {
 
 	async update(args: {data: UpdateCart, select?: Prisma.CartSelect, include?: Prisma.CartInclude}, transaction?: TransactionType): Promise<Cart> {
 		const {userId, courseId, operation} = args.data;
-    if(await this.isCurrentUserInstructorForThisCourse(userId, courseId)) {
+    if(operation === 'Add' && await this.isCurrentUserInstructorForThisCourse(userId, courseId)) {
       throw new APIError('You cannot add your course into your cart', HttpStatusCode.Forbidden);
     }
     const cartId = await this.getCartId(userId);

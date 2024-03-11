@@ -7,9 +7,9 @@ import { IEnrollmentRepository } from "../interfaces/IRepositories/IEnrollmentRe
 import { ICertificateTemplateService } from '../interfaces/IServices/ICertificateTemplateService';
 import { CreateCertificate, UpdateCertificate } from "../inputs/certificateInput"
 import { TransactionType } from "../types/TransactionType"
+import { CertificateInfo } from '../types/CertificateInfo';
 import APIError from "../../presentation/errorHandlers/APIError"
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode"
-import { CertificateInfo } from '../../presentation/types/CertificateInfo';
 
 @injectable()
 export class CertificateService implements ICertificateService {

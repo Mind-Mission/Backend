@@ -38,7 +38,7 @@ export type UpdateUser = {
     resource: Resource;
     cruds: Crud[];
   }[];
-  beInstructor?: boolean;
+  roles?: Role[];
   refreshToken?: string;
   isOnline?: boolean;
   isActive?: boolean;

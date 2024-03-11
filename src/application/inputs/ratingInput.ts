@@ -1,5 +1,5 @@
 export type UpsertRating = {
-  userId: number;
+  studentId: number;
   courseId: number;
   instructorRate?: number;
   courseRate?: number;

@@ -22,9 +22,7 @@ export class SectionService implements ISectionService, IResourceOwnership<Secti
 			where: {
 				id: sectionId,
 				course: {
-					instructor: {
-						userId: user.id
-					}
+					instructorId: user.instructor?.id
 				}
 			},
 			select: {

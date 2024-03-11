@@ -1,27 +1,15 @@
-import { Course, Enrollment, Prisma, Student } from "@prisma/client"
+import {  Prisma } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { IStudentRepository } from "../interfaces/IRepositories/IStudentRepository";
 import { IStudentService } from "../interfaces/IServices/IStudentService";
+import { IUserService } from "../interfaces/IServices/IUserService";
 import { ExtendedStudent } from "../types/ExtendedStudent";
-import { TransactionType } from "../types/TransactionType";
 import { UpdateStudent } from "../inputs/studentInput";
-import APIError from "../../presentation/errorHandlers/APIError";
-import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
+import { TransactionType } from "../types/TransactionType";
 
 @injectable()
 export class StudentService implements IStudentService {
-	constructor(@inject('IStudentRepository') private studentRepository: IStudentRepository) {}
-
-	private async getStudentId(userId: number): Promise<Student | null> {
-		return this.findUnique({
-			where: {
-				userId
-			},
-			select: {
-				id: true,
-			}
-		});
-	};
+	constructor(@inject('IStudentRepository') private studentRepository: IStudentRepository, @inject('IUserService') private userService: IUserService) {}
 
 	count(args: Prisma.StudentCountArgs): Promise<number> {
 		return this.studentRepository.count(args);
@@ -40,30 +28,25 @@ export class StudentService implements IStudentService {
 	};
 
 	async update(args: {data: UpdateStudent, select?: Prisma.StudentSelect, include?: Prisma.StudentInclude}, transaction: TransactionType): Promise<ExtendedStudent> {
-		const {userId, enrolledCourses, wishlistCourse} = args.data;
-		const student = await this.getStudentId(userId);
-		if(!student) {
-			throw new APIError('This student is not exist', HttpStatusCode.BadRequest);
-		}
-		const studentId = student.id;
+		const {id, enrolledCourses, wishlistCourse} = args.data;
 		return this.studentRepository.update({
 			where: {
-				id: studentId
+				id
 			},
 			data: {
 				enrollmentCourses: enrolledCourses ? {
-					upsert: enrolledCourses?.map(id => {
+					upsert: enrolledCourses?.map(courseId => {
 						return {
 							where: {
 								studentId_courseId: {
-									studentId,
-									courseId: id
+									studentId: id,
+									courseId: courseId
 								}
 							},
 							update: {
 								course: {
 									connect: {
-										id
+										id: courseId
 									}
 								}
 							},

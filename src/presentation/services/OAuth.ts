@@ -1,16 +1,18 @@
-import { PlatformInfo } from "../types/Platform";
+import { Request, Response, NextFunction } from "express";
+import { PlatformConfig } from "../types/PlatformConfig";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from "../enums/HTTPStatusCode";
 
 export abstract class OAuth<T> {
-  protected abstract platformInfo: PlatformInfo;
+  protected abstract platformConfig: PlatformConfig;
+
   constructor () {} 
 
   protected abstract getAccessToken(code: string, redirectURL: string): Promise<string>;
-  
+
   protected async getData(code: string, redirectURL: string): Promise<T> {
     const access_token = await this.getAccessToken(code, redirectURL);
-    const response = await fetch(this.platformInfo.scopeURL, {
+    const response = await fetch(this.platformConfig.scopeURL, {
       method: 'GET',  
       headers: { 
         Authorization: `Bearer ${access_token}`,
@@ -22,4 +24,8 @@ export abstract class OAuth<T> {
     }
     return await response.json();
   };
+
+  abstract signup(request: Request, response: Response, next: NextFunction): void;
+
+  abstract login(request: Request, response: Response, next: NextFunction): void;
 };

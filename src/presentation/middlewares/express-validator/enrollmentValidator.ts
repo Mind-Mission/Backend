@@ -2,9 +2,9 @@ import {body} from "express-validator";
 import ErrorExpressValidatorHandler from "../../errorHandlers/ErrorExpressValidatorHandler";
 
 export const addEnrollmentValidation = [
-  body("input.userId")
-    .notEmpty().withMessage("UserId is required")
-    .isInt({min: 1}).withMessage("UserId must be an integer number more than or equal to 1"),
+  body("input.studentId")
+    .notEmpty().withMessage("StudentId is required")
+    .isInt({min: 1}).withMessage("StudentId must be an integer number more than or equal to 1"),
 
   body("input.courseIds")
     .notEmpty().withMessage("CourseIds is required")

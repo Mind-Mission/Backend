@@ -1,4 +1,4 @@
-import { LessonType, Prisma, Quiz } from "@prisma/client"
+import {Prisma, Quiz, LessonType } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { IQuizService } from "../interfaces/IServices/IQuizService"
 import { ILessonService } from "../interfaces/IServices/ILessonService";
@@ -6,10 +6,10 @@ import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { IQuizRepository } from "../interfaces/IRepositories/IQuizRepository"
 import { CreateQuiz, UpdateQuiz } from "../inputs/quizInput";
 import { TransactionType } from "../types/TransactionType";
+import { ExtendedUser } from "../types/ExtendedUser";
 import { Transaction } from "../../infrastructure/services/Transaction";
 import APIError from "../../presentation/errorHandlers/APIError";
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
-import { ExtendedUser } from "../types/ExtendedUser";
 
 @injectable()
 export class QuizService implements IQuizService, IResourceOwnership<Quiz> {
@@ -26,11 +26,7 @@ export class QuizService implements IQuizService, IResourceOwnership<Quiz> {
 					select: {
 						course: {
 							select: {
-								instructor: {
-									select: {
-										userId: true
-									}
-								}
+								instructorId: true
 							}
 						}
 					}
@@ -67,9 +63,7 @@ export class QuizService implements IQuizService, IResourceOwnership<Quiz> {
 				lesson: {
 					section: {
 						course: {
-							instructor: {
-								userId: user.id
-							}
+							instructorId: user.instructor?.id
 						}
 					}
 				}
@@ -96,7 +90,7 @@ export class QuizService implements IQuizService, IResourceOwnership<Quiz> {
 		if(!lesson) {
 			throw new APIError('This lesson is not available', HttpStatusCode.BadRequest);
 		}
-		if(user.roles.includes('Instructor') && lesson.section.course.instructor.userId !== user.id) {
+		if(user.roles.includes('Instructor') && lesson.section.course.instructorId !== user.instructor?.id) {
 			throw new APIError('This lesson is not yours', HttpStatusCode.Forbidden);
 		}
 		return Transaction.transact<Quiz>(async (prismaTransaction) => {

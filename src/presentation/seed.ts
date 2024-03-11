@@ -2,9 +2,9 @@ import { CorrectAnswer, LessonType, QuestionLevel } from "@prisma/client";
 import slugify from "slugify";
 import bcrypt from 'bcrypt';
 import prisma from "../domain/db";
-import { SuperAdminPermissions } from "../application/config/CorePermissions";
+import { SuperAdminPermissions } from "../application/config/SuperAdminPermissions";
 
-export const createSuperAdmin = async () => {
+export const upsertMainSuperAdmin = async () => {
   const {Super_Admin_FirstName, Super_Admin_LastName, Super_Admin_Email, Super_Admin_Password} = process.env;
   await prisma.user.upsert({
     where: {
@@ -34,7 +34,7 @@ export const createSuperAdmin = async () => {
       } 
     },
   });
-  console.log("The main items are upsert into the database successfully ✅");
+  console.log("The super admin is created successfully ✅");
 };
 
 const courses = [

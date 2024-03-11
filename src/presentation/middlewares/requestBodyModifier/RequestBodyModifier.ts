@@ -3,8 +3,8 @@ import asyncHandler from'express-async-handler';
 
 export abstract class RequestBodyModifier {
 
-  static add = (...InsertObjects: {[key: string]: any}[]) => asyncHandler((request: Request, response: Response, next: NextFunction) => {
-    for(const object of InsertObjects) {
+  static add = (...insertedObjects: {[key: string]: any}[]) => asyncHandler((request: Request, response: Response, next: NextFunction) => {
+    for(const object of insertedObjects) {
       request.body.input = {
         ...request.body.input,
         ...object

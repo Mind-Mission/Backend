@@ -89,9 +89,7 @@ export class LessonService implements ILessonService, IResourceOwnership<Lesson>
 				id: resourceId,
 				section: {
 					course: {
-						instructor: {
-							userId: user.id,
-						}
+						instructorId: user.instructor?.id
 					}
 				}
 			}

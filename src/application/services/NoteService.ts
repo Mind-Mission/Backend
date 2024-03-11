@@ -5,27 +5,10 @@ import { IStudentService } from "../interfaces/IServices/IStudentService"
 import { INoteRepository } from "../interfaces/IRepositories/INoteRepository"
 import { UpsertNote } from "../inputs/noteInput"
 import { TransactionType } from "../types/TransactionType"
-import APIError from "../../presentation/errorHandlers/APIError"
-import HttpStatusCode from "../../presentation/enums/HTTPStatusCode"
 
 @injectable()
 export class NoteService implements INoteService {
 	constructor(@inject('INoteRepository') private noteRepository: INoteRepository, @inject('IStudentService') private studentService: IStudentService) {}
-
-  private async getStudentId(userId: number): Promise<number> {
-    const student = await this.studentService.findUnique({
-      where: {
-        userId
-      },
-      select: {
-        id: true
-      }
-    });
-    if(!student) {
-      throw new APIError('This student does not exist', HttpStatusCode.BadRequest);
-    }
-    return student.id;
-  }
 
 	count(args: Prisma.NoteCountArgs): Promise<number> {
 		return this.noteRepository.count(args);
@@ -40,8 +23,7 @@ export class NoteService implements INoteService {
 	};
 
 	async upsert(args: {data: UpsertNote, select?: Prisma.NoteSelect, include?: Prisma.NoteInclude}, transaction?: TransactionType): Promise<Note> {
-    const {time, content, lessonId, userId} = args.data;
-    const studentId = await this.getStudentId(userId);
+    const {time, content, lessonId, studentId} = args.data;
     return this.noteRepository.upsert({
       where: {
         time_lessonId_studentId: {

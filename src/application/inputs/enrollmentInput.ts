@@ -1,5 +1,5 @@
 export type UpdateEnrollment = {
-  userId: number;
+  studentId: number;
   courseId: number;
   lessonId?: number;
 }

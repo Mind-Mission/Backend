@@ -41,7 +41,7 @@ export class NoteController {
 		const updatedNote = await this.noteService.upsert({
 			data: {
 				...request.body.input,
-				userId: request.user?.id
+				studentId: request.user?.student?.id
 			},
 			select,
 			include,

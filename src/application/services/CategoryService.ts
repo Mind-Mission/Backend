@@ -16,7 +16,7 @@ export class CategoryService implements ICategoryService {
 		[CategoryType.CATEGORY]: undefined,
 		[CategoryType.SUBCATEGORY]: CategoryType.CATEGORY,
 		[CategoryType.TOPIC]: CategoryType.SUBCATEGORY
-	}
+	};
 
 	private async isCorrectParent(type: CategoryType, parentId: number | null | undefined): Promise<boolean> {
 		const parentType = this.parentChild[type];
@@ -38,7 +38,7 @@ export class CategoryService implements ICategoryService {
 			};
 		}
 		return false;
-	}
+	};
 
 	count(args: Prisma.CategoryCountArgs): Promise<number> {
 		return this.categoryRepository.count(args);
@@ -54,19 +54,7 @@ export class CategoryService implements ICategoryService {
 
 	async create(args: {data: CreateCategory, select?: Prisma.CategorySelect, include?: Prisma.CategoryInclude}, transaction?: TransactionType): Promise<Category> {
 		const {name, type, description, parentId} = args.data;
-		
 		const slug = slugify(name, {trim: true, lower: true});
-		const isExist = await this.findUnique({
-			where: {
-				slug
-			},
-			select: {
-				id: true
-			}
-		});
-		if(isExist) {
-			throw new APIError('This name already exists', HttpStatusCode.BadRequest);
-		}
 		if(!await this.isCorrectParent(type, parentId)) {
 			const errorMessage = this.parentChild[type] ? `The ${type.toLowerCase()} must belong to a ${this.parentChild[type]?.toLowerCase()}` : 'The category has no parent';
 			throw new APIError(errorMessage, HttpStatusCode.BadRequest);
@@ -90,23 +78,7 @@ export class CategoryService implements ICategoryService {
 
 	async update(args: {data: UpdateCategory, select?: Prisma.CategorySelect, include?: Prisma.CategoryInclude}, transaction?: TransactionType): Promise<Category> {
 		const {id, name, type, description, parentId} = args.data;
-		let slug = undefined
-		if(name) {
-			slug = slugify(name.toString(), {trim: true, lower: true});
-			const isExist = await this.findUnique({
-				where: {
-					slug
-				},
-				select: {
-					id: true
-				}
-			});
-
-			if(isExist && isExist.id !== id) {
-				throw new APIError('This name already exists', HttpStatusCode.BadRequest);
-			}
-		}
-
+		const slug = name ? slugify(name.toString(), {trim: true, lower: true}) : undefined;
 		if(type || parentId) {
 			const category = await this.categoryRepository.findUnique({
 				where: {
@@ -117,16 +89,13 @@ export class CategoryService implements ICategoryService {
 					parentId: true,
 				}
 			});
-
 			const type = (args.data.type || category?.type) as CategoryType;
 			const parentId = (args.data.parentId || category?.parentId) as number;
-
 			if(!await this.isCorrectParent(type, parentId)) {
 				const errorMessage = this.parentChild[type] ? `The ${type.toLowerCase()} must belong to a ${this.parentChild[type]?.toLowerCase()}` : 'The category has no parent';
 				throw new APIError(errorMessage, HttpStatusCode.BadRequest);
 			}
 		}
-
 		return this.categoryRepository.update({
 			where: {
 				id

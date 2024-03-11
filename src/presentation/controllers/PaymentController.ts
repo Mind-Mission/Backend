@@ -27,11 +27,7 @@ export class PaymentController {
 			select: {
 				id: true,
 				status: true,
-				student: {
-					select: {
-						userId: true
-					}
-				},
+				studentId: true,
 				paymentUnits: {
 					select: {
 						courseId: true
@@ -40,7 +36,7 @@ export class PaymentController {
 			}
 		}) as any;
 		const enrolledCourses = updatedPayment?.paymentUnits?.map((unit: any) => unit.courseId);
-		await this.studentService.update({data: {userId: updatedPayment.student.userId, enrolledCourses}});
+		await this.studentService.update({data: {id: updatedPayment.studentId, enrolledCourses}});
 	};
 
 	getPaymentEnums = asyncHandler((request: Request, response: Response, next: NextFunction) => {
@@ -76,7 +72,7 @@ export class PaymentController {
 		const payment = await this.paymentService.create({
 			data: {
         ...request.body.input,
-				userId: request.user?.id as number,
+				studentId: request.user?.student?.id,
 			},
 			select,
 			include: {
@@ -98,7 +94,6 @@ export class PaymentController {
 			const paymentSessionId = await PayPal.createPaymentOrder(payment.id, payment.totalPrice, "USD", payment.discount, orderItems);
 			res = ResponseFormatter.formate(true, 'The payment session is created successfully', [{payment, paymentSessionId}]);
 		}
-		this.paymentService.deleteNotCompletedPayment(payment.id);
 		response.status(HttpStatusCode.Created).json(res);	
   });
 

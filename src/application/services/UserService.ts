@@ -3,7 +3,7 @@ import bcrypt from "bcrypt"
 import { inject, injectable } from "inversify";
 import {IUserService} from "../interfaces/IServices/IUserService"
 import {IUserRepository} from "../interfaces/IRepositories/IUserRepository"
-import { InstructorPermissions } from "../config/CorePermissions";
+import { InstructorPermissions } from "../config/InstructorPermissions";
 import { CreateUser, UpdateUser } from "../inputs/userInput";
 import { ExtendedUser } from "../types/ExtendedUser";
 import { TransactionType } from "../types/TransactionType";
@@ -69,22 +69,12 @@ export class UserService implements IUserService {
 	};
 
 	async update(args: {data: UpdateUser, select?: Prisma.UserSelect, include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
-		let {id, firstName, lastName, email, isEmailVerified, emailVerificationCode, password, passwordUpdatedTime, resetPasswordCode, bio, picture, mobilePhone, whatsAppNumber, refreshToken, isOnline, isActive, isBlocked, isDeleted, beInstructor, permissions, personalLinks} = args.data
+		let {id, firstName, lastName, email, isEmailVerified, emailVerificationCode, password, passwordUpdatedTime, resetPasswordCode, bio, picture, mobilePhone, whatsAppNumber, refreshToken, isOnline, isActive, isBlocked, isDeleted, roles, permissions, personalLinks} = args.data
 		if(resetPasswordCode && resetPasswordCode.code && !resetPasswordCode.isVerified) {
-			resetPasswordCode.code = bcrypt.hashSync((args.data.resetPasswordCode as any).code.toString(), 10);
+			resetPasswordCode.code = bcrypt.hashSync((args.data.resetPasswordCode as any).code, 10);
 		}
-		if(beInstructor) {
-			const user = await this.findUnique({
-				where: {
-					id
-				},
-				select: {
-					roles: true
-				}
-			});
-			beInstructor = user ? !user.roles.includes('Instructor') : false;
-			permissions = beInstructor ? InstructorPermissions : permissions;
-		} 
+		const isStudentWantToBeInstructor = roles && roles.includes('Instructor') && roles.includes('Student') && !roles.includes('Admin') ? true : false;
+		permissions = isStudentWantToBeInstructor ? InstructorPermissions : permissions;
 		return this.userRepository.update({
 			where: {
 				id
@@ -93,10 +83,10 @@ export class UserService implements IUserService {
 				firstName: firstName || undefined,
 				lastName: lastName || undefined,
 				email: email || undefined,
-				isEmailVerified: isEmailVerified || undefined,
+				isEmailVerified,
 				emailVerificationCode,
 				password: password ? bcrypt.hashSync(password.toString(), 10) : undefined,
-				resetPasswordCode: resetPasswordCode || undefined,
+				resetPasswordCode,
 				passwordUpdatedTime: passwordUpdatedTime || undefined,
 				bio: bio,
 				picture: picture || undefined,
@@ -107,10 +97,10 @@ export class UserService implements IUserService {
 				isActive: isActive,
 				isBlocked: isBlocked,
 				isDeleted: isDeleted,
-				roles: beInstructor ? {
+				roles: isStudentWantToBeInstructor ? {
 					set: ['Student', 'Instructor']
 				} : undefined,
-				instructor: beInstructor ? {
+				instructor: isStudentWantToBeInstructor ? {
 					create: {}
 				} : undefined,
 				permissions: permissions ? {

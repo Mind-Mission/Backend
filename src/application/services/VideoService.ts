@@ -28,11 +28,7 @@ export class VideoService implements IVideoService, IResourceOwnership<Video> {
 					select: {
 						course: {
 							select: {
-								instructor: {
-									select: {
-										userId: true
-									}
-								}
+								instructorId: true
 							}
 						}
 					}
@@ -64,9 +60,7 @@ export class VideoService implements IVideoService, IResourceOwnership<Video> {
 				lesson: {
 					section: {
 						course: {
-							instructor: {
-								userId: user.id
-							}
+							instructorId: user.instructor?.id
 						}
 					}
 				}
@@ -93,7 +87,7 @@ export class VideoService implements IVideoService, IResourceOwnership<Video> {
 		if(!lesson) {
 			throw new APIError('This lesson is not available', HttpStatusCode.BadRequest);
 		}
-		if(user.roles.includes('Instructor') && lesson.section.course.instructor.userId !== user.id) {
+		if(user.roles.includes('Instructor') && lesson.section.course.instructorId !== user.instructor?.id) {
 			throw new APIError('This lesson is not yours', HttpStatusCode.Forbidden);
 		}
 		return Transaction.transact<Video>(async (prismaTransaction) => {

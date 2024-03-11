@@ -3,17 +3,17 @@ import { NextFunction, Request, Response } from 'express';
 import { SSOPlatform } from '@prisma/client';
 import asyncHandler from'express-async-handler';
 import { OAuth } from '../../services/OAuth';
-import { PlatformInfo } from '../../types/Platform';
+import { PlatformConfig } from '../../types/PlatformConfig';
 import { GmailUserData } from '../../types/GmailUserData';
 import APIError from '../../errorHandlers/APIError';
 import HttpStatusCode from '../../enums/HTTPStatusCode';
 
 export class Gmail extends OAuth<GmailUserData>{
-  protected platformInfo: PlatformInfo;
+  protected platformConfig: PlatformConfig;
 
   constructor() {
     super();
-    this.platformInfo = {
+    this.platformConfig = {
       clientId: process.env.Google_Client_Id as string,
       clientSecret: process.env.Google_Client_Secret as string,
       tokenURL: process.env.Google_Token_URL as string,
@@ -22,7 +22,7 @@ export class Gmail extends OAuth<GmailUserData>{
   };
 
   protected async getAccessToken(code: string, redirectURL: string): Promise<string> {
-    const {clientId, clientSecret, tokenURL} = this.platformInfo;
+    const {clientId, clientSecret, tokenURL} = this.platformConfig;
     const response = await fetch(tokenURL, {
       headers: {
         'Content-Type': 'application/json',

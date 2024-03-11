@@ -4,7 +4,6 @@ import userRoutes from "./routes/userRoutes";
 import authenticationRoutes from "./routes/authenticationRoutes";
 import ssoGmailRoutes from "./routes/ssoGmailRoutes";
 import ssoLinkedinRoutes from "./routes/ssoLinkedinRoutes";
-import modelPermissionRoutes from "./routes/modelPermissionRoutes";
 import logRoutes from "./routes/logRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
 import instructorRoutes from "./routes/instructorRoutes";
@@ -27,7 +26,6 @@ import messageRoutes from "./routes/messageRoutes";
 import certificateRoutes from "./routes/certificateRoutes";
 import certificateTemplateRoutes from "./routes/certificateTemplateRoutes";
 import enumRoutes from "./routes/enumRoutes";
-import whatsAppRoute from "./routes/whatsAppRoutes"
 
 export const routeMounting = (app: Application) => {
   const apiVersion = process.env.API_Version;
@@ -37,7 +35,6 @@ export const routeMounting = (app: Application) => {
   app.use(`${apiVersion}/sso/linkedin`, ssoLinkedinRoutes);
   app.use(`${apiVersion}/users`, userRoutes);
   app.use(`${apiVersion}/logs`, logRoutes);
-  app.use(`${apiVersion}/permissions`, modelPermissionRoutes);
   app.use(`${apiVersion}/categories`, categoryRoutes);
   app.use(`${apiVersion}/instructors`, instructorRoutes);
   app.use(`${apiVersion}/students`, studentRoutes);
@@ -59,5 +56,4 @@ export const routeMounting = (app: Application) => {
   app.use(`${apiVersion}/certificates`, certificateRoutes);
   app.use(`${apiVersion}/templates/certificates`, certificateTemplateRoutes);
   app.use(`${apiVersion}/enums`, enumRoutes);
-  // app.use(`${process.env.apiVersion}/whatsApp`, whatsAppRoute);
 }

@@ -1,5 +1,5 @@
 export type UpdateStudent = {
-  userId: number;
+  id: number;
   enrolledCourses?: number[];
   wishlistCourse?: {
     courseId: number, 

@@ -3,17 +3,17 @@ import { NextFunction, Request, Response } from 'express';
 import { SSOPlatform } from '@prisma/client';
 import asyncHandler from'express-async-handler';
 import { OAuth } from '../../services/OAuth';
-import { PlatformInfo } from '../../types/Platform';
+import { PlatformConfig } from '../../types/PlatformConfig';
 import { LinkedinUserData } from '../../types/LinkedinUserData';
 import APIError from '../../errorHandlers/APIError';
 import HttpStatusCode from '../../enums/HTTPStatusCode';
 
 export class Linkedin extends OAuth<LinkedinUserData> {
-  protected platformInfo: PlatformInfo;
+  protected platformConfig: PlatformConfig;
 
   constructor() {
     super()
-    this.platformInfo = {
+    this.platformConfig = {
       clientId: process.env.Linkedin_Client_Id as string,
       clientSecret: process.env.Linkedin_Client_Secret as string,
       tokenURL: process.env.Linkedin_Token_Url as string,
@@ -22,7 +22,7 @@ export class Linkedin extends OAuth<LinkedinUserData> {
   };
 
   protected async getAccessToken(code: string, redirectURL: string): Promise<string> {
-    const {clientId, clientSecret, tokenURL} = this.platformInfo;
+    const {clientId, clientSecret, tokenURL} = this.platformConfig;
     const response = await fetch(tokenURL, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

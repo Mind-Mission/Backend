@@ -40,10 +40,10 @@ export class EnrollmentController {
 
 	createEnrollment = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
-		const {userId, courseIds} = request.body.input;
+		const {studentId, courseIds} = request.body.input;
 		const student = await this.studentService.update({
 			data: {
-				userId,
+				id: studentId,
 				enrolledCourses: courseIds
 			},
 			select: {
@@ -68,7 +68,7 @@ export class EnrollmentController {
 		const updateEnrollment = await this.enrollmentService.update({
 			data: {
 				...request.body.input,
-				userId: request.user?.id
+				studentId: request.user?.student?.id
 			},
 			select,
 			include

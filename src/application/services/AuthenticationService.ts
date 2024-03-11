@@ -1,16 +1,17 @@
 import { Prisma, SSOPlatform } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import bcrypt from 'bcrypt';
-import APIError from "../../presentation/errorHandlers/APIError";
-import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 import { IAuthenticationService } from "../interfaces/IServices/IAuthenticationService";
 import { IUserService } from "../interfaces/IServices/IUserService";
 import { JWTGenerator } from "../helpers/JWTGenerator";
 import { Login, Signup } from "../inputs/authenticationInput";
 import { ExtendedUser } from "../types/ExtendedUser";
-import { StudentPermissions } from "../config/CorePermissions";
+import { StudentPermissions } from "../config/StudentPermissions";
 import { UserMapper } from "../../presentation/mapping/UserMapper";
 import { SendEmail } from "../helpers/SendEmail";
+import { MessageGenerator } from "../helpers/MessageGenerator";
+import APIError from "../../presentation/errorHandlers/APIError";
+import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 
 @injectable()
 export class AuthenticationService implements IAuthenticationService {
@@ -54,12 +55,22 @@ export class AuthenticationService implements IAuthenticationService {
       select: select ? {
         ...select,
         id: true,
-        permissions: true,
+        permissions: {
+          select: {
+            resource: true,
+            cruds: true
+          }
+        },
         roles: true,
       } : undefined,
       include: !select ? {
         ...include,
-        permissions: true
+        permissions: {
+          select: {
+            resource: true,
+            cruds: true
+          }
+        },
       } : undefined
 		});
     const token = JWTGenerator.generateAccessToken({id: createdUser.id, firstName, lastName, email, picture, isActive: true, isBlocked: false, isDeleted: false, isEmailVerified, roles: createdUser.roles, permissions: createdUser.permissions});
@@ -88,17 +99,34 @@ export class AuthenticationService implements IAuthenticationService {
         isEmailVerified: true,
         isDeleted: true,
         isBlocked: true,
-        roles: true,
-        permissions: true,
         isSignWithSSO: true,
         platform: true,
-        refreshToken: true
+        refreshToken: true,
+        roles: true,
+        permissions: {
+          select: {
+            resource: true,
+            cruds: true
+          }
+        },
+        student: {
+          select: {
+            id: true,
+            isDeleted: true,
+          }
+        },
+        instructor: {
+          select: {
+            id: true,
+            isDeleted: true,
+          }
+        }
       },
     });
     if(!isExist || isExist.isDeleted || !this.isCredentialsRight(isExist, password, isSignWithSSO, platform)) {
       throw new APIError('Your email or password may be incorrect', HttpStatusCode.BadRequest);
     }
-    if(isExist && isExist.isBlocked) {
+    if(isExist.isBlocked) {
       throw new APIError('Your are blocked, try to contact with our support team', HttpStatusCode.Forbidden);
     }
     let regeneratedRefreshToken = null;
@@ -134,16 +162,8 @@ export class AuthenticationService implements IAuthenticationService {
     });
     if(user) {
       const resetCode = Math.floor(100000 + Math.random() * 900000);
-      const message = `
-        <h3 style="color: black">Hi ${user.firstName} ${user.lastName}</h3>
-        <p style="color: black">We received a request to reset your password on your ${process.env.APP_Name} account.</p>
-        <p style="color: black">This is your reset password code</p
-        <strong style="font-size: 18px">${resetCode}</strong>
-        <p style="color: black">Enter this code to complete the reset</p>
-        <p style="color: black">Thanks for helping us keep your account secure.</p>
-        <p style="color: black">${process.env.APP_Name} Team</p>
-      `;
-      await SendEmail.send({to: user.email, subject: "Reset Password Code", message: message});
+      const message = MessageGenerator.getForgetPasswordMessage(user, resetCode);
+      await SendEmail.send({to: user.email, subject: "Reset Password Code", message});
       await this.userService.update({
         data: {
           id: user.id,
@@ -169,15 +189,15 @@ export class AuthenticationService implements IAuthenticationService {
         id: true,
         resetPasswordCode: true,
       }
-    })
-    if(user) {
+    });
+    if(user && user.resetPasswordCode) {
       const {code: savedCode, expirationTime, isVerified} = user.resetPasswordCode as any;
       if(user.resetPasswordCode && code && bcrypt.compareSync(code, savedCode) && expirationTime >= Date.now() && !isVerified) {
         await this.userService.update({
           data: {
             id: user.id,
             resetPasswordCode: {
-              code,
+              code: savedCode,
               expirationTime,
               isVerified: true
             }
@@ -209,7 +229,7 @@ export class AuthenticationService implements IAuthenticationService {
           data: {
             id: user.id,
             password: newPassword,
-            resetPasswordCode: undefined,
+            resetPasswordCode: null as any,
             passwordUpdatedTime: new Date()
           },
           select: {

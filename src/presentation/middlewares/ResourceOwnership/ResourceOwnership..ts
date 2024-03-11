@@ -14,11 +14,11 @@ export class ResourceOwnership<T> {
     this.resourceOwnership = container.get<IResourceOwnership<T>>(`IResourceOwnership<${this.resource}>`);
   }
 
-  isResourceBelongsToCurrentUser = (resourceName: string = 'id', place: 'body' | 'params' = 'params') => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
-    const resourceId = place ==='params' ? +request.params[resourceName] : request.body.input[resourceName];
+  isResourceBelongsToCurrentUser = (field: string = 'id', place: 'body' | 'params' = 'params') => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
+    const resourceId = place ==='params' ? +request.params[field] : request.body.input[field];
     const isBelongsToCurrentUser = await this.resourceOwnership.isResourceBelongsToCurrentUser(resourceId, request.user as any);
     if(!isBelongsToCurrentUser) {
-      throw new APIError(`This ${this.resource} is not yours`, HttpStatusCode.Forbidden);
+      throw new APIError(`This ${this.resource.toLowerCase()} is not yours`, HttpStatusCode.Forbidden);
     }
     next();
   });

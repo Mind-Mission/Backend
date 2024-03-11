@@ -4,26 +4,13 @@ import { ExtendedEnrollment } from "../types/ExtendedEnrollment";
 import { UpdateEnrollment } from "../inputs/enrollmentInput";
 import {IEnrollmentRepository} from "../interfaces/IRepositories/IEnrollmentRepository";
 import {IEnrollmentService} from "../interfaces/IServices/IEnrollmentService";
-import { IStudentService } from "../interfaces/IServices/IStudentService";
 import { ICertificateService } from "../interfaces/IServices/ICertificateService";
 import { TransactionType } from "../types/TransactionType";
 import { Transaction } from "../../infrastructure/services/Transaction";
 
 @injectable()
 export class EnrollmentService implements IEnrollmentService {
-	constructor(@inject('IEnrollmentRepository') private enrollmentRepository: IEnrollmentRepository, @inject('IStudentService') private studentService: IStudentService, @inject('ICertificateService') private certificateService: ICertificateService) {}
-
-  private async getStudentId(userId: number): Promise<number> {
-    const student = await this.studentService.findUnique({
-      where: {
-        userId
-      },
-      select: {
-        id: true
-      }
-    });
-    return student?.id as number;
-  };
+	constructor(@inject('IEnrollmentRepository') private enrollmentRepository: IEnrollmentRepository, @inject('ICertificateService') private certificateService: ICertificateService) {}
 
   private calcCurrentProgress(courseHours: number, completedLessonsTime: {time: number}[]): number {
     const totalTimeForCompletedLessons = completedLessonsTime.reduce((curr, acc) => curr + acc.time, 0);
@@ -60,8 +47,7 @@ export class EnrollmentService implements IEnrollmentService {
   };
 
 	async update(args: {data: UpdateEnrollment, select?: Prisma.EnrollmentSelect, include?: Prisma.EnrollmentInclude}, transaction?: TransactionType): Promise<ExtendedEnrollment> {
-    const {courseId, userId, lessonId} = args.data;
-    const studentId = await this.getStudentId(userId);
+    const {courseId, studentId, lessonId} = args.data;
     return Transaction.transact<Enrollment>(async (prismaTransaction) => {
       const enrollment = await this.enrollmentRepository.update({
         where: {

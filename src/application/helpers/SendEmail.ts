@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { EmailContent } from '../../presentation/types/EmailContent';
+import { EmailContent } from '../types/EmailContent';
 import APIError from '../../presentation/errorHandlers/APIError';
 import HttpStatusCode from '../../presentation/enums/HTTPStatusCode';
 

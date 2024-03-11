@@ -34,9 +34,7 @@ export class CourseService implements ICourseService, IResourceOwnership<Course>
 		const course = await this.courseRepository.findFirst({
 			where: {
 				id: courseId,
-				instructor: {
-					userId: user.id
-				}
+				instructorId: user.instructor?.id
 			},
 			select: {
 				id: true

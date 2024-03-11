@@ -2,11 +2,12 @@ import express from 'express';
 import container from '../DIContainer/DI'
 import { idValidation} from '../middlewares/express-validator/idValidation';
 import {Authorization} from '../middlewares/authorization-validator/AuthorizationValidator';
-import {addUserValidation, updateUserValidation, updateUserEmailValidation, confirmEmailVerificationCodeValidation, updateUserPasswordValidation} from '../middlewares/express-validator/userValidator';
+import {addUserValidation, updateUserValidation} from '../middlewares/express-validator/userValidator';
+import userCredentialsRouters from './userCredentialsRoutes';
 import {UserController} from '../controllers/UserController';
 
 const {isAuthenticated, isAuthorized, isCurrentUserRoleInBlackList, isCurrentUserRoleInWhiteList, isParamIdEqualCurrentUserId, restrictedUpdateForAdminOnly} = container.get<Authorization>('Authorization');
-const {getUserEnums, getAllUsers, getUserById, createUser, restrictedPropertiesForAdminOnly, updateUser, beInstructor, updateUserEmail, generateEmailVerificationCode, confirmEmailVerificationCode, updateUserPassword, deleteUser } = container.get<UserController>('UserController');
+const {getUserEnums, getAllUsers, getUserById, createUser, restrictedPropertiesForAdminOnly, updateUser, beInstructor, deleteUser} = container.get<UserController>('UserController');
 
 const userRouter = express.Router();
 
@@ -28,19 +29,9 @@ userRouter.route("/update/:id")
 	userRouter.route("/be/instructor")
 	.post(isAuthenticated, isAuthorized('Users', 'Update'), isCurrentUserRoleInWhiteList('Student'), beInstructor);
 
-userRouter.route("/update/:id/email")
-	.post(isAuthenticated, isAuthorized('Users', 'Update'), isCurrentUserRoleInWhiteList("Instructor", "Student"), updateUserEmailValidation, updateUserEmail);
-
-userRouter.route("/verify/email/ask")
-	.post(isAuthenticated, generateEmailVerificationCode);
-
-userRouter.route("/verify/email/confirm")
-	.post(isAuthenticated, confirmEmailVerificationCodeValidation, confirmEmailVerificationCode);
-
-userRouter.route("/update/:id/password")
-	.post(isAuthenticated, isAuthorized('Users', 'Update'), isCurrentUserRoleInWhiteList("Instructor", "Student"), updateUserPasswordValidation, updateUserPassword);
-
 userRouter.route("/delete/:id")
 	.post(idValidation, isAuthenticated, isAuthorized('Users', 'Delete'), isParamIdEqualCurrentUserId(), deleteUser);
+
+userRouter.use("/credentials", userCredentialsRouters);
 
 export default userRouter;

@@ -1,5 +1,5 @@
 export type UpsertNote = {
-  userId: number;
+  studentId: number;
   lessonId: number;
   time: number;
   content: string;

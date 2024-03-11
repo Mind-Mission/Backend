@@ -42,7 +42,7 @@ export class RatingController {
 		const rating = await this.ratingService.upsert({
 			data: {
 				...request.body.input,
-				userId: request.user?.id
+				studentId: request.user?.student?.id
 			},
 			select,
 			include

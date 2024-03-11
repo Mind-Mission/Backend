@@ -1,10 +1,10 @@
 import crypto from "crypto";
 import { Prisma, Coupon } from "@prisma/client";
 import {inject, injectable } from "inversify";
-import { CreateCoupon, UpdateCoupon } from "../inputs/couponInput";
-import { TransactionType } from "../types/TransactionType";
 import {ICouponService} from "../interfaces/IServices/ICouponService";
 import {ICouponRepository} from "../interfaces/IRepositories/ICouponRepository";
+import { CreateCoupon, UpdateCoupon } from "../inputs/couponInput";
+import { TransactionType } from "../types/TransactionType";
 
 @injectable()
 export class CouponService implements ICouponService {

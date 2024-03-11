@@ -77,7 +77,7 @@ export class Authorization {
   });
   
   restrictedUpdateForAdminOnly = (restrictedProperties: string[]) => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
-    if(!request.user?.admin) {
+    if(!request.user?.roles.includes('Admin')) {
       for(const property of restrictedProperties) {
         delete request.body.input[property];
       }

@@ -3,7 +3,7 @@ import { Currency, PaymentMethod, PaymentStatus } from "@prisma/client";
 export type CreatePayment = {
   currency: Currency;
   paymentMethod: PaymentMethod;
-  userId: number;
+  studentId: number;
   couponCode?: string;
 }
 

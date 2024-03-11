@@ -2,10 +2,10 @@ import { Prisma, Rating } from "@prisma/client"
 import { inject, injectable } from "inversify"
 import { IRatingRepository } from "../interfaces/IRepositories/IRatingRepository";
 import { IRatingService } from "../interfaces/IServices/IRatingService";
+import { IEnrollmentService } from "../interfaces/IServices/IEnrollmentService";
 import { ExtendedEnrollment } from "../types/ExtendedEnrollment";
 import { TransactionType } from "../types/TransactionType";
 import { UpsertRating } from "../inputs/ratingInput";
-import { IEnrollmentService } from "../interfaces/IServices/IEnrollmentService";
 import APIError from "../../presentation/errorHandlers/APIError";
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 
@@ -13,16 +13,13 @@ import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 export class RatingService implements IRatingService {
 	constructor(@inject('IRatingRepository') private ratingRepository: IRatingRepository, @inject('IEnrollmentService') private enrollmentService: IEnrollmentService) {}
 
-	private isStudentEnrollInThisCourse(userId: number, courseId: number): Promise<ExtendedEnrollment | null> {
+	private getStudentEnrollInThisCourse(studentId: number, courseId: number): Promise<ExtendedEnrollment | null> {
 		return this.enrollmentService.findFirst({
 			where: {
-				student: {
-					userId
-				},
+				studentId,
 				courseId
 			},
 			select: {
-				studentId: true,
 				course: {
 					select: {
 						instructorId: true
@@ -49,12 +46,11 @@ export class RatingService implements IRatingService {
 	};
 
 	async upsert(args: {data: UpsertRating, select?: Prisma.RatingSelect, include?: Prisma.RatingInclude}, transaction?: TransactionType): Promise<Rating> {
-		const {userId, courseId, commentForCourse, commentForInstructor, courseRate, instructorRate} = args.data;
-		const enrollment = await this.isStudentEnrollInThisCourse(userId, courseId);
+		const {studentId, courseId, commentForCourse, commentForInstructor, courseRate, instructorRate} = args.data;
+		const enrollment = await this.getStudentEnrollInThisCourse(studentId, courseId);
 		if(!enrollment) {
 			throw new APIError('The current student cannot rate the course not enroll in', HttpStatusCode.Forbidden);
 		}
-		const studentId = enrollment.studentId;
 		const instructorId = enrollment.course?.instructorId as number;
 		return this.ratingRepository.upsert({
 			where: {
