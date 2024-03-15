@@ -4,6 +4,8 @@ import { inject, injectable } from "inversify";
 import {IUserService} from "../interfaces/IServices/IUserService"
 import {IUserRepository} from "../interfaces/IRepositories/IUserRepository"
 import { InstructorPermissions } from "../config/InstructorPermissions";
+import { StudentPermissions } from "../config/StudentPermissions";
+import { StudentInstructorPermissions } from "../config/StudentInstructorPermissions";
 import { CreateUser, UpdateUser } from "../inputs/userInput";
 import { ExtendedUser } from "../types/ExtendedUser";
 import { TransactionType } from "../types/TransactionType";
@@ -29,7 +31,20 @@ export class UserService implements IUserService {
 	};
 
 	create(args: {data: CreateUser, select?: Prisma.UserSelect; include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
-		const {firstName, lastName, email, password, mobilePhone, whatsAppNumber, bio, picture, platform, isEmailVerified, permissions, role, refreshToken} = args.data;
+		let {firstName, lastName, email, password, mobilePhone, whatsAppNumber, bio, picture, platform, isEmailVerified, roles, permissions, refreshToken} = args.data;
+		if(roles.includes('Admin')) {
+			roles = ['Admin'];
+		}
+		else {
+			if(roles.includes('Student')) {
+				roles = ['Student'];
+				permissions = StudentPermissions
+			}
+			if(roles.includes('Instructor')) {
+				roles = ['Student', 'Instructor'];
+				permissions = StudentInstructorPermissions
+			}
+		}
 		return this.userRepository.create({
 			data: {
 				firstName,
@@ -44,17 +59,18 @@ export class UserService implements IUserService {
 				isSignWithSSO: platform ? true : false,
 				isEmailVerified,
 				refreshToken,
-				roles: {
-					set: [role]
-				},
-				student: role === "Student" ? {
+				roles,
+				student: roles.includes("Student") ? {
 					create: {
 						cart: {
 							create: {}
 						}
 					}
 				} : undefined,
-				admin: role === 'Admin' ? {
+				instructor: roles.includes('Instructor') ? {
+					create: {}
+				} : undefined,
+				admin: roles.includes('Admin') ? {
 					create: {}
 				} : undefined,
 				permissions: {

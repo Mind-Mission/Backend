@@ -11,7 +11,7 @@ export type CreateUser = {
   picture?: string;
   platform?: SSOPlatform;
   isEmailVerified?: boolean;
-  role: Role;
+  roles: Role[];
   permissions: {
     resource: Resource;
     cruds: Crud[];

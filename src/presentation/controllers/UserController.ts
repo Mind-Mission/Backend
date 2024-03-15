@@ -57,14 +57,14 @@ export class UserController {
 
 	createUser = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
-		const createdUser = await this.userService.create({data: {...request.body.input, role: 'Admin'}, select, include});
+		const createdUser = await this.userService.create({data: request.body.input, select, include});
 		this.logService.log('ADD', 'USER', createdUser, request.user);
 		const mappedUserResults = UserMapper.map([createdUser]);
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The user is created successfully', mappedUserResults));
 	});
 
 	updateUser = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
-		const {firstName, lastName, bio, picture, mobilePhone, whatsAppNumber, isActive, isBlocked, isDeleted, personalLinks, permissions} = request.body.input;
+		const {firstName, lastName, bio, picture, mobilePhone, whatsAppNumber, isActive, isBlocked, isDeleted, personalLinks, roles, permissions} = request.body.input;
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const updatedUser = await this.userService.update({
 			data: {
@@ -79,6 +79,7 @@ export class UserController {
 				isBlocked, 
 				isDeleted, 
 				personalLinks,
+				roles,
 				permissions,
 			},
 			select,

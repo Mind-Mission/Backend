@@ -49,7 +49,7 @@ export class AuthenticationService implements IAuthenticationService {
         platform,
         isEmailVerified,
         refreshToken: JWTGenerator.generateRefreshToken({ firstName, lastName, email, picture } as ExtendedUser),
-        role: 'Student',
+        roles: ['Student'],
         permissions: StudentPermissions
       },
       select: select ? {
