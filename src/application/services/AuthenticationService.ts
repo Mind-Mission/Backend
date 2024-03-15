@@ -243,39 +243,37 @@ export class AuthenticationService implements IAuthenticationService {
   };
 
   async refreshToken(accessToken: string, refreshToken: string): Promise<{accessToken: string, refreshToken: string}> {
-    if(JWTGenerator.isTokenExpired(accessToken)) {
-      JWTGenerator.verifyRefreshToken(refreshToken);
-      const accessTokenPayload = JWTGenerator.decode(accessToken);
-      const user = await this.userService.findFirst({
-        where: {
-          email: {equals: accessTokenPayload.email, mode: 'insensitive'}
+    JWTGenerator.verifyRefreshToken(refreshToken);
+    const accessTokenPayload = JWTGenerator.decode(accessToken);
+    const user = await this.userService.findFirst({
+      where: {
+        email: {equals: accessTokenPayload.email, mode: 'insensitive'}
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        picture: true,
+        refreshToken: true
+      }
+    });
+    if(!user || user.refreshToken !== refreshToken) {
+      throw new APIError('Invalid tokens, try to login again', HttpStatusCode.BadRequest);
+    }
+    accessToken = JWTGenerator.generateAccessToken(user);
+    if(this.isRefreshTokenExpiredSoon(refreshToken)) {
+      refreshToken = JWTGenerator.generateRefreshToken(user);
+      await this.userService.update({
+        data: {
+          id: user.id,
+          refreshToken
         },
         select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-          picture: true,
-          refreshToken: true
+          id: true
         }
       });
-      if(!user || user.refreshToken !== refreshToken) {
-        throw new APIError('Invalid tokens, try to login again', HttpStatusCode.BadRequest);
-      }
-      accessToken = JWTGenerator.generateAccessToken(user);
-      if(this.isRefreshTokenExpiredSoon(refreshToken)) {
-        refreshToken = JWTGenerator.generateRefreshToken(user);
-        await this.userService.update({
-          data: {
-            id: user.id,
-            refreshToken
-          },
-          select: {
-            id: true
-          }
-        });
-      };
-    }
+    };
     return {
       accessToken,
       refreshToken
