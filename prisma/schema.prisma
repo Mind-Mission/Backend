@@ -33,12 +33,12 @@ model User {
   student               Student?    
   instructor            Instructor?
   admin                 Admin?
+  coupons               Coupon[]
   logs                  Log[]
   personalLinks         PersonalLink[]
   comments              Comment[]
   messages              Message[]
   onlineUser            OnlineUser[]
-  coupons               Coupon[]
   lastSeen              DateTime?
   createdAt             DateTime    @default(now())
   updatedAt             DateTime?   @updatedAt
@@ -504,9 +504,9 @@ model Coupon {
   discount       Float
   expiredAt      DateTime
   courses        Course[]
-  userId         Int 
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   payments       Payment[]
+  userId         Int
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime?      @updatedAt
 }

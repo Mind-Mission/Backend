@@ -50,13 +50,15 @@ export class VideoService implements IVideoService, IResourceOwnership<Video> {
 		}, transaction)
 	};
 
-	async isResourceBelongsToCurrentUser(resourceId: number, user: ExtendedUser): Promise<boolean> {
+	async isResourceBelongsToCurrentUser(user: ExtendedUser, ...videoIds: number[]): Promise<boolean> {
 		if(!user.roles.includes('Instructor')) {
 			return true
 		}
-		const video = await this.videoRepository.findFirst({
+		const videos = await this.findMany({
 			where: {
-				id: resourceId,
+				id: {
+					in: videoIds
+				},
 				lesson: {
 					section: {
 						course: {
@@ -66,7 +68,7 @@ export class VideoService implements IVideoService, IResourceOwnership<Video> {
 				}
 			}
 		});
-		return video ? true : false;
+		return videos.length === videoIds.length ? true : false;
 	};
 
 	count(args: Prisma.VideoCountArgs): Promise<number> {

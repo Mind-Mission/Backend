@@ -27,21 +27,23 @@ export class CourseService implements ICourseService, IResourceOwnership<Course>
 		return (topic && topic.type === 'TOPIC') ? true : false;
 	};
 
-	async isResourceBelongsToCurrentUser(courseId: number, user: ExtendedUser): Promise<boolean> {
-		if(!user.roles.includes('Instructor')) {
+	async isResourceBelongsToCurrentUser(user: ExtendedUser, ...courseIds: number[]): Promise<boolean> {
+		if(user.roles.includes('Admin')) {
 			return true;
 		}
-		const course = await this.courseRepository.findFirst({
+		const courses = await this.courseRepository.findMany({
 			where: {
-				id: courseId,
+				id: {
+					in: courseIds
+				},
 				instructorId: user.instructor?.id
 			},
 			select: {
 				id: true
 			}
 		});
-		return course ? true : false;
-	}
+		return courses.length === courseIds.length ? true : false;
+	};
 
   aggregate(args: Prisma.CourseAggregateArgs): Promise<Prisma.GetCourseAggregateType<Prisma.CourseAggregateArgs>> {
     return this.courseRepository.aggregate(args);

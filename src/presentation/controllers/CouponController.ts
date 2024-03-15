@@ -39,14 +39,7 @@ export class CouponController {
 
 	createCoupon = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
-		const createdCoupon = await this.couponService.create({
-			data: {
-        ...request.body.input,
-				userId: request.user?.id as number,
-			},
-			select,
-			include,
-		});
+		const createdCoupon = await this.couponService.create({data: {...request.body.input, userId: request.user?.id}, select, include});
 		this.logService.log("ADD", "COUPON", {id: createdCoupon.id, ...request.body.input}, request.user);
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The Coupon is created successfully', [createdCoupon]));
 	});

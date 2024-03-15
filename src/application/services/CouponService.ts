@@ -1,15 +1,35 @@
 import crypto from "crypto";
-import { Prisma, Coupon } from "@prisma/client";
+import { Prisma, Coupon, Course } from "@prisma/client";
 import {inject, injectable } from "inversify";
 import {ICouponService} from "../interfaces/IServices/ICouponService";
 import {ICouponRepository} from "../interfaces/IRepositories/ICouponRepository";
 import { CreateCoupon, UpdateCoupon } from "../inputs/couponInput";
 import { TransactionType } from "../types/TransactionType";
+import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
+import { ExtendedUser } from "../types/ExtendedUser";
 
 @injectable()
-export class CouponService implements ICouponService {
+export class CouponService implements ICouponService, IResourceOwnership<Coupon> {
 	constructor(@inject('ICouponRepository') private couponRepository: ICouponRepository) {}
-	
+
+  async isResourceBelongsToCurrentUser(user: ExtendedUser, ...couponIds: number[]): Promise<boolean> {
+    if(user.roles.includes('Admin')) {
+      return true;
+    }
+    const courses = await this.findMany({
+      where: {
+        id: {
+          in: couponIds
+        },
+        userId: user.id
+      },
+      select: {
+        id: true
+      }
+    });
+    return courses.length === couponIds.length ? true : false;
+  };
+
   private async generateRandomCode(): Promise<string> {
     const codeLength = 6;
     let code = undefined
@@ -43,26 +63,49 @@ export class CouponService implements ICouponService {
 	};
 
 	async create(args: {data: CreateCoupon, select?: Prisma.CouponSelect, include?: Prisma.CouponInclude}, transaction?: TransactionType): Promise<Coupon> {
-		const {discount, expiredAt, userId} = args.data;
+		const {courses, discount, expiredAt, userId} = args.data;
     const code = await this.generateRandomCode();
     return this.couponRepository.create({
       data: {
         code,
         discount,
         expiredAt,
-        admin: {
-          connect: {
-            userId
-          }
+        courses: {
+          connect: courses.map(course => {
+            return {
+              id: course
+            }
+          })
         },
+        user: {
+          connect: {
+            id: userId
+          }
+        }
       },
       select: args.select,
       include: args.include
     }, transaction);
-	};
+	};  
 
-	update(args: {data: UpdateCoupon, select?: Prisma.CouponSelect, include?: Prisma.CouponInclude}, transaction?: TransactionType): Promise<Coupon> {
-		const {id, discount, expiredAt} = args.data;
+	async update(args: {data: UpdateCoupon, select?: Prisma.CouponSelect, include?: Prisma.CouponInclude}, transaction?: TransactionType): Promise<Coupon> {
+		const {id, courses, discount, expiredAt} = args.data;
+    let disConnectedCourses: number[] = []
+    if(courses && courses.length > 0) {
+      const coupon = await this.findUnique({
+        where: {
+          id
+        },
+        select: {
+          courses: {
+            select: {
+              id: true
+            }
+          }
+        }
+      }) as any;
+      disConnectedCourses = coupon ? (coupon.courses as Course[]).map(({id}) => id).filter((id) => !courses.includes(id)) : disConnectedCourses as any;
+    }
     return this.couponRepository.update({
       where: {
         id
@@ -70,6 +113,18 @@ export class CouponService implements ICouponService {
       data: {
         discount: discount || undefined,
         expiredAt: expiredAt || undefined,
+        courses: courses ? {
+          disconnect: disConnectedCourses.length > 0 ? disConnectedCourses.map((course) => {
+            return {
+              id: course
+            }
+          }) : undefined,
+          connect: courses.map(course => {
+            return {
+              id: course
+            }
+          })
+        } : undefined
       },
       select: args.select,
       include: args.include

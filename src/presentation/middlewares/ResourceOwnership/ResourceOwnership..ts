@@ -10,15 +10,18 @@ import HttpStatusCode from "../../enums/HTTPStatusCode";
 @injectable()
 export class ResourceOwnership<T> {
   private resourceOwnership: IResourceOwnership<T>;
-  constructor(@unmanaged() private resource: 'Course' | 'Section' | 'Lesson' | 'Article' | 'Video' | 'Quiz') {
+  constructor(@unmanaged() private resource: 'Course' | 'Section' | 'Lesson' | 'Article' | 'Video' | 'Quiz' | 'Coupon') {
     this.resourceOwnership = container.get<IResourceOwnership<T>>(`IResourceOwnership<${this.resource}>`);
   }
 
   isResourceBelongsToCurrentUser = (field: string = 'id', place: 'body' | 'params' = 'params') => asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
-    const resourceId = place ==='params' ? +request.params[field] : request.body.input[field];
-    const isBelongsToCurrentUser = await this.resourceOwnership.isResourceBelongsToCurrentUser(resourceId, request.user as any);
-    if(!isBelongsToCurrentUser) {
-      throw new APIError(`This ${this.resource.toLowerCase()} is not yours`, HttpStatusCode.Forbidden);
+    let resourceIds = place ==='params' ? +request.params[field] : request.body.input[field];
+    if(resourceIds) {
+      resourceIds = Array.isArray(resourceIds) ? resourceIds : [resourceIds];
+      const isBelongsToCurrentUser = await this.resourceOwnership.isResourceBelongsToCurrentUser(request.user as any, ...resourceIds);
+      if(!isBelongsToCurrentUser) {
+        throw new APIError(`This ${this.resource.toLowerCase()} is not yours`, HttpStatusCode.Forbidden);
+      }
     }
     next();
   });

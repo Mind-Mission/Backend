@@ -53,13 +53,15 @@ export class QuizService implements IQuizService, IResourceOwnership<Quiz> {
 		}, transaction)
 	};
 
-	async isResourceBelongsToCurrentUser(resourceId: number, user: ExtendedUser): Promise<boolean> {
-		if(!user.roles.includes('Instructor')) {
+	async isResourceBelongsToCurrentUser(user: ExtendedUser, ...quizIds: number[]): Promise<boolean> {
+		if(user.roles.includes('Admin')) {
 			return true
 		}
-		const quiz = await this.quizRepository.findFirst({
+		const quizzes = await this.quizRepository.findMany({
 			where: {
-				id: resourceId,
+				id: {
+					in: quizIds
+				},
 				lesson: {
 					section: {
 						course: {
@@ -69,7 +71,7 @@ export class QuizService implements IQuizService, IResourceOwnership<Quiz> {
 				}
 			}
 		});
-		return quiz ? true : false;
+		return quizzes.length === quizIds.length ? true : false;
 	};
 
 	count(args: Prisma.QuizCountArgs): Promise<number> {

@@ -14,13 +14,15 @@ import HttpStatusCode from "../../presentation/enums/HTTPStatusCode"
 export class SectionService implements ISectionService, IResourceOwnership<Section> {
 	constructor(@inject('ISectionRepository') private sectionRepository: ISectionRepository) {}
 
-	async isResourceBelongsToCurrentUser(sectionId: number, user: ExtendedUser): Promise<boolean> {
+	async isResourceBelongsToCurrentUser(user: ExtendedUser, ...sectionIds: number[]): Promise<boolean> {
 		if(!user.roles.includes('Instructor')) {
 			return true;
 		}
-		const section = await this.findFirst({
+		const sections = await this.findMany({
 			where: {
-				id: sectionId,
+				id: {
+					in: sectionIds
+				},
 				course: {
 					instructorId: user.instructor?.id
 				}
@@ -29,7 +31,7 @@ export class SectionService implements ISectionService, IResourceOwnership<Secti
 				id: true
 			}
 		});
-		return section ? true : false;
+		return sections.length === sectionIds.length ? true : false;
 	};
 
 	count(args: Prisma.SectionCountArgs): Promise<number> {

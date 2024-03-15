@@ -50,13 +50,15 @@ export class ArticleService implements IArticleService, IResourceOwnership<Artic
 		}, transaction)
 	};
 
-	async isResourceBelongsToCurrentUser(resourceId: number, user: ExtendedUser): Promise<boolean> {
-		if(!user.roles.includes('Instructor')) {
+	async isResourceBelongsToCurrentUser(user: ExtendedUser, ...articleIds: number[]): Promise<boolean> {
+		if(user.roles.includes('Admin')) {
 			return true
 		}
-		const article = await this.articleRepository.findFirst({
+		const articles = await this.articleRepository.findMany({
 			where: {
-				id: resourceId,
+				id: {
+					in: articleIds
+				},
 				lesson: {
 					section: {
 						course: {
@@ -66,7 +68,7 @@ export class ArticleService implements IArticleService, IResourceOwnership<Artic
 				}
 			}
 		});
-		return article ? true : false;
+		return articles.length === articleIds.length ? true : false;
 	};
 
 	count(args: Prisma.ArticleCountArgs): Promise<number> {

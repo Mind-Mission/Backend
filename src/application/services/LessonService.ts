@@ -80,13 +80,15 @@ export class LessonService implements ILessonService, IResourceOwnership<Lesson>
 		}, transaction);
 	};
 
-	async isResourceBelongsToCurrentUser(resourceId: number, user: ExtendedUser): Promise<boolean> {
-		if(!user.roles.includes('Instructor')) {
+	async isResourceBelongsToCurrentUser(user: ExtendedUser, ...lessonIds: number[]): Promise<boolean> {
+		if(user.roles.includes('Admin')) {
 			return true;
 		}
-		const lesson = await this.lessonRepository.findFirst({
+		const lessons = await this.lessonRepository.findMany({
 			where: {
-				id: resourceId,
+				id: {
+					in: lessonIds
+				},
 				section: {
 					course: {
 						instructorId: user.instructor?.id
@@ -94,7 +96,7 @@ export class LessonService implements ILessonService, IResourceOwnership<Lesson>
 				}
 			}
 		});
-		return lesson ? true : false;
+		return lessons.length === lessonIds.length ? true : false;
 	};
 
 	count(args: Prisma.LessonCountArgs): Promise<number> {
