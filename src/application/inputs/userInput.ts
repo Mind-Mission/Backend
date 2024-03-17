@@ -41,7 +41,7 @@ export type UpdateUser = {
   roles?: Role[];
   refreshToken?: string;
   isOnline?: boolean;
-  isActive?: boolean;
+  isClosed?: boolean;
   isBlocked?: boolean;
   isDeleted?: boolean;
   personalLinks?: {platform: Platform, link: string}[];

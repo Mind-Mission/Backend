@@ -10,5 +10,5 @@ export interface IUserService {
   findFirst(args: Prisma.UserFindFirstArgs): Promise<ExtendedUser | null> 
   create(args: {data: CreateUser, select?: Prisma.UserSelect, include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser>;
   update(args: {data: UpdateUser, select?: Prisma.UserSelect, include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser>;
-  delete(id: number, transaction?: TransactionType): Promise<ExtendedUser>;
+  delete(args: {data: {id: number, isDeleted: boolean}, select?: Prisma.UserSelect, include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser>;
 }

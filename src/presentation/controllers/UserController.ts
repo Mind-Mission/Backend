@@ -14,7 +14,7 @@ import HttpStatusCode from '../enums/HTTPStatusCode';
 
 @injectable()
 export class UserController {
-	restrictedPropertiesForAdminOnly: string[] = ['isBlocked', 'isDeleted', 'permissions'];
+	restrictedPropertiesForAdminOnly: string[] = ['isBlocked', 'permissions'];
 
 	constructor(@inject('IUserService') private userService: IUserService, @inject('ILogService') private logService: ILogService) {}
 
@@ -64,7 +64,7 @@ export class UserController {
 	});
 
 	updateUser = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
-		const {firstName, lastName, bio, picture, mobilePhone, whatsAppNumber, isActive, isBlocked, isDeleted, personalLinks, roles, permissions} = request.body.input;
+		const {firstName, lastName, bio, picture, mobilePhone, whatsAppNumber, isClosed, isBlocked, personalLinks, roles, permissions} = request.body.input;
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const updatedUser = await this.userService.update({
 			data: {
@@ -75,9 +75,8 @@ export class UserController {
 				picture, 
 				mobilePhone, 
 				whatsAppNumber, 
-				isActive, 
+				isClosed, 
 				isBlocked, 
-				isDeleted, 
 				personalLinks,
 				roles,
 				permissions,
@@ -105,8 +104,14 @@ export class UserController {
 	});
 
 	deleteUser = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
-		const deletedUser = await this.userService.delete(+request.params.id);
-		this.logService.log('DELETE', 'USER', deletedUser, request.user);
+		const {isDeleted} = request.body.input;
+		const deletedUser = await this.userService.delete({
+			data: {
+				id: +request.params.id,
+				isDeleted
+			}
+		});
+		this.logService.log(isDeleted ? 'DELETE' : 'RETRIEVE', 'USER', deletedUser, request.user);
 		response.status(HttpStatusCode.NoContent).json();
 	});
 }

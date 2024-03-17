@@ -169,9 +169,21 @@ export const updateUserValidation = [
       return true;
     }),
   
+  body("input.isClosed")
+    .optional()
+    .isBoolean().withMessage("isClosed must be a boolean; true or false"),
+  
   body("input.isBlocked")
     .optional()
     .isBoolean().withMessage("isBlocked must be a boolean; true or false"),
   
+  ErrorExpressValidatorHandler.catchExpressValidatorErrors
+];
+
+export const deleteUserValidation = [
+  body('input.isDeleted')
+    .notEmpty().withMessage('isDeleted is required')
+    .isBoolean().withMessage('isDeleted must be boolean'),
+
   ErrorExpressValidatorHandler.catchExpressValidatorErrors
 ];

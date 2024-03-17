@@ -8,4 +8,5 @@ export interface IInstructorService {
   findMany(args: Prisma.InstructorFindManyArgs): Promise<ExtendedInstructor[]>;
   findUnique(args: Prisma.InstructorFindUniqueArgs): Promise<ExtendedInstructor | null>
   update(args: {data: UpdateInstructor, select?: Prisma.InstructorSelect, include?: Prisma.InstructorInclude}, transaction?: TransactionType): Promise<ExtendedInstructor>;
+  delete(args: {data: {userId: number, isDeleted: boolean}, select?: Prisma.InstructorSelect, include?: Prisma.InstructorInclude}, transaction?: TransactionType): Promise<ExtendedInstructor>;
 }

@@ -95,14 +95,15 @@ export class AuthenticationService implements IAuthenticationService {
         email: true, 
         picture: true,
         password: true,
-        isActive: true,
+        isClosed: true,
         isEmailVerified: true,
         isDeleted: true,
         isBlocked: true,
-        isSignWithSSO: true,
+        isSignWithSSO: true,                
         platform: true,
         refreshToken: true,
         roles: true,
+        lastSeen: true,
         permissions: {
           select: {
             resource: true,
@@ -112,7 +113,6 @@ export class AuthenticationService implements IAuthenticationService {
         student: {
           select: {
             id: true,
-            isDeleted: true,
           }
         },
         instructor: {
@@ -123,6 +123,7 @@ export class AuthenticationService implements IAuthenticationService {
         }
       },
     });
+    //Check isClosed with lastSeen after 30 days and create cron job to merge email with id after 30 days
     if(!isExist || isExist.isDeleted || !this.isCredentialsRight(isExist, password, isSignWithSSO, platform)) {
       throw new APIError('Your email or password may be incorrect', HttpStatusCode.BadRequest);
     }
@@ -136,7 +137,7 @@ export class AuthenticationService implements IAuthenticationService {
     const updatedUser = await this.userService.update({
       data: {
         id: isExist.id,
-        isActive: true,
+        isClosed: true,
         refreshToken: regeneratedRefreshToken ? regeneratedRefreshToken : undefined
       },
       select: args.select,
@@ -251,12 +252,37 @@ export class AuthenticationService implements IAuthenticationService {
       },
       select: {
         id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
+        firstName: true, 
+        lastName: true, 
+        email: true, 
         picture: true,
-        refreshToken: true
-      }
+        password: true,
+        isClosed: true,
+        isEmailVerified: true,
+        isDeleted: true,
+        isBlocked: true,
+        isSignWithSSO: true,                
+        platform: true,
+        refreshToken: true,
+        roles: true,
+        permissions: {
+          select: {
+            resource: true,
+            cruds: true
+          }
+        },
+        student: {
+          select: {
+            id: true,
+          }
+        },
+        instructor: {
+          select: {
+            id: true,
+            isDeleted: true,
+          }
+        }
+      },
     });
     if(!user || user.refreshToken !== refreshToken) {
       throw new APIError('Invalid tokens, try to login again', HttpStatusCode.BadRequest);

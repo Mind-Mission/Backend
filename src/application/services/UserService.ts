@@ -9,6 +9,7 @@ import { StudentInstructorPermissions } from "../config/StudentInstructorPermiss
 import { CreateUser, UpdateUser } from "../inputs/userInput";
 import { ExtendedUser } from "../types/ExtendedUser";
 import { TransactionType } from "../types/TransactionType";
+import prisma from "../../domain/db";
 
 @injectable()
 export class UserService implements IUserService {
@@ -85,7 +86,7 @@ export class UserService implements IUserService {
 	};
 
 	async update(args: {data: UpdateUser, select?: Prisma.UserSelect, include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
-		let {id, firstName, lastName, email, isEmailVerified, emailVerificationCode, password, passwordUpdatedTime, resetPasswordCode, bio, picture, mobilePhone, whatsAppNumber, refreshToken, isOnline, isActive, isBlocked, isDeleted, roles, permissions, personalLinks} = args.data
+		let {id, firstName, lastName, email, isEmailVerified, emailVerificationCode, password, passwordUpdatedTime, resetPasswordCode, bio, picture, mobilePhone, whatsAppNumber, refreshToken, isOnline, isClosed, isBlocked, roles, permissions, personalLinks} = args.data
 		if(resetPasswordCode && resetPasswordCode.code && !resetPasswordCode.isVerified) {
 			resetPasswordCode.code = bcrypt.hashSync((args.data.resetPasswordCode as any).code, 10);
 		}
@@ -109,10 +110,9 @@ export class UserService implements IUserService {
 				mobilePhone: mobilePhone || undefined,
 				whatsAppNumber: whatsAppNumber || undefined,
 				refreshToken: refreshToken || undefined,
-				isOnline: isOnline,
-				isActive: isActive,
-				isBlocked: isBlocked,
-				isDeleted: isDeleted,
+				isOnline,
+				isClosed,
+				isBlocked,
 				roles: isStudentWantToBeInstructor ? {
 					set: ['Student', 'Instructor']
 				} : undefined,
@@ -165,7 +165,22 @@ export class UserService implements IUserService {
 		}, transaction);
 	};
 
-	delete(id: number, transaction?: TransactionType): Promise<ExtendedUser> {
-		return this.userRepository.delete(id, transaction);
+	delete(args: {data: {id: number, isDeleted: boolean}, select?: Prisma.UserSelect, include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
+		const {id, isDeleted} = args.data;
+		return this.userRepository.update({
+			where: {
+				id
+			},
+			data: {
+				isDeleted,
+				instructor: isDeleted ? {
+					update: {
+						isDeleted
+					}
+				} : undefined
+			},
+			select: args.select,
+			include: args.include
+		}, transaction);
 	};
 }

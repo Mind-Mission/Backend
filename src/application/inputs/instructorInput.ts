@@ -8,4 +8,5 @@ export type UpdateInstructor = {
   videoProAcademy?: VideoProAcademy;
   haveAudience?: HaveAudience;
   skills?: {name: string}[];
+  isClosed?: boolean;
 }
