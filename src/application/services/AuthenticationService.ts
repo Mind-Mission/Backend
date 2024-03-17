@@ -33,6 +33,16 @@ export class AuthenticationService implements IAuthenticationService {
     return false;
   };
 
+  private isLastSeenWithin30Days(lastSeen: Date | null) {  
+    if(lastSeen) {
+      const currentDate = new Date();
+      const timeDifference = currentDate.getTime() - lastSeen.getTime();
+      const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+      return daysDifference <= 30;
+    }
+    return false
+  };
+
 	async signup(args: {data: Signup, select?: Prisma.UserSelect, include?: Prisma.UserInclude}): Promise<{user: any, token: string}> {
     const {firstName, lastName, email, password, mobilePhone, whatsAppNumber, bio, picture, platform, isEmailVerified} = args.data;
     const {select, include} = args;
@@ -123,8 +133,7 @@ export class AuthenticationService implements IAuthenticationService {
         }
       },
     });
-    //Check isClosed with lastSeen after 30 days and create cron job to merge email with id after 30 days
-    if(!isExist || isExist.isDeleted || !this.isCredentialsRight(isExist, password, isSignWithSSO, platform)) {
+    if(!isExist || isExist.isDeleted || !this.isCredentialsRight(isExist, password, isSignWithSSO, platform) || (isExist.isClosed && this.isLastSeenWithin30Days(isExist.lastSeen))) {
       throw new APIError('Your email or password may be incorrect', HttpStatusCode.BadRequest);
     }
     if(isExist.isBlocked) {
