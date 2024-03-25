@@ -1,16 +1,16 @@
-import { Prisma, Lesson, LessonType } from "@prisma/client"
-import {inject, injectable } from "inversify"
-import slugify from "slugify"
-import { ILessonService } from "../interfaces/IServices/ILessonService"
-import { ICourseService } from "../interfaces/IServices/ICourseService"
+import { Prisma, Lesson, LessonType } from "@prisma/client";
+import {inject, injectable } from "inversify";
+import slugify from "slugify";
+import { ILessonService } from "../interfaces/IServices/ILessonService";
+import { ICourseService } from "../interfaces/IServices/ICourseService";
 import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
-import { ILessonRepository } from "../interfaces/IRepositories/ILessonRepository"
-import { CreateLesson, UpdateLesson } from "../inputs/lessonInput"
-import { TransactionType } from "../types/TransactionType"
-import { ExtendedUser } from "../types/ExtendedUser"
-import { Transaction } from "../../infrastructure/services/Transaction"
-import APIError from "../../presentation/errorHandlers/APIError"
-import HttpStatusCode from "../../presentation/enums/HTTPStatusCode"
+import { ILessonRepository } from "../interfaces/IRepositories/ILessonRepository";
+import { CreateLesson, UpdateLesson } from "../inputs/lessonInput";
+import { TransactionType } from "../types/TransactionType";
+import { ExtendedUser } from "../types/ExtendedUser";
+import { Transaction } from "../../infrastructure/services/Transaction";
+import APIError from "../../presentation/errorHandlers/APIError";
+import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 
 @injectable()
 export class LessonService implements ILessonService, IResourceOwnership<Lesson> {
@@ -116,7 +116,7 @@ export class LessonService implements ILessonService, IResourceOwnership<Lesson>
 	};
 
 	async create(args: {data: CreateLesson, select?: Prisma.LessonSelect, include?: Prisma.LessonInclude}, transaction?: TransactionType): Promise<Lesson> {
-		const {title, order, attachment, isFree, isAvailable, sectionId} = args.data;
+		const {title, order, attachment, isFree, isDraft, sectionId} = args.data;
 		const slug = slugify(args.data.title.toString(), {lower: true, trim: true});
 		const isOrderIsFound = await this.lessonRepository.findFirst({
 			where: {
@@ -138,7 +138,7 @@ export class LessonService implements ILessonService, IResourceOwnership<Lesson>
 				lessonType: LessonType.UNDEFINED,
 				attachment,
 				isFree,
-				isAvailable,
+				isDraft,
 				section: {
 					connect: {
 						id: sectionId
@@ -148,11 +148,19 @@ export class LessonService implements ILessonService, IResourceOwnership<Lesson>
 			select: args.select,
 			include: args.include
 		}, transaction);
-	}
+	};
 
-	update(args: {data: UpdateLesson, select?: Prisma.LessonSelect, include?: Prisma.LessonInclude}, transaction?: TransactionType): Promise<Lesson> {
-		const {id, title, attachment, isFree, isAvailable, lessonType, time} = args.data;
+	async update(args: {data: UpdateLesson, select?: Prisma.LessonSelect, include?: Prisma.LessonInclude}, transaction?: TransactionType): Promise<Lesson> {
+		const {id, title, attachment, isFree, isDraft, isApproved, lessonType, time} = args.data;
 		const slug = title ? slugify(title.toString(), {lower: true, trim: true}) : undefined;
+		const lesson = await this.findUnique({
+			where: {
+				id
+			}
+		});
+		if(!lesson) {
+			throw new APIError('This lesson is not exist', HttpStatusCode.BadRequest);
+		}
 		return Transaction.transact<Lesson>(async (prismaTransaction) => {
 			(lessonType || time) && await this.updateCourseInfo(id, 'update', prismaTransaction, lessonType, time);
 			return await this.lessonRepository.update({
@@ -160,12 +168,13 @@ export class LessonService implements ILessonService, IResourceOwnership<Lesson>
 					id
 				},
 				data: {
-					title: title || undefined,
-					slug: slug || undefined,
-					attachment: attachment || undefined,
+					title,
+					slug,
+					attachment,
 					isFree,
-					isAvailable,
-					lessonType: lessonType || undefined,
+					isDraft,
+					isApproved,
+					lessonType,
 					time,	
 				},
 				select: args.select,

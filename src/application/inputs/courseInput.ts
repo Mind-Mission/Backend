@@ -27,7 +27,6 @@ export type UpdateCourse = {
   courseTeachings?: string[];
   price?: number;
   discountPercentage?: number;
-  isApproved?: boolean;
   isDraft?: boolean;
   hours?: number;
   lectures?: number;

@@ -51,7 +51,7 @@ export class SectionService implements ISectionService, IResourceOwnership<Secti
 	};
 
   async create(args: {data: CreateSection, select?: Prisma.SectionSelect, include?: Prisma.SectionInclude}, transaction?: TransactionType): Promise<Section> {
-		const {title, description, isAvailable, order, courseId} = args.data;
+		const {title, description, isDraft, order, courseId} = args.data;
 		const slug = slugify(title, {lower: true, trim: true});
 		const isOrderExist = await this.findFirst({
 			where: {
@@ -70,7 +70,7 @@ export class SectionService implements ISectionService, IResourceOwnership<Secti
 				title,
 				slug,
 				order,
-				isAvailable,
+				isDraft,
 				description,
 				course: {
 					connect: {
@@ -84,7 +84,7 @@ export class SectionService implements ISectionService, IResourceOwnership<Secti
 	};
 
 	update(args: {data: UpdateSection, select?: Prisma.SectionSelect, include?: Prisma.SectionInclude}, transaction: TransactionType): Promise<Section> {
-		const {id, title, description, isAvailable, lessons} = args.data;
+		const {id, title, description, isDraft, lessons} = args.data;
 		const slug = title ? slugify(title.toString(), {lower: true, trim: true}) : undefined;
 		return this.sectionRepository.update({
 			where: {
@@ -94,7 +94,7 @@ export class SectionService implements ISectionService, IResourceOwnership<Secti
 				title: title || undefined,
 				slug: slug || undefined,
 				description:  description || undefined,
-				isAvailable,
+				isDraft,
 				lessons: lessons ? {
 					update: lessons.map(({id, order}) => {
 						return {

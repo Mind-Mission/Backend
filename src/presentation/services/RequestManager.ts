@@ -2,7 +2,7 @@ import { Request } from "express"
 
 export abstract class RequestManager {
   private static skipItems = 0;
-  private static takeItems = 3;
+  private static takeItems = 10;
 
   private static select = (request: Request) => {
     const {select} = request.body;

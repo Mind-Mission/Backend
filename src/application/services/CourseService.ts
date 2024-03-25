@@ -101,7 +101,7 @@ export class CourseService implements ICourseService, IResourceOwnership<Course>
 	};
 
 	async update(args: {data: UpdateCourse, select?: Prisma.CourseSelect, include?: Prisma.CourseInclude}, transaction?: TransactionType): Promise<Course> {
-    const {id, title, shortDescription, description, language, level, imageCover, requirements, courseTeachings, price, discountPercentage, hours, lectures, articles, quizzes, isApproved, isDraft, sections: sections, topicId} = args.data;
+    const {id, title, shortDescription, description, language, level, imageCover, requirements, courseTeachings, price, discountPercentage, hours, lectures, articles, quizzes, isDraft, sections: sections, topicId} = args.data;
 		const slug = title ? slugify(title, {lower: true, trim: true}) : undefined;
 		if(topicId && !await this.isTrueTopic(topicId)) {
 			throw new APIError("This topic may be not exist or may be exist but not a topic", HttpStatusCode.BadRequest);
@@ -126,9 +126,8 @@ export class CourseService implements ICourseService, IResourceOwnership<Course>
 				lectures,
 				articles,
 				quizzes,
-        isApproved: isApproved,
-				isDraft: isDraft,
-				publishedAt: isApproved ? new Date() : undefined,
+				isDraft,
+				publishedAt: isDraft ? new Date() : undefined,
 				sections: sections ? {
 					update: sections.map(({id, order}) => {
 						return {

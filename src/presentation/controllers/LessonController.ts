@@ -10,6 +10,8 @@ import HttpStatusCode from '../enums/HTTPStatusCode';
 
 @injectable()
 export class LessonController {
+	restrictedPropertiesForAdminOnly: string[] = ['isApproved'];
+	
 	constructor(@inject('ILessonService') private lessonService: ILessonService) {};
 
 	getAllLessons = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {

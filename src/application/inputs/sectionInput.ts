@@ -3,7 +3,7 @@ import { ExtendedUser } from "../types/ExtendedUser";
 export type CreateSection = {
   title: string;
   description?: string;
-  isAvailable?: Boolean;
+  isDraft?: Boolean;
   order: number;
   courseId: number;
 }
@@ -12,6 +12,6 @@ export type UpdateSection = {
   id: number;
   title?: string;
   description?: string;
-  isAvailable?: Boolean;
+  isDraft?: Boolean;
   lessons?: {id: number, order: number}[];
 }

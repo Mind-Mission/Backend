@@ -112,6 +112,6 @@ export class UserController {
 			}
 		});
 		this.logService.log(isDeleted ? 'DELETE' : 'RETRIEVE', 'USER', deletedUser, request.user);
-		response.status(HttpStatusCode.NoContent).json();
+		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, `The user is ${isDeleted ? 'deleted' : 'retrieved'} successfully`));
 	});
 }

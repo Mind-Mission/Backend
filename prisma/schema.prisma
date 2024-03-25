@@ -251,7 +251,6 @@ model Course {
   price              Float
   discountPercentage Float                   @default(0)
   hasCertificate     Boolean                 @default(false)
-  isApproved         Boolean                 @default(false)
   isDraft            Boolean                 @default(true)
   publishedAt        DateTime?
   hours              Int                     @default(0)
@@ -325,7 +324,7 @@ model Section {
   title             String
   slug              String
   description       String?
-  isAvailable       Boolean        @default(true)
+  isDraft           Boolean        @default(false)
   order             Int
   lessons           Lesson[]
   courseId          Int
@@ -340,11 +339,12 @@ model Lesson {
   title              String
   slug               String
   isFree             Boolean        @default(false)
-  isAvailable        Boolean        @default(true)
+  isDraft            Boolean        @default(false)
   attachment         String?
   order              Int            @default(0)
   lessonType         LessonType     @default(UNDEFINED)
   time               Int            @default(0)
+  isApproved         Boolean        @default(false)
   video              Video?
   article            Article?
   quiz               Quiz?

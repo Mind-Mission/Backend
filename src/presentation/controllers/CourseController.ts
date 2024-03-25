@@ -78,7 +78,6 @@ export class CourseController {
 			data: {
 				...request.body.input,
 				id: +request.params.id,
-				user: request.user
 			},
 			select,
 			include

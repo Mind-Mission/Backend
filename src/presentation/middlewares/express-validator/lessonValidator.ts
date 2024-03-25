@@ -12,9 +12,9 @@ export const addLessonValidation = [
     .optional()
     .isBoolean().withMessage("isFree property must be a boolean value"),
 
-  body("input.isAvailable")
+  body("input.isDraft")
     .optional()
-    .isBoolean().withMessage("isAvailable property must be a boolean value"),
+    .isBoolean().withMessage("isDraft property must be a boolean value"),
 
   body("input.attachment")
     .optional()
@@ -42,9 +42,13 @@ export const updateLessonValidation = [
     .optional()
     .isBoolean().withMessage("isFree property must be a boolean value"),
 
-  body("input.isAvailable")
+  body("input.isDraft")
     .optional()
-    .isBoolean().withMessage("isAvailable property must be a boolean value"),
+    .isBoolean().withMessage("isDraft property must be a boolean value"),
+  
+  body("input.isApproved")
+    .optional()
+    .isBoolean().withMessage("isApproved property must be a boolean value"),
 
   body("input.attachment")
     .optional()

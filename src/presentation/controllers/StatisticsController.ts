@@ -15,8 +15,16 @@ export class StatisticsController {
   private async getAvailableCoursesCount(): Promise<Number> {
     return this.courseService.count({
       where: {
-        isApproved: {
-          equals: true
+        sections: {
+          some: {
+            isDraft: false,
+            lessons: {
+              some: {
+                isDraft: false,
+                isApproved: true
+              }
+            }
+          }
         },
         isDraft: {
           equals: false
