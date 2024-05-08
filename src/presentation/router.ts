@@ -27,7 +27,7 @@ import certificateRoutes from "./routes/certificateRoutes";
 import certificateTemplateRoutes from "./routes/certificateTemplateRoutes";
 import enumRoutes from "./routes/enumRoutes";
 
-export const routeMounting = (app: Application) => {
+export const router = (app: Application) => {
   const apiVersion = process.env.API_Version;
   app.use('/', welcomeRoute)
   app.use(`${apiVersion}/auth`, authenticationRoutes);

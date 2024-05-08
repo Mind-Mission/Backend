@@ -16,7 +16,7 @@ abstract class GlobalErrorHandler {
 		message: error.message,
 	});
 
-	static catchError(error: APIError, request: Request, response: Response, next: NextFunction): void {
+	static catch(error: APIError, request: Request, response: Response, next: NextFunction): void {
 		error.status = error.status || 'Error';
 		if(!error.statusCode) {
 			error.statusCode = HttpStatusCode.InternalServerError;

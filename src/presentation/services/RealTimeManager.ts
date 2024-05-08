@@ -9,6 +9,10 @@ import { NotifyFor, SubscribeOn } from "../enums/NotificationEvent";
 @injectable()
 export class RealTimeManager {
 	constructor(@inject('IOnlineUserService') private onlineUserService: IOnlineUserService, @inject('ICommentService') private commentService: ICommentService) {
+    this.initializeNotifier();
+  };
+
+  private initializeNotifier() {
     notifier.on(SubscribeOn.Connection, (socket) => {
       socket.on(SubscribeOn.Login, async (userId: number) => {
         try {
@@ -21,17 +25,17 @@ export class RealTimeManager {
             try {
               await this.removeCurrentLoggedInUserIFromOnlineUserTable(socket.id);
               // await this.sendNotificationWithOnlineUsersCount(socket);
-            }catch(error) {
+            } catch(error) {
               console.log(error);
             }
           });
-        }catch(error) {
+        } catch(error) {
           console.log(error);
         }
       });
       socket.on(SubscribeOn.NewMessage, (message: Message) => {
         socket.emit(NotifyFor.NewMessage, message);
-      })
+      });
     });
   };
 
