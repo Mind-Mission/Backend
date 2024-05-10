@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
 import { ExtendedRequest } from "../types/ExtendedRequest";
-import {ICouponService} from "../../application/interfaces/IServices/ICouponService"
-import { ILogService } from "../../application/interfaces/IServices/ILogService";
+import {ICouponService} from "../../application/interfaces/IServices/i-coupon.service"
+import { ILogService } from "../../application/interfaces/IServices/i-log.service";
 import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import APIError from "../errorHandlers/APIError";

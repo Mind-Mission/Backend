@@ -2,7 +2,7 @@ import { CorrectAnswer, LessonType, QuestionLevel } from "@prisma/client";
 import slugify from "slugify";
 import bcrypt from 'bcrypt';
 import prisma from "../domain/db";
-import { SuperAdminPermissions } from "../application/config/SuperAdminPermissions";
+import { SuperAdminPermissions } from "../application/config/super-admin.permissions";
 
 export const upsertMainSuperAdmin = async () => {
   const {Super_Admin_FirstName, Super_Admin_LastName, Super_Admin_Email, Super_Admin_Password} = process.env;

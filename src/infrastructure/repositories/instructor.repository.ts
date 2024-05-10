@@ -2,8 +2,8 @@ import { Prisma } from "@prisma/client";
 import { injectable } from "inversify";
 import { IInstructorRepository } from "../../application/interfaces/IRepositories/i-instructor.repository";
 import prisma from "../../domain/db";
-import { ExtendedInstructor } from "../../application/types/ExtendedInstructor";
-import { TransactionType } from "../../application/types/TransactionType";
+import { ExtendedInstructor } from "../../application/interfaces/extended/instructor.extend";
+import { TransactionType } from "../../application/interfaces/extended/transaction-type.extend";
 
 @injectable()
 export class InstructorRepository implements IInstructorRepository {

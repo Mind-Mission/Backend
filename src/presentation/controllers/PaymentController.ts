@@ -2,10 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
 import { $Enums, PaymentMethod } from "@prisma/client";
-import {IPaymentService} from "../../application/interfaces/IServices/IPaymentService"
-import { IStudentService } from "../../application/interfaces/IServices/IStudentService";
-import { ILogService } from "../../application/interfaces/IServices/ILogService";
-import { ExtendedPaymentUnit } from "../../application/types/ExtendedPaymentUnit";
+import {IPaymentService} from "../../application/interfaces/IServices/i-payment.service"
+import { IStudentService } from "../../application/interfaces/IServices/i-student.service";
+import { ILogService } from "../../application/interfaces/IServices/i-log.service";
+import { ExtendedPaymentUnit } from "../../application/interfaces/extended/payment-unit.extend";
 import {PayMob} from "../services/PayMob";
 import {PayPal} from "../services/PayPal";
 import { ExtendedRequest } from "../types/ExtendedRequest";

@@ -2,8 +2,8 @@ import { Prisma } from "@prisma/client";
 import { injectable } from "inversify";
 import { IStudentRepository } from "../../application/interfaces/IRepositories/i-student.repository";
 import prisma from "../../domain/db";
-import { ExtendedStudent } from "../../application/types/ExtendedStudent";
-import { TransactionType } from "../../application/types/TransactionType";
+import { ExtendedStudent } from "../../application/interfaces/extended/student.extend";
+import { TransactionType } from "../../application/interfaces/extended/transaction-type.extend";
 
 @injectable()
 export class StudentRepository implements IStudentRepository {

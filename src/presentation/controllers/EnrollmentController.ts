@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import { IEnrollmentService } from "../../application/interfaces/IServices/IEnrollmentService";
-import { IStudentService } from "../../application/interfaces/IServices/IStudentService";
-import { ILogService } from "../../application/interfaces/IServices/ILogService";
+import { IEnrollmentService } from "../../application/interfaces/IServices/i-enrollment.service";
+import { IStudentService } from "../../application/interfaces/IServices/i-student.service";
+import { ILogService } from "../../application/interfaces/IServices/i-log.service";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";

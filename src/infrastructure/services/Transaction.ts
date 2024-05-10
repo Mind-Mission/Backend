@@ -1,5 +1,5 @@
 import prisma from "../../domain/db";
-import { TransactionType } from "../../application/types/TransactionType";
+import { TransactionType } from "../../application/interfaces/extended/transaction-type.extend";
 import APIError from "../../presentation/errorHandlers/APIError";
 import HttpStatusCode from "../../presentation/enums/HTTPStatusCode";
 import { PrismaCodeErrors } from "../enum/prisma-error.enum";

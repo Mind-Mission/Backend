@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
 import { ExtendedRequest } from "../types/ExtendedRequest";
-import { ICartService } from "../../application/interfaces/IServices/ICartService";
+import { ICartService } from "../../application/interfaces/IServices/i-cart.service";
 import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import APIError from "../errorHandlers/APIError";

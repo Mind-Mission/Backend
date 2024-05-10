@@ -1,8 +1,8 @@
 import { Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import { IUserCredentialsService } from "../../application/interfaces/IServices/IUserCredentialsService";
-import { JWTGenerator } from "../../application/helpers/JWTGenerator";
+import { IUserCredentialsService } from "../../application/interfaces/IServices/i-user-credentials.service";
+import { JWTGenerator } from "../../application/helpers/jwt-generator";
 import { RequestManager } from "../services/RequestManager";
 import { UserMapper } from "../mapping/UserMapper";
 import { ExtendedRequest } from "../types/ExtendedRequest";

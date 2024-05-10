@@ -1,8 +1,8 @@
 import { Prisma, Comment, Message } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import { Socket } from "socket.io";
-import { IOnlineUserService } from "../../application/interfaces/IServices/IOnlineUserService";
-import { ICommentService } from "../../application/interfaces/IServices/ICommentService";
+import { IOnlineUserService } from "../../application/interfaces/IServices/i-online-user.service";
+import { ICommentService } from "../../application/interfaces/IServices/i-comment-service";
 import { notifier } from "./Notifier";
 import { NotifyFor, SubscribeOn } from "../enums/NotificationEvent";
 

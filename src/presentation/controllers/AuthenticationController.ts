@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import { IAuthenticationService } from "../../application/interfaces/IServices/IAuthenticationService";
+import { IAuthenticationService } from "../../application/interfaces/IServices/i-authentication.service";
 import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import HttpStatusCode from '../enums/HTTPStatusCode';

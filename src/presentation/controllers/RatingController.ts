@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction, request } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import {IRatingService} from "../../application/interfaces/IServices/IRatingService"
-import { ILogService } from "../../application/interfaces/IServices/ILogService";
+import {IRatingService} from "../../application/interfaces/IServices/i-rating.service"
+import { ILogService } from "../../application/interfaces/IServices/i-log.service";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";

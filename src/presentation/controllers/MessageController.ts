@@ -2,10 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
 import { ExtendedRequest } from "../types/ExtendedRequest";
-import {IMessageService} from "../../application/interfaces/IServices/IMessageService"
-import { ILogService } from "../../application/interfaces/IServices/ILogService";
+import {IMessageService} from "../../application/interfaces/IServices/i-message.service"
+import { ILogService } from "../../application/interfaces/IServices/i-log.service";
 import { RequestManager } from "../services/RequestManager";
-import { SendEmail } from "../../application/helpers/SendEmail";
+import { SendEmail } from "../../application/helpers/send-email";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from '../enums/HTTPStatusCode';

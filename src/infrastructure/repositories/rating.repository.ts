@@ -3,7 +3,7 @@ import { injectable } from "inversify";
 import { IRatingRepository } from "../../application/interfaces/IRepositories/i-rating.repository";
 import prisma from "../../domain/db";
 import { DefaultArgs } from "@prisma/client/runtime/library";
-import { TransactionType } from "../../application/types/TransactionType";
+import { TransactionType } from "../../application/interfaces/extended/transaction-type.extend";
 
 @injectable()
 export class RatingRepository implements IRatingRepository {

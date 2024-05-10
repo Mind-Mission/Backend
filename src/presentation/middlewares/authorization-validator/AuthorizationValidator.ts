@@ -2,9 +2,9 @@ import { Crud, Resource, Role } from "@prisma/client";
 import { Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
 import {inject, injectable} from "inversify";
-import {IUserService} from "../../../application/interfaces/IServices/IUserService";
+import {IUserService} from "../../../application/interfaces/IServices/i-user.service";
 import { ExtendedRequest } from "../../types/ExtendedRequest";
-import { JWTGenerator } from "../../../application/helpers/JWTGenerator";
+import { JWTGenerator } from "../../../application/helpers/jwt-generator";
 import APIError from "../../errorHandlers/APIError";
 import HttpStatusCode from "../../enums/HTTPStatusCode";
 

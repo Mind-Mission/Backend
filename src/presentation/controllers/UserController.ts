@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import { $Enums } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import { IUserService } from "../../application/interfaces/IServices/IUserService";
-import { ILogService } from "../../application/interfaces/IServices/ILogService";
+import { IUserService } from "../../application/interfaces/IServices/i-user.service";
+import { ILogService } from "../../application/interfaces/IServices/i-log.service";
 import { RequestManager } from "../services/RequestManager";
 import { UserMapper } from "../mapping/UserMapper";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
-import { SuperAdminPermissions } from "../../application/config/SuperAdminPermissions";
+import { SuperAdminPermissions } from "../../application/config/super-admin.permissions";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from '../enums/HTTPStatusCode';
 

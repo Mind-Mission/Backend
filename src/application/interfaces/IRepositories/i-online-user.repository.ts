@@ -1,7 +1,7 @@
 
 import { Prisma, OnlineUser } from "@prisma/client";
 import { IFindBaseRepository } from "./Base/i-find-base.repository";
-import { TransactionType } from "../../types/TransactionType";
+import { TransactionType } from "../extended/transaction-type.extend";
 
 export interface IOnlineUserRepository extends IFindBaseRepository<OnlineUser> {
   aggregate(args: Prisma.OnlineUserAggregateArgs): Prisma.PrismaPromise<Prisma.GetOnlineUserAggregateType<Prisma.OnlineUserAggregateArgs>>
