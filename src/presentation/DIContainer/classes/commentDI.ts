@@ -1,5 +1,5 @@
 import { container } from '../container/DIContainer';
-import { ICommentRepository } from '../../../application/interfaces/IRepositories/ICommentRepository';
+import { ICommentRepository } from '../../../application/interfaces/IRepositories/i-comment.repository';
 import { CommentRepository } from '../../../infrastructure/repositories/comment.repository';
 import { ICommentService } from '../../../application/interfaces/IServices/ICommentService';
 import { CommentService } from '../../../application/services/CommentService';

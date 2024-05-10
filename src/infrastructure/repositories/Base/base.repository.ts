@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { injectable, unmanaged } from "inversify";
-import { IBaseRepository } from "../../../application/interfaces/IRepositories/Base/IBaseRepository";
+import { IBaseRepository } from "../../../application/interfaces/IRepositories/Base/i-base.repository";
 import prisma from "../../../domain/db";
 import { TransactionType } from "../../../application/types/TransactionType";
 

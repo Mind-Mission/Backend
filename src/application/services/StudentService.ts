@@ -1,6 +1,6 @@
 import {  Prisma } from "@prisma/client"
 import {inject, injectable } from "inversify"
-import { IStudentRepository } from "../interfaces/IRepositories/IStudentRepository";
+import { IStudentRepository } from "../interfaces/IRepositories/i-student.repository";
 import { IStudentService } from "../interfaces/IServices/IStudentService";
 import { IUserService } from "../interfaces/IServices/IUserService";
 import { ExtendedStudent } from "../types/ExtendedStudent";

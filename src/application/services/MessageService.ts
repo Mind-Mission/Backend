@@ -1,7 +1,7 @@
 import { Prisma, Message } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { IMessageService } from "../interfaces/IServices/IMessageService"
-import { IMessageRepository } from "../interfaces/IRepositories/IMessageRepository"
+import { IMessageRepository } from "../interfaces/IRepositories/i-message.repository"
 import { CreateMessage, UpdateMessage } from "../inputs/messageInput"
 import { TransactionType } from "../types/TransactionType"
 

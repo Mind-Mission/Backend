@@ -1,6 +1,6 @@
 import { Lesson } from '@prisma/client';
 import { container } from '../container/DIContainer';
-import { ILessonRepository } from '../../../application/interfaces/IRepositories/ILessonRepository';
+import { ILessonRepository } from '../../../application/interfaces/IRepositories/i-lesson.repository';
 import { LessonRepository } from '../../../infrastructure/repositories/lesson.repository';
 import { ILessonService } from '../../../application/interfaces/IServices/ILessonService';
 import { LessonService } from '../../../application/services/LessonService';

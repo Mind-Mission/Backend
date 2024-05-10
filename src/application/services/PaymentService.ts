@@ -3,7 +3,7 @@ import {inject, injectable } from "inversify"
 import { IPaymentService } from "../interfaces/IServices/IPaymentService"
 import { ICouponService } from "../interfaces/IServices/ICouponService"
 import { ICartService } from "../interfaces/IServices/ICartService";
-import { IPaymentRepository } from "../interfaces/IRepositories/IPaymentRepository"
+import { IPaymentRepository } from "../interfaces/IRepositories/i-payment.repository"
 import { CreatePayment, UpdatePayment } from "../inputs/paymentInput"
 import { TransactionType } from "../types/TransactionType"
 import { ExtendedPayment } from "../types/ExtendedPayment"

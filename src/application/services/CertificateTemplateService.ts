@@ -1,7 +1,7 @@
 import { Prisma, CertificateTemplate } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { ICertificateTemplateService } from "../interfaces/IServices/ICertificateTemplateService"
-import { ICertificateTemplateRepository } from "../interfaces/IRepositories/ICertificateTemplateRepository"
+import { ICertificateTemplateRepository } from "../interfaces/IRepositories/i-certificate-template.repository"
 import { CreateCertificateTemplate, UpdateCertificateTemplate } from "../inputs/certificateTemplateInput"
 import { TransactionType } from "../types/TransactionType"
 

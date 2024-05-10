@@ -1,6 +1,6 @@
 import { Course } from '@prisma/client';
 import { container } from '../container/DIContainer';
-import { ICourseRepository } from '../../../application/interfaces/IRepositories/ICourseRepository';
+import { ICourseRepository } from '../../../application/interfaces/IRepositories/i-course.repository';
 import { CourseRepository } from '../../../infrastructure/repositories/course.repository';
 import { ICourseService } from '../../../application/interfaces/IServices/ICourseService';
 import { CourseService } from '../../../application/services/CourseService';

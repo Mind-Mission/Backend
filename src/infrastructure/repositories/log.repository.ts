@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { Prisma, Log } from "@prisma/client";
-import {ILogRepository} from "../../application/interfaces/IRepositories/ILogRepository"
+import {ILogRepository} from "../../application/interfaces/IRepositories/i-log.repository"
 import prisma from "../../domain/db";
 
 @injectable()

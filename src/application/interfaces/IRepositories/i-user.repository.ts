@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { IBaseRepository } from "./Base/IBaseRepository";
+import { IBaseRepository } from "./Base/i-base.repository";
 import { ExtendedUser } from "../../types/ExtendedUser";
 
 export interface IUserRepository extends IBaseRepository<ExtendedUser> {

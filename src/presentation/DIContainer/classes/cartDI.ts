@@ -1,5 +1,5 @@
 import { container } from '../container/DIContainer';
-import { ICartRepository } from '../../../application/interfaces/IRepositories/ICartRepository';
+import { ICartRepository } from '../../../application/interfaces/IRepositories/i-cart.repository';
 import { CartRepository } from '../../../infrastructure/repositories/cart.repository';
 import { ICartService } from '../../../application/interfaces/IServices/ICartService';
 import { CartService } from '../../../application/services/CartService';

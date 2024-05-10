@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import slugify from "slugify";
-import { IInstructorRepository } from "../interfaces/IRepositories/IInstructorRepository";
+import { IInstructorRepository } from "../interfaces/IRepositories/i-instructor.repository";
 import { IInstructorService } from "../interfaces/IServices/IInstructorService";
 import { ExtendedInstructor } from "../types/ExtendedInstructor";
 import { UpdateInstructor } from "../inputs/instructorInput";

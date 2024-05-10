@@ -1,7 +1,7 @@
 import { Prisma, OnlineUser } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { IOnlineUserService } from "../interfaces/IServices/IOnlineUserService"
-import { IOnlineUserRepository } from "../interfaces/IRepositories/IOnlineUserRepository"
+import { IOnlineUserRepository } from "../interfaces/IRepositories/i-online-user.repository"
 import { IUserService } from "../interfaces/IServices/IUserService"
 import { CreateOnlineUser } from "../inputs/onlineUserInput"
 import { Transaction } from "../../infrastructure/services/Transaction"

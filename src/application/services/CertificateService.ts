@@ -2,8 +2,8 @@ import crypto from 'crypto';
 import { Prisma, Certificate, CertificateTemplate } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { ICertificateService } from "../interfaces/IServices/ICertificateService"
-import { ICertificateRepository } from "../interfaces/IRepositories/ICertificateRepository"
-import { IEnrollmentRepository } from "../interfaces/IRepositories/IEnrollmentRepository"
+import { ICertificateRepository } from "../interfaces/IRepositories/i-certificate.repository"
+import { IEnrollmentRepository } from "../interfaces/IRepositories/i-enrollment.repository"
 import { ICertificateTemplateService } from '../interfaces/IServices/ICertificateTemplateService';
 import { CreateCertificate, UpdateCertificate } from "../inputs/certificateInput"
 import { TransactionType } from "../types/TransactionType"

@@ -1,6 +1,6 @@
 import { Coupon } from '@prisma/client';
 import { container } from '../container/DIContainer';
-import { ICouponRepository } from '../../../application/interfaces/IRepositories/ICouponRepository';
+import { ICouponRepository } from '../../../application/interfaces/IRepositories/i-coupon.repository';
 import { CouponRepository } from '../../../infrastructure/repositories/coupon.repository';
 import { ICouponService } from '../../../application/interfaces/IServices/ICouponService';
 import { CouponService } from '../../../application/services/CouponService';

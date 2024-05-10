@@ -1,6 +1,6 @@
 import { Prisma, Comment } from "@prisma/client"
 import { inject, injectable } from "inversify"
-import { ICommentRepository } from "../interfaces/IRepositories/ICommentRepository"
+import { ICommentRepository } from "../interfaces/IRepositories/i-comment.repository"
 import { ICommentService } from "../interfaces/IServices/ICommentService"
 import { CreateComment, UpdateComment } from "../inputs/commentInput"
 import { TransactionType } from "../types/TransactionType"

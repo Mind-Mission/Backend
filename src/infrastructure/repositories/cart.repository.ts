@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { injectable } from "inversify";
-import { ICartRepository } from "../../application/interfaces/IRepositories/ICartRepository";
+import { ICartRepository } from "../../application/interfaces/IRepositories/i-cart.repository";
 import { ExtendedCart } from "../../application/types/ExtenedCart";
 import { TransactionType } from "../../application/types/TransactionType";
 import prisma from "../../domain/db";

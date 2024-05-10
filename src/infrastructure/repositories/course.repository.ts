@@ -1,6 +1,6 @@
 import { Prisma, Course } from "@prisma/client";
 import { injectable } from "inversify";
-import { ICourseRepository } from "../../application/interfaces/IRepositories/ICourseRepository";
+import { ICourseRepository } from "../../application/interfaces/IRepositories/i-course.repository";
 import prisma from "../../domain/db";
 import { BaseRepository } from "./Base/base.repository";
 

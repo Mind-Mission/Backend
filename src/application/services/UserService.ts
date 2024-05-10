@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import bcrypt from "bcrypt"
 import { inject, injectable } from "inversify";
 import {IUserService} from "../interfaces/IServices/IUserService"
-import {IUserRepository} from "../interfaces/IRepositories/IUserRepository"
+import {IUserRepository} from "../interfaces/IRepositories/i-user.repository"
 import { InstructorPermissions } from "../config/InstructorPermissions";
 import { StudentPermissions } from "../config/StudentPermissions";
 import { StudentInstructorPermissions } from "../config/StudentInstructorPermissions";

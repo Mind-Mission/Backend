@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { injectable } from "inversify";
 import { ExtendedEnrollment } from "../../application/types/ExtendedEnrollment";
-import { IEnrollmentRepository } from "../../application/interfaces/IRepositories/IEnrollmentRepository";
+import { IEnrollmentRepository } from "../../application/interfaces/IRepositories/i-enrollment.repository";
 import prisma from "../../domain/db";
 import { TransactionType } from "../../application/types/TransactionType";
 

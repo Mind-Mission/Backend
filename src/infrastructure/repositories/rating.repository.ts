@@ -1,6 +1,6 @@
 import { Prisma, Rating } from "@prisma/client";
 import { injectable } from "inversify";
-import { IRatingRepository } from "../../application/interfaces/IRepositories/IRatingRepository";
+import { IRatingRepository } from "../../application/interfaces/IRepositories/i-rating.repository";
 import prisma from "../../domain/db";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 import { TransactionType } from "../../application/types/TransactionType";

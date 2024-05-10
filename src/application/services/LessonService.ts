@@ -4,7 +4,7 @@ import slugify from "slugify";
 import { ILessonService } from "../interfaces/IServices/ILessonService";
 import { ICourseService } from "../interfaces/IServices/ICourseService";
 import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
-import { ILessonRepository } from "../interfaces/IRepositories/ILessonRepository";
+import { ILessonRepository } from "../interfaces/IRepositories/i-lesson.repository";
 import { CreateLesson, UpdateLesson } from "../inputs/lessonInput";
 import { TransactionType } from "../types/TransactionType";
 import { ExtendedUser } from "../types/ExtendedUser";

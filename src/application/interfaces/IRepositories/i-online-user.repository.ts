@@ -1,5 +1,6 @@
+
 import { Prisma, OnlineUser } from "@prisma/client";
-import { IFindBaseRepository } from "./Base/IFindBaseRepository";
+import { IFindBaseRepository } from "./Base/i-find-base.repository";
 import { TransactionType } from "../../types/TransactionType";
 
 export interface IOnlineUserRepository extends IFindBaseRepository<OnlineUser> {

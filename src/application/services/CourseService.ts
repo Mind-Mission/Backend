@@ -1,7 +1,7 @@
 import { Prisma, Course } from "@prisma/client";
 import {inject, injectable } from "inversify";
 import slugify from "slugify";
-import { ICourseRepository } from "../interfaces/IRepositories/ICourseRepository";
+import { ICourseRepository } from "../interfaces/IRepositories/i-course.repository";
 import { ICourseService } from "../interfaces/IServices/ICourseService";
 import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { ICategoryService } from "../interfaces/IServices/ICategoryService";

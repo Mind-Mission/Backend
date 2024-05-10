@@ -2,7 +2,7 @@ import { Prisma, Enrollment } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import { ExtendedEnrollment } from "../types/ExtendedEnrollment";
 import { UpdateEnrollment } from "../inputs/enrollmentInput";
-import {IEnrollmentRepository} from "../interfaces/IRepositories/IEnrollmentRepository";
+import {IEnrollmentRepository} from "../interfaces/IRepositories/i-enrollment.repository";
 import {IEnrollmentService} from "../interfaces/IServices/IEnrollmentService";
 import { ICertificateService } from "../interfaces/IServices/ICertificateService";
 import { TransactionType } from "../types/TransactionType";

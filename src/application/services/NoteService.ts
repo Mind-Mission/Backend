@@ -2,7 +2,7 @@ import { Prisma, Note } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { INoteService } from "../interfaces/IServices/INoteService"
 import { IStudentService } from "../interfaces/IServices/IStudentService"
-import { INoteRepository } from "../interfaces/IRepositories/INoteRepository"
+import { INoteRepository } from "../interfaces/IRepositories/i-note.repository"
 import { UpsertNote } from "../inputs/noteInput"
 import { TransactionType } from "../types/TransactionType"
 

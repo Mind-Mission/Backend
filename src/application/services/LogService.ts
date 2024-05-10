@@ -1,7 +1,7 @@
 import { Log, LogModel, OperationType, Prisma } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import { ExtendedUser } from "../types/ExtendedUser";
-import { ILogRepository } from "../interfaces/IRepositories/ILogRepository";
+import { ILogRepository } from "../interfaces/IRepositories/i-log.repository";
 import { ILogService } from "../interfaces/IServices/ILogService"; 
 
 @injectable()

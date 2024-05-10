@@ -3,7 +3,7 @@ import {inject, injectable } from "inversify";
 import { IVideoService } from "../interfaces/IServices/IVideoService";
 import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { ILessonService } from "../interfaces/IServices/ILessonService";
-import { IVideoRepository } from "../interfaces/IRepositories/IVideoRepository";
+import { IVideoRepository } from "../interfaces/IRepositories/i-video-repository";
 import { CreateVideo, UpdateVideo } from "../inputs/videoInput";
 import { TransactionType } from "../types/TransactionType";
 import { ExtendedUser } from "../types/ExtendedUser";

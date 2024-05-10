@@ -1,7 +1,7 @@
 import { Prisma, Article, LessonType, Lesson } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { CreateArticle, UpdateArticle } from "../inputs/articleInput";
-import { IArticleRepository } from "../interfaces/IRepositories/IArticleRepository"
+import { IArticleRepository } from "../interfaces/IRepositories/i-article.repository"
 import { IArticleService } from "../interfaces/IServices/IArticleService"
 import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
 import { ILessonService } from "../interfaces/IServices/ILessonService";

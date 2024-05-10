@@ -3,7 +3,7 @@ import {inject, injectable } from "inversify"
 import slugify from "slugify"
 import { ISectionService } from "../interfaces/IServices/ISectionService"
 import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
-import { ISectionRepository } from "../interfaces/IRepositories/ISectionRepository"
+import { ISectionRepository } from "../interfaces/IRepositories/i-section.repository"
 import { CreateSection, UpdateSection } from "../inputs/sectionInput"
 import { TransactionType } from "../types/TransactionType"
 import { ExtendedUser } from "../types/ExtendedUser"

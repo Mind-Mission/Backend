@@ -3,7 +3,7 @@ import {inject, injectable } from "inversify"
 import { IQuizService } from "../interfaces/IServices/IQuizService"
 import { ILessonService } from "../interfaces/IServices/ILessonService";
 import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";
-import { IQuizRepository } from "../interfaces/IRepositories/IQuizRepository"
+import { IQuizRepository } from "../interfaces/IRepositories/i-quiz.repository"
 import { CreateQuiz, UpdateQuiz } from "../inputs/quizInput";
 import { TransactionType } from "../types/TransactionType";
 import { ExtendedUser } from "../types/ExtendedUser";

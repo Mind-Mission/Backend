@@ -1,5 +1,5 @@
 import { container } from '../container/DIContainer';
-import { ICategoryRepository } from '../../../application/interfaces/IRepositories/ICategoryRepository';
+import { ICategoryRepository } from '../../../application/interfaces/IRepositories/i-category.repository';
 import { CategoryRepository } from '../../../infrastructure/repositories/category.repository';
 import { ICategoryService } from '../../../application/interfaces/IServices/ICategoryService';
 import { CategoryService } from '../../../application/services/CategoryService';

@@ -1,6 +1,6 @@
 import { Coupon } from "@prisma/client";
 import { injectable } from "inversify";
-import { ICouponRepository } from "../../application/interfaces/IRepositories/ICouponRepository";
+import { ICouponRepository } from "../../application/interfaces/IRepositories/i-coupon.repository";
 import { BaseRepository } from "./Base/base.repository";
 
 @injectable()

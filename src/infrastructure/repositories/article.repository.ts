@@ -1,7 +1,7 @@
 import { Article, Prisma } from "@prisma/client";
 import { injectable } from "inversify";
 import { BaseRepository } from "./Base/base.repository";
-import { IArticleRepository } from "../../application/interfaces/IRepositories/IArticleRepository";
+import { IArticleRepository } from "../../application/interfaces/IRepositories/i-article.repository";
 import prisma from "../../domain/db";
 
 @injectable()

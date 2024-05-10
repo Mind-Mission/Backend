@@ -1,6 +1,6 @@
 import { Prisma, Lesson } from "@prisma/client";
 import { injectable } from "inversify";
-import { ILessonRepository } from "../../application/interfaces/IRepositories/ILessonRepository";
+import { ILessonRepository } from "../../application/interfaces/IRepositories/i-lesson.repository";
 import prisma from "../../domain/db";
 import { BaseRepository } from "./Base/base.repository";
 

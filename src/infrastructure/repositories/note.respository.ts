@@ -1,6 +1,6 @@
 import { Note, Prisma } from "@prisma/client";
 import { injectable } from "inversify";
-import { INoteRepository } from "../../application/interfaces/IRepositories/INoteRepository";
+import { INoteRepository } from "../../application/interfaces/IRepositories/i-note.repository";
 import { TransactionType } from "../../application/types/TransactionType";
 import prisma from "../../domain/db";
 

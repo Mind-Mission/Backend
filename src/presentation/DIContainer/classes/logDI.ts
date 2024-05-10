@@ -1,5 +1,5 @@
 import { container } from '../container/DIContainer';
-import { ILogRepository } from '../../../application/interfaces/IRepositories/ILogRepository';
+import { ILogRepository } from '../../../application/interfaces/IRepositories/i-log.repository';
 import { LogRepository } from '../../../infrastructure/repositories/log.repository';
 import { ILogService } from '../../../application/interfaces/IServices/ILogService';
 import { LogService } from '../../../application/services/LogService';

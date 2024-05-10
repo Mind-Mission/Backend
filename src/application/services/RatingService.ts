@@ -1,6 +1,6 @@
 import { Prisma, Rating } from "@prisma/client"
 import { inject, injectable } from "inversify"
-import { IRatingRepository } from "../interfaces/IRepositories/IRatingRepository";
+import { IRatingRepository } from "../interfaces/IRepositories/i-rating.repository";
 import { IRatingService } from "../interfaces/IServices/IRatingService";
 import { IEnrollmentService } from "../interfaces/IServices/IEnrollmentService";
 import { ExtendedEnrollment } from "../types/ExtendedEnrollment";

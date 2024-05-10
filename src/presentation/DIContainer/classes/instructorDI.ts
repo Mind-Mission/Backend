@@ -1,5 +1,5 @@
 import { container } from '../container/DIContainer';
-import { IInstructorRepository } from '../../../application/interfaces/IRepositories/IInstructorRepository';
+import { IInstructorRepository } from '../../../application/interfaces/IRepositories/i-instructor.repository';
 import { InstructorRepository } from '../../../infrastructure/repositories/instructor.repository';
 import { IInstructorService } from '../../../application/interfaces/IServices/IInstructorService';
 import { InstructorService } from '../../../application/services/InstructorService';

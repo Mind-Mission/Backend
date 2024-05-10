@@ -1,6 +1,6 @@
 import { Article } from '@prisma/client';
 import { container } from '../container/DIContainer';
-import { IArticleRepository } from '../../../application/interfaces/IRepositories/IArticleRepository';
+import { IArticleRepository } from '../../../application/interfaces/IRepositories/i-article.repository';
 import { ArticleRepository } from '../../../infrastructure/repositories/article.repository';
 import { IArticleService } from '../../../application/interfaces/IServices/IArticleService';
 import { ArticleService } from '../../../application/services/ArticleService';

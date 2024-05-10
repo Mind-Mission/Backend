@@ -1,7 +1,7 @@
 import { Prisma, Cart } from "@prisma/client"
 import {inject, injectable } from "inversify"
 import { UpdateCart} from "../inputs/cartInput";
-import { ICartRepository } from "../interfaces/IRepositories/ICartRepository"
+import { ICartRepository } from "../interfaces/IRepositories/i-cart.repository"
 import { ICartService } from "../interfaces/IServices/ICartService"
 import { ICourseService } from "../interfaces/IServices/ICourseService";
 import { TransactionType } from "../types/TransactionType";

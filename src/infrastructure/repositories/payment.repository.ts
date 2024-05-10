@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { IPaymentRepository } from "../../application/interfaces/IRepositories/IPaymentRepository";
+import { IPaymentRepository } from "../../application/interfaces/IRepositories/i-payment.repository";
 import { ExtendedPayment } from "../../application/types/ExtendedPayment";
 import { BaseRepository } from "./Base/base.repository";
 

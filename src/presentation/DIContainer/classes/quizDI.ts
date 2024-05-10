@@ -1,6 +1,6 @@
 import { Quiz } from '@prisma/client';
 import { container } from '../container/DIContainer';
-import { IQuizRepository } from '../../../application/interfaces/IRepositories/IQuizRepository';
+import { IQuizRepository } from '../../../application/interfaces/IRepositories/i-quiz.repository';
 import { QuizRepository } from '../../../infrastructure/repositories/quiz.repository';
 import { IQuizService } from '../../../application/interfaces/IServices/IQuizService';
 import { QuizService } from '../../../application/services/QuizService';

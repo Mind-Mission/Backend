@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { Prisma, Coupon, Course } from "@prisma/client";
 import {inject, injectable } from "inversify";
 import {ICouponService} from "../interfaces/IServices/ICouponService";
-import {ICouponRepository} from "../interfaces/IRepositories/ICouponRepository";
+import {ICouponRepository} from "../interfaces/IRepositories/i-coupon.repository";
 import { CreateCoupon, UpdateCoupon } from "../inputs/couponInput";
 import { TransactionType } from "../types/TransactionType";
 import { IResourceOwnership } from "../interfaces/IServices/IResourceOwnership";

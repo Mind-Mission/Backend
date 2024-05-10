@@ -1,6 +1,6 @@
 import { Prisma, OnlineUser } from "@prisma/client";
 import { injectable } from "inversify";
-import { IOnlineUserRepository } from "../../application/interfaces/IRepositories/IOnlineUserRepository";
+import { IOnlineUserRepository } from "../../application/interfaces/IRepositories/i-online-user.repository";
 import prisma from "../../domain/db";
 import { TransactionType } from "../../application/types/TransactionType";
 

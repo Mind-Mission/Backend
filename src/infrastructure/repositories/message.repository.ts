@@ -1,6 +1,6 @@
 import { Message } from "@prisma/client";
 import { injectable } from "inversify";
-import { IMessageRepository } from "../../application/interfaces/IRepositories/IMessageRepository";
+import { IMessageRepository } from "../../application/interfaces/IRepositories/i-message.repository";
 import { BaseRepository } from "./Base/base.repository";
 
 @injectable()

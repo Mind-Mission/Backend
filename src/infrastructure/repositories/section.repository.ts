@@ -1,6 +1,6 @@
 import { Prisma, Section } from "@prisma/client";
 import { injectable } from "inversify";
-import { ISectionRepository } from "../../application/interfaces/IRepositories/ISectionRepository";
+import { ISectionRepository } from "../../application/interfaces/IRepositories/i-section.repository";
 import prisma from "../../domain/db";
 import { BaseRepository } from "./Base/base.repository";
 

@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { injectable } from "inversify";
 import prisma from "../../domain/db"
-import {IUserRepository} from "../../application/interfaces/IRepositories/IUserRepository"
+import {IUserRepository} from "../../application/interfaces/IRepositories/i-user.repository"
 import { ExtendedUser } from "../../application/types/ExtendedUser";
 import { BaseRepository } from "./Base/base.repository";
 

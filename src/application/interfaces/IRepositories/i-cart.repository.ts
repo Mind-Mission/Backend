@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { IFindBaseRepository } from "./Base/IFindBaseRepository";
+import { IFindBaseRepository } from "./Base/i-find-base.repository";
 import { ExtendedCart } from "../../types/ExtenedCart";
 import { TransactionType } from "../../types/TransactionType";
 
