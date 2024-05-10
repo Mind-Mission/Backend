@@ -1,6 +1,6 @@
 import { container } from '../container/DIContainer';
 import { IMessageRepository } from '../../../application/interfaces/IRepositories/IMessageRepository';
-import { MessageRepository } from '../../../infrastructure/repositories/MessageRepository';
+import { MessageRepository } from '../../../infrastructure/repositories/message.repository';
 import { IMessageService } from '../../../application/interfaces/IServices/IMessageService';
 import { MessageService } from '../../../application/services/MessageService';
 import { MessageController } from '../../controllers/MessageController';

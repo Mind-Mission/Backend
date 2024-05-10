@@ -1,0 +1,4 @@
+export enum PrismaCodeErrors {
+  TRANSACTION_ERROR = 'P2028',
+  UNIQUE_CONSTRAINT_ERROR = 'P2002'
+}

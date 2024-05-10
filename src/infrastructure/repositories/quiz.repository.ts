@@ -1,7 +1,7 @@
 import { Prisma, Quiz } from "@prisma/client";
 import { injectable } from "inversify";
 import { IQuizRepository } from "../../application/interfaces/IRepositories/IQuizRepository";
-import { BaseRepository } from "./Base/BaseRepository";
+import { BaseRepository } from "./Base/base.repository";
 import prisma from "../../domain/db";
 
 @injectable()

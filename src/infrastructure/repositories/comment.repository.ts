@@ -2,7 +2,7 @@ import { Prisma, Comment } from "@prisma/client";
 import { injectable } from "inversify";
 import { ICommentRepository } from "../../application/interfaces/IRepositories/ICommentRepository";
 import prisma from "../../domain/db";
-import { BaseRepository } from "./Base/BaseRepository";
+import { BaseRepository } from "./Base/base.repository";
 
 @injectable()
 export class CommentRepository extends BaseRepository<Comment> implements ICommentRepository {

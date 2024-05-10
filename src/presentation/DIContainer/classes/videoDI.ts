@@ -1,7 +1,7 @@
 import { Video } from '@prisma/client';
 import { container } from '../container/DIContainer';
 import { IVideoRepository } from '../../../application/interfaces/IRepositories/IVideoRepository';
-import { VideoRepository } from '../../../infrastructure/repositories/VideoRepository';
+import { VideoRepository } from '../../../infrastructure/repositories/video.repository';
 import { IVideoService } from '../../../application/interfaces/IServices/IVideoService';
 import { VideoService } from '../../../application/services/VideoService';
 import { IResourceOwnership } from '../../../application/interfaces/IServices/IResourceOwnership';

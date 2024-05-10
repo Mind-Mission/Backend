@@ -1,6 +1,6 @@
 import { Certificate } from "@prisma/client";
 import { injectable } from "inversify";
-import { BaseRepository } from "./Base/BaseRepository";
+import { BaseRepository } from "./Base/base.repository";
 import { ICertificateRepository } from "../../application/interfaces/IRepositories/ICertificateRepository";
 
 @injectable()

@@ -1,7 +1,7 @@
 import { Prisma, Video } from "@prisma/client";
 import { injectable } from "inversify";
 import { IVideoRepository } from "../../application/interfaces/IRepositories/IVideoRepository";
-import { BaseRepository } from "./Base/BaseRepository";
+import { BaseRepository } from "./Base/base.repository";
 import prisma from "../../domain/db";
 
 @injectable()

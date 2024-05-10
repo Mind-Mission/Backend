@@ -1,5 +1,5 @@
 import { container } from '../container/DIContainer';
-import { UserRepository } from '../../../infrastructure/repositories/UserRepository';
+import { UserRepository } from '../../../infrastructure/repositories/user.repository';
 import { UserService } from '../../../application/services/UserService';
 import { IUserRepository } from '../../../application/interfaces/IRepositories/IUserRepository';
 import { IUserService } from '../../../application/interfaces/IServices/IUserService';

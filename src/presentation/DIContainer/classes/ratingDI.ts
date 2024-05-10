@@ -1,6 +1,6 @@
 import { container } from '../container/DIContainer';
 import { IRatingRepository } from '../../../application/interfaces/IRepositories/IRatingRepository';
-import { RatingRepository } from '../../../infrastructure/repositories/RatingRepository';
+import { RatingRepository } from '../../../infrastructure/repositories/rating.repository';
 import { IRatingService } from '../../../application/interfaces/IServices/IRatingService';
 import { RatingService } from '../../../application/services/RatingService';
 import { RatingController } from '../../controllers/RatingController';

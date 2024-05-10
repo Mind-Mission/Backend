@@ -1,7 +1,7 @@
 import { Section } from '@prisma/client';
 import { container } from '../container/DIContainer';
 import { ISectionRepository } from '../../../application/interfaces/IRepositories/ISectionRepository';
-import { SectionRepository } from '../../../infrastructure/repositories/SectionRepository';
+import { SectionRepository } from '../../../infrastructure/repositories/section.repository';
 import { ISectionService } from '../../../application/interfaces/IServices/ISectionService';
 import { SectionService } from '../../../application/services/SectionService';
 import { IResourceOwnership } from '../../../application/interfaces/IServices/IResourceOwnership';

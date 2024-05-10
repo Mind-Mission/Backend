@@ -1,6 +1,6 @@
 import { container } from '../container/DIContainer';
 import { IStudentRepository } from '../../../application/interfaces/IRepositories/IStudentRepository';
-import { StudentRepository } from '../../../infrastructure/repositories/StudentRepository';
+import { StudentRepository } from '../../../infrastructure/repositories/student.repository';
 import { IStudentService } from '../../../application/interfaces/IServices/IStudentService';
 import { StudentService } from '../../../application/services/StudentService';
 import { StudentController } from '../../controllers/StudentController';

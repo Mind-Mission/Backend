@@ -1,6 +1,6 @@
 import { container } from '../container/DIContainer';
 import { ICertificateTemplateRepository } from '../../../application/interfaces/IRepositories/ICertificateTemplateRepository';
-import { CertificateTemplateRepository } from '../../../infrastructure/repositories/CertificateTemplateRepository';
+import { CertificateTemplateRepository } from '../../../infrastructure/repositories/certificate-template.repository';
 import { ICertificateTemplateService } from '../../../application/interfaces/IServices/ICertificateTemplateService';
 import { CertificateTemplateService } from '../../../application/services/CertificateTemplateService';
 import { CertificateTemplateController } from '../../controllers/CertificateTemplateController';

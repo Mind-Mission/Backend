@@ -1,6 +1,6 @@
 import { container } from '../container/DIContainer';
 import { IEnrollmentRepository } from '../../../application/interfaces/IRepositories/IEnrollmentRepository';
-import { EnrollmentRepository } from '../../../infrastructure/repositories/EnrollmentRepository';
+import { EnrollmentRepository } from '../../../infrastructure/repositories/enrollment.repository';
 import { IEnrollmentService } from '../../../application/interfaces/IServices/IEnrollmentService';
 import { EnrollmentService } from '../../../application/services/EnrollmentService';
 import { EnrollmentController } from '../../controllers/EnrollmentController';

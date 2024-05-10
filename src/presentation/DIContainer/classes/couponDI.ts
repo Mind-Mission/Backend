@@ -1,7 +1,7 @@
 import { Coupon } from '@prisma/client';
 import { container } from '../container/DIContainer';
 import { ICouponRepository } from '../../../application/interfaces/IRepositories/ICouponRepository';
-import { CouponRepository } from '../../../infrastructure/repositories/CouponRepository';
+import { CouponRepository } from '../../../infrastructure/repositories/coupon.repository';
 import { ICouponService } from '../../../application/interfaces/IServices/ICouponService';
 import { CouponService } from '../../../application/services/CouponService';
 import { IResourceOwnership } from '../../../application/interfaces/IServices/IResourceOwnership';

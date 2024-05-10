@@ -3,7 +3,7 @@ import { injectable } from "inversify";
 import prisma from "../../domain/db"
 import {IUserRepository} from "../../application/interfaces/IRepositories/IUserRepository"
 import { ExtendedUser } from "../../application/types/ExtendedUser";
-import { BaseRepository } from "./Base/BaseRepository";
+import { BaseRepository } from "./Base/base.repository";
 
 @injectable()
 export class UserRepository extends BaseRepository<ExtendedUser> implements IUserRepository {
