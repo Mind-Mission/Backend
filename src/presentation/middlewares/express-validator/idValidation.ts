@@ -3,7 +3,8 @@ import ErrorExpressValidatorHandler from "../../errorHandlers/ErrorExpressValida
 
 export const idValidation = [
   param("id")
-    .isInt({min: 1}).withMessage('Invalid id format, must be an integer number more than or equal to 1'),
+    .toInt()
+    .isInt({min: 1}).withMessage('Id must be more than or equal to 1'),
 
 	ErrorExpressValidatorHandler.catchExpressValidatorErrors,
 ]

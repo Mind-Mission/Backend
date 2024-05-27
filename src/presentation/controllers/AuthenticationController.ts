@@ -43,6 +43,9 @@ export class AuthenticationController {
 
   refreshToken = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
     const {accessToken, refreshToken} = request.body.input;
+    console.log(accessToken === refreshToken);  
+    console.log('access ', accessToken);
+    console.log('refresh ', refreshToken);
     const tokens = await this.authenticationService.refreshToken(accessToken, refreshToken);
     response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'Your access token has been refreshed successfully.', [{
       accessToken: tokens.accessToken,

@@ -1,4 +1,4 @@
-import JWT, { JwtPayload } from "jsonwebtoken"
+import JWT, { JwtPayload } from "jsonwebtoken";
 import { ExtendedUser } from "../interfaces/extended/user.extend";
 
 export abstract class JWTGenerator {
