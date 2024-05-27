@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, request } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import {IStudentService} from "../../application/interfaces/IServices/IStudentService"
+import {IStudentService} from "../../application/interfaces/IServices/i-student.service"
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import { RequestManager } from "../services/RequestManager";
 import { ExtendedRequest } from "../types/ExtendedRequest";

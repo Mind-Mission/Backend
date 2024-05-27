@@ -1,8 +1,8 @@
 import { container } from '../container/DIContainer';
-import { ICertificateRepository } from '../../../application/interfaces/IRepositories/ICertificateRepository';
-import { CertificateRepository } from '../../../infrastructure/repositories/CertificateRepository';
-import { ICertificateService } from '../../../application/interfaces/IServices/ICertificateService';
-import { CertificateService } from '../../../application/services/CertificateService';
+import { ICertificateRepository } from '../../../application/interfaces/IRepositories/i-certificate.repository';
+import { CertificateRepository } from '../../../infrastructure/repositories/certificate.repository';
+import { ICertificateService } from '../../../application/interfaces/IServices/i-certificate-service';
+import { CertificateService } from '../../../application/services/certificate.service';
 import { CertificateController } from '../../controllers/CertificateController';
 
 container.bind<ICertificateRepository>('ICertificateRepository').to(CertificateRepository).inSingletonScope();

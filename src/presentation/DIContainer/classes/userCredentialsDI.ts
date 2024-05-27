@@ -1,6 +1,6 @@
 import { container } from '../container/DIContainer';
-import { IUserCredentialsService } from '../../../application/interfaces/IServices/IUserCredentialsService';
-import { UserCredentialsService } from '../../../application/services/UserCredentialsService';
+import { IUserCredentialsService } from '../../../application/interfaces/IServices/i-user-credentials.service';
+import { UserCredentialsService } from '../../../application/services/user-credentials.service';
 import { UserCredentialsController } from '../../controllers/UserCredentialsController';
 
 container.bind<IUserCredentialsService>('IUserCredentialsService').to(UserCredentialsService).inSingletonScope();

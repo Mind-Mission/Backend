@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import {ICertificateService} from "../../application/interfaces/IServices/ICertificateService";
-import { ILogService } from "../../application/interfaces/IServices/ILogService";
+import {ICertificateService} from "../../application/interfaces/IServices/i-certificate-service";
+import { ILogService } from "../../application/interfaces/IServices/i-log.service";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";

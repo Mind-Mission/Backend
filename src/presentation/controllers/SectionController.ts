@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import {ISectionService} from "../../application/interfaces/IServices/ISectionService";
+import {ISectionService} from "../../application/interfaces/IServices/i-section.service";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";

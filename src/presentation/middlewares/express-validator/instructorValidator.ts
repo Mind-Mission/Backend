@@ -60,5 +60,17 @@ export const updateInstructorValidation = [
       return true;
     }),
 
+  body('input.isClosed')
+    .optional()
+    .isBoolean().withMessage('isClosed must be boolean'),
+
+  ErrorExpressValidatorHandler.catchExpressValidatorErrors
+];
+
+export const deleteInstructorValidation = [
+  body('input.isDeleted')
+    .notEmpty().withMessage('isDeleted is required')
+    .isBoolean().withMessage('isDeleted must be boolean'),
+
   ErrorExpressValidatorHandler.catchExpressValidatorErrors
 ];

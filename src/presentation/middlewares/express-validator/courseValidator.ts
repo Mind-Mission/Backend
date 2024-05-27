@@ -1,5 +1,5 @@
-import {body} from "express-validator";
 import { CourseLevel, Language } from "@prisma/client";
+import {body} from "express-validator";
 import ErrorExpressValidatorHandler from "../../errorHandlers/ErrorExpressValidatorHandler";
 
 export const addCourseValidation = [
@@ -77,6 +77,10 @@ export const addCourseValidation = [
   body("input.discountPercentage")
     .optional()
     .isFloat({min: 0, max: 100}).withMessage('Discount Percentage must be a floating number between 0 and 100'),
+
+  body("input.isDraft")
+    .optional()
+    .isBoolean().withMessage('isDraft must be boolean'),
     
   body("input.topicId")
     .notEmpty().withMessage('Any course must belong to a topic')
@@ -160,6 +164,10 @@ export const updateCourseValidation = [
   body("input.discountPercentage")
     .optional()
     .isFloat({min: 0, max: 100}).withMessage('Discount Percentage must be a floating number between 0 and 100'),
+  
+  body("input.isDraft")
+    .optional()
+    .isBoolean().withMessage('isDraft must be boolean'),
 
     body("input.sections")
     .optional()

@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import { ICourseService } from "../../application/interfaces/IServices/ICourseService";
-import { IRatingService } from "../../application/interfaces/IServices/IRatingService";
-import { IInstructorService } from "../../application/interfaces/IServices/IInstructorService";
-import { IEnrollmentService } from "../../application/interfaces/IServices/IEnrollmentService";
+import { ICourseService } from "../../application/interfaces/IServices/i-course.service";
+import { IRatingService } from "../../application/interfaces/IServices/i-rating.service";
+import { IInstructorService } from "../../application/interfaces/IServices/i-instructor.service";
+import { IEnrollmentService } from "../../application/interfaces/IServices/i-enrollment.service";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import HttpStatusCode from '../enums/HTTPStatusCode';
 
@@ -15,8 +15,16 @@ export class StatisticsController {
   private async getAvailableCoursesCount(): Promise<Number> {
     return this.courseService.count({
       where: {
-        isApproved: {
-          equals: true
+        sections: {
+          some: {
+            isDraft: false,
+            lessons: {
+              some: {
+                isDraft: false,
+                isApproved: true
+              }
+            }
+          }
         },
         isDraft: {
           equals: false

@@ -1,8 +1,8 @@
 import { container } from '../container/DIContainer';
-import { IMessageRepository } from '../../../application/interfaces/IRepositories/IMessageRepository';
-import { MessageRepository } from '../../../infrastructure/repositories/MessageRepository';
-import { IMessageService } from '../../../application/interfaces/IServices/IMessageService';
-import { MessageService } from '../../../application/services/MessageService';
+import { IMessageRepository } from '../../../application/interfaces/IRepositories/i-message.repository';
+import { MessageRepository } from '../../../infrastructure/repositories/message.repository';
+import { IMessageService } from '../../../application/interfaces/IServices/i-message.service';
+import { MessageService } from '../../../application/services/message.service';
 import { MessageController } from '../../controllers/MessageController';
 
 container.bind<IMessageRepository>('IMessageRepository').to(MessageRepository).inSingletonScope();

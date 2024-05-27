@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { $Enums } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import { ICourseService } from "../../application/interfaces/IServices/ICourseService";
-import { ILogService } from "../../application/interfaces/IServices/ILogService";
+import { ICourseService } from "../../application/interfaces/IServices/i-course.service";
+import { ILogService } from "../../application/interfaces/IServices/i-log.service";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
@@ -78,7 +78,6 @@ export class CourseController {
 			data: {
 				...request.body.input,
 				id: +request.params.id,
-				user: request.user
 			},
 			select,
 			include

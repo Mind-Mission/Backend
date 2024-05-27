@@ -1,6 +1,6 @@
 import { Currency } from '@prisma/client';
 import { ExtendedRequest } from '../types/ExtendedRequest';
-import { ExtendedPaymentUnit } from '../../application/types/ExtendedPaymentUnit';
+import { ExtendedPaymentUnit } from '../../application/interfaces/extended/payment-unit.extend';
 import HttpStatusCode from '../enums/HTTPStatusCode';
 import APIError from '../errorHandlers/APIError';
 import CurrencyConvertor from './CurrencyConvertor';

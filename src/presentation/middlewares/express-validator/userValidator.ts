@@ -1,4 +1,4 @@
-import { Crud, Platform, Resource } from "@prisma/client";
+import { Crud, Platform, Resource, Role } from "@prisma/client";
 import {body} from "express-validator";
 import { MobilePhoneLocale } from "express-validator/src/options";
 import ErrorExpressValidatorHandler from "../../errorHandlers/ErrorExpressValidatorHandler";
@@ -39,6 +39,18 @@ export const addUserValidation = [
   body("input.picture")
     .optional()
     .isURL().withMessage("picture must be in URL format"),
+
+  body("input.roles")
+    .notEmpty().withMessage("roles is required")
+    .isArray({min: 1}).withMessage('roles must be an array contains one role at least')
+    .custom(roles => {
+      roles.forEach((role: any) => {
+        if(!Role[role as Role]) {
+          throw new Error(`Roles can be ${Object.keys(Role)} only`)
+        }
+      });
+      return true
+    }),
 
   body("input.permissions")
     .notEmpty().withMessage("Permissions is required")
@@ -157,9 +169,21 @@ export const updateUserValidation = [
       return true;
     }),
   
+  body("input.isClosed")
+    .optional()
+    .isBoolean().withMessage("isClosed must be a boolean; true or false"),
+  
   body("input.isBlocked")
     .optional()
     .isBoolean().withMessage("isBlocked must be a boolean; true or false"),
   
+  ErrorExpressValidatorHandler.catchExpressValidatorErrors
+];
+
+export const deleteUserValidation = [
+  body('input.isDeleted')
+    .notEmpty().withMessage('isDeleted is required')
+    .isBoolean().withMessage('isDeleted must be boolean'),
+
   ErrorExpressValidatorHandler.catchExpressValidatorErrors
 ];

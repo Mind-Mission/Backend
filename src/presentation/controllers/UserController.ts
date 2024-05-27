@@ -2,19 +2,19 @@ import { Request, Response, NextFunction } from "express";
 import { $Enums } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import { IUserService } from "../../application/interfaces/IServices/IUserService";
-import { ILogService } from "../../application/interfaces/IServices/ILogService";
+import { IUserService } from "../../application/interfaces/IServices/i-user.service";
+import { ILogService } from "../../application/interfaces/IServices/i-log.service";
 import { RequestManager } from "../services/RequestManager";
 import { UserMapper } from "../mapping/UserMapper";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
-import { SuperAdminPermissions } from "../../application/config/SuperAdminPermissions";
+import { SuperAdminPermissions } from "../../application/config/super-admin.permissions";
 import APIError from "../errorHandlers/APIError";
 import HttpStatusCode from '../enums/HTTPStatusCode';
 
 @injectable()
 export class UserController {
-	restrictedPropertiesForAdminOnly: string[] = ['isBlocked', 'isDeleted', 'permissions'];
+	restrictedPropertiesForAdminOnly: string[] = ['isBlocked', 'permissions'];
 
 	constructor(@inject('IUserService') private userService: IUserService, @inject('ILogService') private logService: ILogService) {}
 
@@ -57,14 +57,14 @@ export class UserController {
 
 	createUser = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
 		const {select, include} = RequestManager.findOptionsWrapper(request);
-		const createdUser = await this.userService.create({data: {...request.body.input, role: 'Admin'}, select, include});
+		const createdUser = await this.userService.create({data: request.body.input, select, include});
 		this.logService.log('ADD', 'USER', createdUser, request.user);
 		const mappedUserResults = UserMapper.map([createdUser]);
 		response.status(HttpStatusCode.Created).json(ResponseFormatter.formate(true, 'The user is created successfully', mappedUserResults));
 	});
 
 	updateUser = asyncHandler(async(request: ExtendedRequest, response: Response, next: NextFunction) => {
-		const {firstName, lastName, bio, picture, mobilePhone, whatsAppNumber, isActive, isBlocked, isDeleted, personalLinks, permissions} = request.body.input;
+		const {firstName, lastName, bio, picture, mobilePhone, whatsAppNumber, isClosed, isBlocked, personalLinks, roles, permissions} = request.body.input;
 		const {select, include} = RequestManager.findOptionsWrapper(request);
 		const updatedUser = await this.userService.update({
 			data: {
@@ -75,10 +75,10 @@ export class UserController {
 				picture, 
 				mobilePhone, 
 				whatsAppNumber, 
-				isActive, 
+				isClosed, 
 				isBlocked, 
-				isDeleted, 
 				personalLinks,
+				roles,
 				permissions,
 			},
 			select,
@@ -104,8 +104,14 @@ export class UserController {
 	});
 
 	deleteUser = asyncHandler(async (request: ExtendedRequest, response: Response, next: NextFunction) => {
-		const deletedUser = await this.userService.delete(+request.params.id);
-		this.logService.log('DELETE', 'USER', deletedUser, request.user);
-		response.status(HttpStatusCode.NoContent).json();
+		const {isDeleted} = request.body.input;
+		const deletedUser = await this.userService.delete({
+			data: {
+				id: +request.params.id,
+				isDeleted
+			}
+		});
+		this.logService.log(isDeleted ? 'DELETE' : 'RETRIEVE', 'USER', deletedUser, request.user);
+		response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, `The user is ${isDeleted ? 'deleted' : 'retrieved'} successfully`));
 	});
 }

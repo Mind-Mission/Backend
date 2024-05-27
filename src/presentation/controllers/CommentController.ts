@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import {ICommentService} from "../../application/interfaces/IServices/ICommentService";
-import { ILogService } from "../../application/interfaces/IServices/ILogService";
+import {ICommentService} from "../../application/interfaces/IServices/i-comment-service";
+import { ILogService } from "../../application/interfaces/IServices/i-log.service";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";

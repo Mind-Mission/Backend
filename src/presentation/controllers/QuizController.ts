@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { $Enums } from "@prisma/client";
 import { inject, injectable } from "inversify";
 import asyncHandler from'express-async-handler';
-import {IQuizService} from "../../application/interfaces/IServices/IQuizService"
+import {IQuizService} from "../../application/interfaces/IServices/i-quiz.service"
 import { RequestManager } from "../services/RequestManager";
 import { ResponseFormatter } from "../responseFormatter/ResponseFormatter";
 import APIError from "../errorHandlers/APIError";

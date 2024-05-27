@@ -14,9 +14,9 @@ export const addSectionValidation = [
     .isLength({min: 10}).withMessage("Too short description, 5 characters at least")
     .isLength({max: 1000}).withMessage("Too long description, 1000 characters at most"),
 
-  body("input.isAvailable")
+  body("input.isDraft")
     .optional()
-    .isBoolean().withMessage("isAvailable property must be a boolean value"),
+    .isBoolean().withMessage("isDraft property must be a boolean value"),
   
   body("input.order")
     .notEmpty().withMessage("Order is required")
@@ -42,9 +42,9 @@ export const updateSectionValidation = [
     .isLength({min: 10}).withMessage("Too short description, 5 characters at least")
     .isLength({max: 1000}).withMessage("Too long description, 1000 characters at most"),
 
-  body("input.isAvailable")
+  body("input.isDraft")
     .optional()
-    .isBoolean().withMessage("isAvailable property must be a boolean value"),
+    .isBoolean().withMessage("isDraft property must be a boolean value"),
   
   body("input.lessons")
     .optional()

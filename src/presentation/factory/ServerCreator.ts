@@ -7,7 +7,7 @@ class ServerCreator {
 	static create = (app: Application) => app.listen(this.port, async () => {
 		await prisma.$connect();
 		console.log(`App is running at: http://localhost:${this.port} 🚀`);
-	})
+	});
 };
 
 const server = ServerCreator.create(app);

@@ -1,6 +1,6 @@
 import crypto from "crypto"
 import { Currency } from "@prisma/client";
-import { ExtendedPaymentUnit } from "../../application/types/ExtendedPaymentUnit";
+import { ExtendedPaymentUnit } from "../../application/interfaces/extended/payment-unit.extend";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import HTTPStatusCode from "../enums/HTTPStatusCode";
 import APIError from "../errorHandlers/APIError";

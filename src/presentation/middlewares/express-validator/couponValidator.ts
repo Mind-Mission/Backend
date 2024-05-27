@@ -2,6 +2,19 @@ import {body} from "express-validator";
 import ErrorExpressValidatorHandler from "../../errorHandlers/ErrorExpressValidatorHandler";
 
 export const addCouponValidation = [
+  body('input.courses')
+    .notEmpty().withMessage('Courses are required')
+    .isArray({min: 1}).withMessage('Courses must be an array of one course at least')
+    .custom((courses: number[]) => {
+      courses.forEach(course => {
+        if(!Number.isInteger(course)) {
+          throw new Error('Courses must be an array of integers')
+        }
+      })
+      return true;
+    }),
+
+
   body("input.discount")
     .notEmpty().withMessage("Discount is required")
     .isFloat({min: 0, max: 100}).withMessage("Discount must be a floating number between 0 and 100"),

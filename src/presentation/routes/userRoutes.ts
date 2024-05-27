@@ -2,7 +2,7 @@ import express from 'express';
 import container from '../DIContainer/DI'
 import { idValidation} from '../middlewares/express-validator/idValidation';
 import {Authorization} from '../middlewares/authorization-validator/AuthorizationValidator';
-import {addUserValidation, updateUserValidation} from '../middlewares/express-validator/userValidator';
+import {addUserValidation, updateUserValidation, deleteUserValidation} from '../middlewares/express-validator/userValidator';
 import userCredentialsRouters from './userCredentialsRoutes';
 import {UserController} from '../controllers/UserController';
 
@@ -30,7 +30,7 @@ userRouter.route("/update/:id")
 	.post(isAuthenticated, isAuthorized('Users', 'Update'), isCurrentUserRoleInWhiteList('Student'), beInstructor);
 
 userRouter.route("/delete/:id")
-	.post(idValidation, isAuthenticated, isAuthorized('Users', 'Delete'), isParamIdEqualCurrentUserId(), deleteUser);
+	.post(idValidation, isAuthenticated, isAuthorized('Users', 'Delete'), deleteUserValidation, deleteUser);
 
 userRouter.use("/credentials", userCredentialsRouters);
 

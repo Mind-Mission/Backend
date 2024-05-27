@@ -6,27 +6,26 @@ import server from "./factory/ServerCreator";
 import Logger from "./logger";
 import container from "./DIContainer/DI";
 import { RealTimeManager } from "./services/RealTimeManager";
-import notFoundRoutes from "./errorHandlers/NotFoundRoutesHandler";
+import NotFoundRoutes from "./errorHandlers/NotFoundRoutesHandler";
 import GlobalError from "./errorHandlers/GlobalErrorHandler"
 import UnhandledRejection from "./errorHandlers/UnhandledRejectionHandler";
-import { routeMounting } from "./routeMounting";
+import { router } from "./router";
 import { upsertMainSuperAdmin, seeding } from "./seed";
 
-app.use(cors());
-app.options('*', cors());
-app.use(express.json({limit: "50kb"}));
-app.use(Logger());
-app.use(compression());
+async function bootstrap() {
+  app.use(cors());
+  app.options('*', cors());
+  app.use(express.json({limit: "50kb"}));
+  app.use(Logger());
+  app.use(compression());
+  // container.get<RealTimeManager>('RealTimeManager'); // to run the realtime service
+  router(app); 
+  app.all('*', NotFoundRoutes.catch);
+  app.use(GlobalError.catch);
+  UnhandledRejection.catch(server);
 
-// container.get<RealTimeManager>('RealTimeManager');
+  // await upsertMainSuperAdmin();
+  // await seeding();
+};
 
-// upsertMainSuperAdmin();
-// seeding();
-
-routeMounting(app);
-
-app.all('*', notFoundRoutes.catchRoute);
-
-app.use(GlobalError.catchError);
-
-UnhandledRejection.catchError(server);
+bootstrap();

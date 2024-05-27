@@ -1,8 +1,8 @@
 import { container } from '../container/DIContainer';
-import { UserRepository } from '../../../infrastructure/repositories/UserRepository';
-import { UserService } from '../../../application/services/UserService';
-import { IUserRepository } from '../../../application/interfaces/IRepositories/IUserRepository';
-import { IUserService } from '../../../application/interfaces/IServices/IUserService';
+import { UserRepository } from '../../../infrastructure/repositories/user.repository';
+import { UserService } from '../../../application/services/user.service';
+import { IUserRepository } from '../../../application/interfaces/IRepositories/i-user.repository';
+import { IUserService } from '../../../application/interfaces/IServices/i-user.service';
 import { UserController } from '../../controllers/UserController';
 
 container.bind<IUserRepository>('IUserRepository').to(UserRepository).inSingletonScope();
