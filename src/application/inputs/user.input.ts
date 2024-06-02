@@ -27,7 +27,7 @@ export type UpdateUser = {
   isEmailVerified?: boolean;
   emailVerificationCode?: string | null;
   password?: string;
-  resetPasswordCode?: {code: string; expirationTime: number; isVerified: boolean}
+  resetPasswordToken?: {token: string; isVerified: boolean}
   passwordUpdatedTime?: Date;
   mobilePhone?: string;
   whatsAppNumber?: string;

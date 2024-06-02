@@ -86,10 +86,7 @@ export class UserService implements IUserService {
 	};
 
 	async update(args: {data: UpdateUser, select?: Prisma.UserSelect, include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
-		let {id, firstName, lastName, email, isEmailVerified, emailVerificationCode, password, passwordUpdatedTime, resetPasswordCode, bio, picture, mobilePhone, whatsAppNumber, refreshToken, isOnline, isClosed, isBlocked, roles, permissions, personalLinks} = args.data
-		if(resetPasswordCode && resetPasswordCode.code && !resetPasswordCode.isVerified) {
-			resetPasswordCode.code = bcrypt.hashSync((args.data.resetPasswordCode as any).code, 10);
-		}
+		let {id, firstName, lastName, email, isEmailVerified, emailVerificationCode, password, passwordUpdatedTime, resetPasswordToken, bio, picture, mobilePhone, whatsAppNumber, refreshToken, isOnline, isClosed, isBlocked, roles, permissions, personalLinks} = args.data;
 		const isStudentWantToBeInstructor = roles && roles.includes('Instructor') && roles.includes('Student') && !roles.includes('Admin') ? true : false;
 		permissions = isStudentWantToBeInstructor ? InstructorPermissions : permissions;
 		return this.userRepository.update({
@@ -103,7 +100,7 @@ export class UserService implements IUserService {
 				isEmailVerified,
 				emailVerificationCode,
 				password: password ? bcrypt.hashSync(password.toString(), 10) : undefined,
-				resetPasswordCode,
+				resetPasswordToken,
 				passwordUpdatedTime: passwordUpdatedTime || undefined,
 				bio: bio,
 				picture: picture || undefined,

@@ -20,7 +20,7 @@ model User {
   bio                   String?
   picture               String?
   refreshToken          String?
-  resetPasswordCode     Json?
+  resetPasswordToken    Json?
   passwordUpdatedTime   DateTime?
   isOnline              Boolean     @default(false)
   isClosed              Boolean     @default(false)

@@ -171,15 +171,14 @@ export class AuthenticationService implements IAuthenticationService {
       }
     });
     if(user) {
-      const resetCode = Math.floor(100000 + Math.random() * 900000);
-      const message = MessageGenerator.getForgetPasswordMessage(user, resetCode);
-      await SendEmail.send({to: user.email, subject: "Reset Password Code", message});
+      const token = JWTGenerator.generateForgetPasswordToken(user);
+      const message = MessageGenerator.getForgetPasswordMessage(user, token);
+      await SendEmail.send({to: user.email, subject: "Reset Password Token", message});
       await this.userService.update({
         data: {
           id: user.id,
-          resetPasswordCode: {
-            code: `${resetCode}`,
-            expirationTime: Date.now() + 5 * 60 * 1000, // 5 minutes from the time of reset code generation
+          resetPasswordToken: {
+            token,
             isVerified: false
           }
         },
@@ -190,36 +189,37 @@ export class AuthenticationService implements IAuthenticationService {
     };
   };
 
-  async verifyResetPasswordCode(email: string, code: string): Promise<void> {
+  async verifyResetPasswordToken(email: string, forgetPasswordToken: string): Promise<void> {
+    const payload = JWTGenerator.verifyForgetPasswordToken(forgetPasswordToken);
     const user = await this.userService.findUnique({
       where: {
         email
       },
       select: {
         id: true,
-        resetPasswordCode: true,
+        email: true,
+        resetPasswordToken: true,
       }
     });
-    if(user && user.resetPasswordCode) {
-      const {code: savedCode, expirationTime, isVerified} = user.resetPasswordCode as any;
-      if(user.resetPasswordCode && code && bcrypt.compareSync(code, savedCode) && expirationTime >= Date.now() && !isVerified) {
-        await this.userService.update({
-          data: {
-            id: user.id,
-            resetPasswordCode: {
-              code: savedCode,
-              expirationTime,
-              isVerified: true
-            }
-          },
-          select: {
-            id: true
-          }
-        });
-        return;
-      }
+    if(!user || !user.resetPasswordToken || user.email !== payload.email) {
+      throw new APIError("Not found user or Invalid token, try to ask another token and try again", HttpStatusCode.BadRequest);
     }
-    throw new APIError("Not found user or Invalid code, try to ask another code and try again", HttpStatusCode.BadRequest);
+    const {token, isVerified} = user.resetPasswordToken as any;
+    if(token !== forgetPasswordToken || isVerified) {
+      throw new APIError('This token is used before', HttpStatusCode.BadRequest);
+    }
+    await this.userService.update({
+      data: {
+        id: user.id,
+        resetPasswordToken: {
+          token,
+          isVerified: true
+        }
+      },
+      select: {
+        id: true
+      }
+    });
   };
 
   async resetPassword(email: string, newPassword: string): Promise<void> {
@@ -229,27 +229,28 @@ export class AuthenticationService implements IAuthenticationService {
       },
       select: {
         id: true,
-        resetPasswordCode: true
+        resetPasswordToken: true
       }
     });
-    if(user && user.resetPasswordCode) {
-      const {expirationTime, isVerified} = user.resetPasswordCode as any;
-      if(expirationTime >= Date.now() && isVerified) {
-        await this.userService.update({
-          data: {
-            id: user.id,
-            password: newPassword,
-            resetPasswordCode: null as any,
-            passwordUpdatedTime: new Date()
-          },
-          select: {
-            id: true,
-          }
-        })
-        return;
-      }
+    if(!user || !user.resetPasswordToken) {
+      throw new APIError("Not found user or Invalid token, try to ask another token and try again", HttpStatusCode.BadRequest);
     }
-    throw new APIError("This code expired, try to ask another code", HttpStatusCode.BadRequest);
+    const {token, isVerified} = user.resetPasswordToken as any;
+    JWTGenerator.verifyForgetPasswordToken(token);
+    if(isVerified === false) {
+      throw new APIError('Your token is not verified yet', HttpStatusCode.BadRequest);
+    }
+    await this.userService.update({
+      data: {
+        id: user.id,
+        password: newPassword,
+        resetPasswordToken: null as any,
+        passwordUpdatedTime: new Date()
+      },
+      select: {
+        id: true,
+      }
+    });
   };
 
   async refreshToken(accessToken: string, refreshToken: string): Promise<{accessToken: string, refreshToken: string}> {

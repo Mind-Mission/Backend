@@ -28,10 +28,10 @@ export class AuthenticationController {
     response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'If your email exists, you will receive a verification code'));
   });
 
-  verifyResetPasswordCode = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-    const {email, code} = request.body.input;
-    await this.authenticationService.verifyResetPasswordCode(email, code);
-    response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'Your code is verified'));
+  verifyResetPasswordToken = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+    const {email, token} = request.body.input;
+    await this.authenticationService.verifyResetPasswordToken(email, token);
+    response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'Your token is verified'));
     
   });
 
@@ -43,9 +43,6 @@ export class AuthenticationController {
 
   refreshToken = asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
     const {accessToken, refreshToken} = request.body.input;
-    console.log(accessToken === refreshToken);  
-    console.log('access ', accessToken);
-    console.log('refresh ', refreshToken);
     const tokens = await this.authenticationService.refreshToken(accessToken, refreshToken);
     response.status(HttpStatusCode.OK).json(ResponseFormatter.formate(true, 'Your access token has been refreshed successfully.', [{
       accessToken: tokens.accessToken,
