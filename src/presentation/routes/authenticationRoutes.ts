@@ -4,7 +4,7 @@ import { signupValidation, loginValidation, forgetPasswordValidation, verifyRese
 import { RequestBodyModifier } from '../middlewares/requestBodyModifier/RequestBodyModifier';
 import {AuthenticationController} from '../controllers/AuthenticationController';
 
-const {signup, login, forgetPassword, verifyResetPasswordCode, resetPassword, refreshToken} = container.get<AuthenticationController>('AuthenticationController');
+const {signup, login, forgetPassword, verifyResetPasswordToken, resetPassword, refreshToken} = container.get<AuthenticationController>('AuthenticationController');
 
 const authRouter = express.Router();
 
@@ -14,16 +14,16 @@ authRouter.route("/signup")
 authRouter.route("/login")
 	.post(loginValidation, RequestBodyModifier.remove('isSignWithSSO', 'platform'), login);
 
-authRouter.route("/password/forget")
+authRouter.route("/forget-password")
 	.post(forgetPasswordValidation, forgetPassword);
 
-authRouter.route("/password/verify")
-	.post(verifyResetPasswordCodeValidation, verifyResetPasswordCode);
+authRouter.route("/verify-password")
+	.post(verifyResetPasswordCodeValidation, verifyResetPasswordToken);
 
-authRouter.route("/password/reset")
+authRouter.route("/reset-password")
 	.post(resetPasswordValidation, resetPassword);
 
-authRouter.route('/refresh/token')
+authRouter.route('/refresh-token')
 	.post(refreshTokenValidation, refreshToken);
 
 export default authRouter;

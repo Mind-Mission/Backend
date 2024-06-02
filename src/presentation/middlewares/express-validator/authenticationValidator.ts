@@ -65,16 +65,9 @@ export const verifyResetPasswordCodeValidation = 	[
     .notEmpty().withMessage("Email is required")
     .matches(/[a-z0-9]+@[a-z]+\.[a-z]{2,3}/).withMessage("Invalid email"),
 
-  body("input.code")
+  body("input.token")
     .notEmpty().withMessage("Reset Code is required")
-    .isInt().withMessage("Reset Code must be an integer number")
-    .customSanitizer(value => value.toString())
-    .custom(value => {
-      if(value.toString().length !== 6) {
-        throw new Error("Invalid code")
-      }
-      return true
-    }),
+    .isJWT().withMessage('Invalid token'),
 
   ErrorExpressValidatorHandler.catchExpressValidatorErrors
 ];
