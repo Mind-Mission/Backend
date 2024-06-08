@@ -59,7 +59,7 @@ export abstract class JWTGenerator {
     }
     catch(error: any) {
       if(error.message = 'jwt expired') {
-        throw new APIError('Your token has been expired, try to ask another link and try again', HttpStatusCode.BadRequest);
+        throw new APIError('Your link has been expired, try to ask another link and try again', HttpStatusCode.BadRequest);
       }
       throw error;
     }

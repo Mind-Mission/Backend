@@ -202,11 +202,11 @@ export class AuthenticationService implements IAuthenticationService {
       }
     });
     if(!user || !user.resetPasswordToken || user.email !== payload.email) {
-      throw new APIError("Not found user or Invalid token, try to ask another token and try again", HttpStatusCode.BadRequest);
+      throw new APIError("Not found user or Invalid link, try to ask another link and try again", HttpStatusCode.BadRequest);
     }
-    const {token, isVerified} = user.resetPasswordToken as any;
-    if(token !== forgetPasswordToken || isVerified) {
-      throw new APIError('This token is used before', HttpStatusCode.BadRequest);
+    const {token} = user.resetPasswordToken as any;
+    if(token !== forgetPasswordToken) {
+      throw new APIError('This link is used before', HttpStatusCode.BadRequest);
     }
     await this.userService.update({
       data: {
@@ -233,12 +233,12 @@ export class AuthenticationService implements IAuthenticationService {
       }
     });
     if(!user || !user.resetPasswordToken) {
-      throw new APIError("Not found user or Invalid token, try to ask another token and try again", HttpStatusCode.BadRequest);
+      throw new APIError("Not found user or link token, try to ask another link and try again", HttpStatusCode.BadRequest);
     }
     const {token, isVerified} = user.resetPasswordToken as any;
     JWTGenerator.verifyForgetPasswordToken(token);
     if(isVerified === false) {
-      throw new APIError('Your token is not verified yet', HttpStatusCode.BadRequest);
+      throw new APIError('Your link is not verified yet', HttpStatusCode.BadRequest);
     }
     await this.userService.update({
       data: {
