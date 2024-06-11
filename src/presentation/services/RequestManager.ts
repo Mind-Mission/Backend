@@ -20,8 +20,8 @@ export abstract class RequestManager {
   };
 
   private static orderBy = (request: Request) => {
-    const {order} = request.body;
-    return order
+    const {orderBy} = request.body;
+    return orderBy
   };
 
   private static skip = (request: Request) => {
