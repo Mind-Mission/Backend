@@ -19,12 +19,12 @@ export class LogService implements ILogService {
     return this.logRepository.findUnique(args);
   };
 
-  async log(operationType: OperationType, ModelName: LogModel, details: object, user: ExtendedUser | undefined): Promise<Log | undefined> {
+  async log(operationType: OperationType, modelName: LogModel, details: object, user: ExtendedUser | undefined): Promise<Log | undefined> {
     if(user?.roles.includes('Admin')) {
       const log = await this.logRepository.log({
         data: {
           operationType,
-          ModelName,
+          modelName,
           details,
           user: {
             connect: {

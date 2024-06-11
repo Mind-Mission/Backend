@@ -6,6 +6,10 @@ export const SuperAdminPermissions = [
   //   cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
   // },
   {
+    resource: Resource.Admins,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
     resource: Resource.Users,
     cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
   },
@@ -31,6 +35,18 @@ export const SuperAdminPermissions = [
   },
   {
     resource: Resource.Coupons,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Offers,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Settings,
+    cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
+  },
+  {
+    resource: Resource.Payments,
     cruds: [Crud.Get, Crud.Add, Crud.Update, Crud.Delete]
   },
   {

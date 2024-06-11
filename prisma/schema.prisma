@@ -49,6 +49,7 @@ enum Role {
   Instructor
   Student
 }
+
 model Permission {
   id             Int         @id @default(autoincrement())
   resource       Resource
@@ -63,6 +64,7 @@ model Permission {
 enum Resource {
   Users
   Permissions
+  Admins
   Instructors
   Students
   Categories
@@ -86,6 +88,8 @@ enum Resource {
   CertificateTemplates
   Carts
   Logs
+  Settings
+  Offers
 }
 
 enum Crud {
@@ -542,7 +546,7 @@ model Message {
 model Log {
   id                Int            @id @default(autoincrement())
   operationType     OperationType
-  ModelName         LogModel
+  modelName         LogModel
   details           Json
   userId            Int
   user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
