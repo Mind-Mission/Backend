@@ -9,7 +9,6 @@ import { StudentInstructorPermissions } from "../config/student-instructor.permi
 import { CreateUser, UpdateUser } from "../inputs/user.input";
 import { ExtendedUser } from "../interfaces/extended/user.extend";
 import { TransactionType } from "../interfaces/extended/transaction-type.extend";
-import prisma from "../../domain/db";
 
 @injectable()
 export class UserService implements IUserService {
