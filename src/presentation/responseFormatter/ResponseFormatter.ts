@@ -3,11 +3,12 @@ export abstract class ResponseFormatter {
 		return {
 			success: success,
 			message: message,
-			itemsPerPage: result.length,
-			totalItems: totalCount,
-			page: Math.floor(skip / take) + 1 || 1,
-			pages: Math.ceil(totalCount / (result.length || 1)),
-			data: result
+			data: result,
+			pagination: {
+				count: totalCount,
+				page: Math.floor(skip / take) + 1 || 1,
+				pages: Math.ceil(totalCount / (result.length || 1)),
+			}
 		};
 	};
 };
