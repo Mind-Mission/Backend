@@ -30,6 +30,43 @@ export class UserService implements IUserService {
 		return this.userRepository.findFirst(args);
 	};
 
+	async getUserStatistics() {
+		const now = new Date();
+		const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // Calculate one week ago
+		const [totalCount, blockedUsers, activeUsers, closedUsers, deletedUsers] = await Promise.all([
+			this.count({}),
+			this.count({
+				where: {
+					isBlocked: true
+				}
+			}),
+			this.count({
+				where: {
+					lastSeen: {
+						gte: lastWeek
+					}
+				}
+			}),	
+			this.count({
+				where: {
+					isClosed: true
+				}
+			}),
+			this.count({
+				where: {
+					isDeleted: true
+				}
+			}),
+		]);
+		return {
+			totalCount,
+			blockedUsers,
+			activeUsers,
+			closedUsers,
+			deletedUsers
+		}
+	}
+
 	create(args: {data: CreateUser, select?: Prisma.UserSelect; include?: Prisma.UserInclude}, transaction?: TransactionType): Promise<ExtendedUser> {
 		let {firstName, lastName, email, password, mobilePhone, whatsAppNumber, bio, picture, platform, isEmailVerified, roles, permissions, refreshToken} = args.data;
 		if(roles.includes('Admin')) {

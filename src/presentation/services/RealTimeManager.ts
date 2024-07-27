@@ -1,19 +1,21 @@
-import { Prisma, Comment, Message } from "@prisma/client";
+import { Server, Socket } from "socket.io";
 import { inject, injectable } from "inversify";
-import { Socket } from "socket.io";
+import { Prisma, Comment, Message } from "@prisma/client";
 import { IOnlineUserService } from "../../application/interfaces/IServices/i-online-user.service";
 import { ICommentService } from "../../application/interfaces/IServices/i-comment-service";
-import { notifier } from "./Notifier";
 import { NotifyFor, SubscribeOn } from "../enums/NotificationEvent";
+import { ApplicationCreator } from "../factory/application-creator";
 
 @injectable()
 export class RealTimeManager {
+  private notifier: Server;
 	constructor(@inject('IOnlineUserService') private onlineUserService: IOnlineUserService, @inject('ICommentService') private commentService: ICommentService) {
+    this.notifier = new Server(ApplicationCreator.getServer());
     this.initializeNotifier();
   };
 
   private initializeNotifier() {
-    notifier.on(SubscribeOn.Connection, (socket) => {
+    this.notifier.on(SubscribeOn.Connection, (socket) => {
       socket.on(SubscribeOn.Login, async (userId: number) => {
         try {
           await this.addCurrentLoggedInUserIntoOnlineUserTable(userId, socket);

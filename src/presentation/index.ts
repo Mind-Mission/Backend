@@ -1,29 +1,19 @@
-import express from "express"
-import cors from 'cors';
-import compression from 'compression';
-import app from "./factory/Express";
-import server from "./factory/ServerCreator";
-import Logger from "./logger";
-import container from "./DIContainer/DI";
-import { RealTimeManager } from "./services/RealTimeManager";
-import NotFoundRoutes from "./errorHandlers/NotFoundRoutesHandler";
-import GlobalError from "./errorHandlers/GlobalErrorHandler"
-import UnhandledRejection from "./errorHandlers/UnhandledRejectionHandler";
-import { router } from "./router";
+import { ApplicationCreator } from "./factory/application-creator";
+import { routes } from "./router";
 import { upsertMainSuperAdmin, seeding } from "./seed";
 
 async function bootstrap() {
-  app.use(cors());
-  app.options('*', cors());
-  app.use(express.json({limit: "50kb"}));
-  app.use(Logger());
-  app.use(compression());
-  // container.get<RealTimeManager>('RealTimeManager'); // to run the realtime service
-  router(app); 
-  app.all('*', NotFoundRoutes.catch);
-  app.use(GlobalError.catch);
-  UnhandledRejection.catch(server);
-
+  const port = Number(process.env.PORT) || 3000;
+  const app = ApplicationCreator.create();
+  app.enableCors();
+  app.enableLimitation('50kb');
+  app.compression();
+  app.logger();
+  // app.enableRuntime();
+  app.setGlobalPrefix('api/v1')
+  app.routing(routes) 
+  await app.listen(port);
+  console.log(`App is running at http://localhost:${port} 🚀`);
   // await upsertMainSuperAdmin();
   // await seeding();
 };

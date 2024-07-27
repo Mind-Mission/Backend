@@ -1,4 +1,3 @@
-import { Application } from 'express';
 import welcomeRoute from './routes/welcomeRoute';
 import userRoutes from "./routes/userRoutes";
 import authenticationRoutes from "./routes/authenticationRoutes";
@@ -27,33 +26,113 @@ import certificateRoutes from "./routes/certificateRoutes";
 import certificateTemplateRoutes from "./routes/certificateTemplateRoutes";
 import enumRoutes from "./routes/enumRoutes";
 
-export const router = (app: Application) => {
-  const apiVersion = process.env.API_Version;
-  app.use('/', welcomeRoute)
-  app.use(`${apiVersion}/auth`, authenticationRoutes);
-  app.use(`${apiVersion}/sso/gmail`, ssoGmailRoutes);
-  app.use(`${apiVersion}/sso/linkedin`, ssoLinkedinRoutes);
-  app.use(`${apiVersion}/users`, userRoutes);
-  app.use(`${apiVersion}/logs`, logRoutes);
-  app.use(`${apiVersion}/categories`, categoryRoutes);
-  app.use(`${apiVersion}/instructors`, instructorRoutes);
-  app.use(`${apiVersion}/students`, studentRoutes);
-  app.use(`${apiVersion}/courses`, courseRoutes);
-  app.use(`${apiVersion}/sections`, sectionRoutes);
-  app.use(`${apiVersion}/lessons`, lessonRoutes);
-  app.use(`${apiVersion}/notes`, noteRoutes);
-  app.use(`${apiVersion}/articles`, articleRoutes);
-  app.use(`${apiVersion}/videos`, videoRoutes);
-  app.use(`${apiVersion}/quizzes`, quizRoutes);
-  app.use(`${apiVersion}/carts`, cartRoutes);
-  app.use(`${apiVersion}/payments`, paymentRoutes);
-  app.use(`${apiVersion}/enrollments`, enrollmentRoutes);
-  app.use(`${apiVersion}/ratings`, ratingRoutes);
-  app.use(`${apiVersion}/statistics`, statisticsRoutes);
-  app.use(`${apiVersion}/coupons`, couponRoutes);
-  app.use(`${apiVersion}/comments`, commentRoutes);
-  app.use(`${apiVersion}/messages`, messageRoutes);
-  app.use(`${apiVersion}/certificates`, certificateRoutes);
-  app.use(`${apiVersion}/templates/certificates`, certificateTemplateRoutes);
-  app.use(`${apiVersion}/enums`, enumRoutes);
-}
+export const routes: any[] = [
+  {
+    path: '',
+    router: welcomeRoute
+  },
+  {
+    path: 'auth',
+    router: authenticationRoutes
+  },
+  {
+    path: 'sso/gmail',
+    router: ssoGmailRoutes
+  },
+  {
+    path: 'sso/linkedin',
+    router: ssoLinkedinRoutes
+  },
+  {
+    path: 'users',
+    router: userRoutes
+  },
+  {
+    path: 'logs',
+    router: logRoutes
+  },
+  {
+    path: 'categories',
+    router: categoryRoutes
+  },
+  {
+    path: 'instructors',
+    router: instructorRoutes
+  },
+  {
+    path: 'students',
+    router: studentRoutes
+  },
+  {
+    path: 'courses',
+    router: courseRoutes
+  },
+  {
+    path: 'sections',
+    router: sectionRoutes
+  },
+  {
+    path: 'lessons',
+    router: lessonRoutes
+  },
+  {
+    path: 'notes',
+    router: noteRoutes
+  },
+  {
+    path: 'articles',
+    router: articleRoutes
+  },
+  {
+    path: 'videos',
+    router: videoRoutes
+  },
+  {
+    path: 'quizzes',
+    router: quizRoutes
+  },
+  {
+    path: 'carts',
+    router: cartRoutes
+  },
+  {
+    path: 'payments',
+    router: paymentRoutes
+  },
+  {
+    path: 'enrollments',
+    router: enrollmentRoutes
+  },
+  {
+    path: 'ratings',
+    router: ratingRoutes
+  },
+  {
+    path: 'statistics',
+    router: statisticsRoutes
+  },
+  {
+    path: 'coupons',
+    router: couponRoutes
+  },
+  {
+    path: 'comments',
+    router: commentRoutes
+  },
+  {
+    path: 'messages',
+    router: messageRoutes
+  },
+  {
+    path: 'certificates',
+    router: certificateRoutes
+  },
+  {
+    path: 'templates/certificates',
+    router: certificateTemplateRoutes
+  },
+  {
+    path: 'enums',
+    router: enumRoutes
+  },
+]
