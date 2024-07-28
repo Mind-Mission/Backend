@@ -1,5 +1,5 @@
 import { Server } from 'http';
-import express, { Application } from 'express';
+import express, { Application, RequestHandler } from 'express';
 import cors, { CorsOptions } from 'cors';
 import compression, { CompressionOptions } from 'compression';
 import Logger from '../logger';
@@ -13,8 +13,11 @@ export class ApplicationCreator {
 	private static app: Application;
 	private static server: Server
 	private static instance: ApplicationCreator;
-	private isRunTimeEnabled: boolean = false;
 	private prefix: string = '';
+	private runTimeController!: {
+		provider: string;
+		Controller:  new (...args: any[]) => any;
+	};
 	
 	private constructor() {
 		ApplicationCreator.app = express();
@@ -51,22 +54,23 @@ export class ApplicationCreator {
     ApplicationCreator.app.options('*', cors(options));
   };
 
-	enableRuntime() {
-		this.isRunTimeEnabled = true;
+	enableRealTime(realTimeController:{ provider: string, Controller: new (...args: any[]) => any}) {
+		this.runTimeController = {...realTimeController};
 	}
 
 	compression(options?: CompressionOptions) {
     ApplicationCreator.app.use(compression(options))
   };
 
-	logger() {
-		ApplicationCreator.app.use(Logger());
+	enableLogger(loggerMiddleware?: RequestHandler) {
+		ApplicationCreator.app.use(loggerMiddleware || Logger());
 	}
 
 	async listen(port: number | string) {
 		ApplicationCreator.server = await ApplicationCreator.app.listen(port);
-		if(this.isRunTimeEnabled) {
-			container.get<RealTimeManager>('RealTimeManager');
+		if(this.runTimeController) {
+			const {provider, Controller} = this.runTimeController;
+			container.get<typeof Controller>(provider);
 		}
 		UnhandledRejectionHandler.catch(ApplicationCreator.server);
 		return ApplicationCreator.server;
