@@ -12,10 +12,10 @@ async function bootstrap() {
   app.enableLogger();
   app.setGlobalPrefix('api/v1');
   app.routing(routes);
-  app.enableRealTime({
-    provider: RealTimeManager.name,
-    Controller: RealTimeManager
-  });
+  // app.enableRealTime({
+  //   provider: RealTimeManager.name,
+  //   Controller: RealTimeManager
+  // });
   await app.listen(port);
   // await upsertMainSuperAdmin();
   // await seeding();
